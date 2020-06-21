@@ -27,8 +27,8 @@ class Pos
 
 class Robot
 {
-	float x;
-	float y;
+ 	int x;
+	int y;
 	float angle;
 
 	Robot(int x, int y, float angle)
@@ -75,7 +75,7 @@ class Robot
 		if (this.y - pos.y < 0)
 			//detination dans le bas du cercle
 			theta -= 2*theta;
-    println(theta - angle);
+		println(theta - angle);
 		if ((theta - angle) > petite_rot)
 		{
 			goToAngle(theta);
@@ -109,8 +109,8 @@ void setup()
 	size(1500,1000);
 	img = loadImage("map.png");
 	background(img);
-  frameRate(fps);
-	initialization(Dir.gauche);
+	frameRate(fps);
+	initialization(Dir.droite);
 }
 
 void draw()
