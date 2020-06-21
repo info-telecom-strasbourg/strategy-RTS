@@ -73,15 +73,15 @@ class Robot
 
 	void goToAngle(float theta)
 	{
-		println("rotate");
-		println(angle);
-		println(theta);
-		if (abs(theta - angle) < petite_rot)
+		//println("rotate");
+		//println(angle);
+		//println(theta);
+		float angleDiff = mod2Pi(theta - angle);
+		if (abs(angleDiff) < petite_rot)
 			angle = theta;
 		else
 		{
-			float angleDiff = (theta - angle + 2 * PI) % (2 * PI);
-			if (angleDiff < PI)
+			if (angleDiff > PI)
 				angle -= petite_rot;
 			else
 				angle += petite_rot;
@@ -165,9 +165,19 @@ class Robot
 				y -= corners[i].y - LARGEUR_TERRAIN + 1;
 		}
 	}
+};
+
+float mod2Pi(float nb)
+{
+	while ((nb < 0) || (nb >= 2 * PI))
+	{
+		if (nb < 0)
+			nb += 2 * PI;
+		else
+			nb -= 2 * PI;
+	}
+	return nb;
 }
-
-
 
 void initialization(Dir dir)
 {
