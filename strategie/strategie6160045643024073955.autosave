@@ -11,7 +11,7 @@ enum Dir {gauche , droite };
 
 Robot robot;
 PImage img;
-Pos[] pos_obj = new Pos[] {new Pos(100, 100), new Pos(500, 400), new Pos(1000,830), new Pos(1200, 300), new Pos(-10,-10)};
+Pos[] pos_obj = new Pos[] {new Pos(750,500), new Pos(500, 400), new Pos(1000,830), new Pos(1200, 300), new Pos(-10,-10)};
 int num_obj = 0;
 
 class Pos
@@ -33,26 +33,22 @@ class Robot
 	float angle;
 	Pos[] corners = new Pos[] {new Pos(0,0), new Pos(0,0), new Pos(0,0), new Pos(0,0)};
 
-	Pos dest = new Pos(0,0);
-
 	Robot(int x, int y, float angle)
 	{
 		this.x = x;
 		this.y = y;
-		this.angle = angle + PI;
-		dest.x = x;
-		dest.y = y;
+		this.angle = angle;
 
-		//bas gauche
+		//haut gauche
 		corners[0].x = x + DEMI_DIAG * cos(angle + PI/4);
 		corners[0].y = y + DEMI_DIAG * sin(angle + PI/4);
-		//hauche gauche
+		//bas gauche
 		corners[1].x = x + DEMI_DIAG * cos(angle + 3 * PI/4);
 		corners[1].y = y + DEMI_DIAG * sin(angle + 3 * PI/4);
-		//bas droite
+		//haut droite
 		corners[2].x = x + DEMI_DIAG * cos(angle - PI/4);
 		corners[2].y = y + DEMI_DIAG * sin(angle - PI/4);
-		//haut droite
+		//bas droite
 		corners[3].x = x + DEMI_DIAG * cos(angle - 3 * PI/4);
 		corners[3].y = y + DEMI_DIAG * sin(angle - 3 * PI/4);
 	}
@@ -74,14 +70,11 @@ class Robot
 	void goToAngle(float theta)
 	{
 		println("rotate");
-		println(angle);
-		println(theta);
 		if (abs(theta - angle) < petite_rot)
 			angle = theta;
 		else
 		{
-			float angleDiff = (theta - angle + 2 * PI) % (2 * PI);
-			if (angleDiff < PI)
+			if (angle > theta)
 				angle -= petite_rot;
 			else
 				angle += petite_rot;
@@ -93,25 +86,16 @@ class Robot
 		if ((this.x == pos.x) && (this.y == pos.y))
 		//le robot est à destination
 			return 1;
-
 		float dist = sqrt(pow((this.x - pos.x),2) + pow((this.y - pos.y),2));
 		float theta = acos((this.x - pos.x)/dist);
 		if (this.y - pos.y < 0)
 		//detination dans le bas du cercle
 			theta -= 2*theta;
-
-		if (abs(theta - angle) > petite_rot/2 && (dest.x != pos.x || dest.y != pos.y))
+		if (abs(theta - angle) > petite_rot/2)
 		{
 			goToAngle(theta);
 			return 0;
 		}
-
-		if (dest.x != pos.x || dest.y != pos.y)
-		{
-			dest.x = pos.x;
-			dest.y = pos.y;
-		}
-
 		if (dist < petite_dist)
 		{
 			this.x = pos.x;
@@ -140,41 +124,30 @@ class Robot
 		corners[3].x = this.x + DEMI_DIAG * cos(this.angle - 3 * PI/4);
 		corners[3].y = this.y + DEMI_DIAG * sin(this.angle - 3 * PI/4);
 
-		// println("haut gauche");
-		// println(corners[0].x);
-		// println(corners[0].y);
-		// println(corners[1].x);
-		// println(corners[1].y);
-		// println(corners[2].x);
-		// println(corners[2].y);
-		// println(corners[3].x);
-		// println(corners[3].y);
-	}
-
-	void borderColision()
-	{
-		for(int i=0; i < 4; i++)
-		{
-			if (corners[i].x < 0 )
-				x -= corners[i].x;
-			else if (corners[i].x >= LONGUEUR_TERRAIN)
-				x -= corners[i].x - LONGUEUR_TERRAIN + 1;
-			if (corners[i].y < 0 )
-				y -= corners[i].y;
-			else if (corners[i].y >= LARGEUR_TERRAIN)
-				y -= corners[i].y - LARGEUR_TERRAIN + 1;
-		}
+		println("haut gauche");
+		println(corners[0].x);
+		println(corners[0].y);
+		println(corners[1].x);
+		println(corners[1].y);
+		println(corners[2].x);
+		println(corners[2].y);
+		println(corners[3].x);
+		println(corners[3].y);
 	}
 }
+
+
+
+
 
 
 
 void initialization(Dir dir)
 {
   if (dir == Dir.gauche)
-    robot = new Robot(100, 410, 0);
+    robot = new Robot(100, 410, PI);
   else if (dir == Dir.droite)
-    robot = new Robot(1400, 410, PI);
+    robot = new Robot(1400, 410, 0);
 }
 
 void setup()
@@ -188,10 +161,9 @@ void setup()
 
 void draw()
 {
-	//boucle
+  //boucle
 	if (robot.goTo(pos_obj[num_obj]) == 1)
 		num_obj++;
 	robot.getCorners();
-	robot.borderColision();
 	robot.affiche();
 }

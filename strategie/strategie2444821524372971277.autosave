@@ -76,11 +76,12 @@ class Robot
 		println("rotate");
 		println(angle);
 		println(theta);
-		if (abs(theta - angle) < petite_rot)
+		if (abs(theta - angle) % (2 * PI) < petite_rot)
 			angle = theta;
 		else
 		{
-			float angleDiff = (theta - angle + 2 * PI) % (2 * PI);
+			float angleDiff = abs(theta - angle) % 2 * PI;
+
 			if (angleDiff < PI)
 				angle -= petite_rot;
 			else
