@@ -7,13 +7,15 @@ class Girouette
 	Girouette()
 	{
 		color_g = NO_COLOR;
-		begin = second();
+		begin = millis();
 	}
 
 	void decide_zone()
 	{
-		if((second() - begin > 5) && color_g == NO_COLOR)
+		println((millis() - begin)/1000);
+		if((millis() - begin) > 25000 && color_g == NO_COLOR)
 		{
+			println("weathercock activated");
 			color_g = int(random(50))%2 + 1;
 			switch (color_g)
 			{

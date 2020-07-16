@@ -16,7 +16,7 @@ class Strat
 		this.id_current_task = -1;
 		this.opponent_positions = null;
 		this.color_weathercock = NO_COLOR;
-		this.time = second();
+		this.time = millis();
 		this.path = null;
 		this.tasks = tasks;
 		this.score = 0;
@@ -144,7 +144,7 @@ class Strat
 
 	int find_best_task()
 	{
-		if ((100 - second() - time) < (tab_tasks[TASK_FLAG].max_time + tab_tasks[TASK_FLAG].position.dist(robot.position)/SLOW))
+		if ((100000 - millis() - time) < (tab_tasks[TASK_FLAG].max_time + tab_tasks[TASK_FLAG].position.dist(robot.position)/SLOW))
 			return TASK_FLAG;
 
 		if(!tab_tasks[TASK_LIGHTHOUSE].done)
@@ -157,11 +157,5 @@ class Strat
 			return TASK_WEATHERCOCK;
 
 		return TASK_FLAG;
-	}
-
-	int cost_task(Task task)
-	{
-		float dist = robot.position.dist(task.position);
-		float req_time = task.max_time + dist/FAST;
 	}
 }

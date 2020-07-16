@@ -117,10 +117,10 @@ void setup()
 	strat = new Strat(robot, tab_tasks);
 	dep_robot = new Dep(robot_op);
 	girouette = new Girouette();
-	Task task_weathercock = new Task(10, POS_WEATHERCOCK, 25);
-	Task task_windsock = new Task(15, POS_WINDSOCK, 20);
-	Task task_lighthouse = new Task(13, POS_LIGHTHOUSE, 15);
-	Task task_flag = new Task(10, POS_FLAG, 7);
+	Task task_weathercock = new Task(10, POS_WEATHERCOCK, 25000);
+	Task task_windsock = new Task(15, POS_WINDSOCK, 20000);
+	Task task_lighthouse = new Task(13, POS_LIGHTHOUSE, 15000);
+	Task task_flag = new Task(10, POS_FLAG, 7000);
 	Task[] tab_temp = {task_weathercock, task_windsock, task_lighthouse, task_flag};
 	tab_tasks = tab_temp;
 }
