@@ -129,5 +129,4 @@ void draw()
 	background(img);
 	strat.apply(robot_op);
 	dep_robot.apply();
-	println("Angle: ", robot.angle);
 }

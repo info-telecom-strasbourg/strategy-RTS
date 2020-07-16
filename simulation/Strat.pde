@@ -25,16 +25,15 @@ class Strat
 
 	void apply(Robot opponent)
 	{
-		this.next_position = new Pos(LONGUEUR_TERRAIN, LARGEUR_TERRAIN/2);
-		robot.speed_regime = FAST;
+		this.next_position = new Pos(LONGUEUR_TERRAIN, LARGEUR_TERRAIN/12);
+		robot.speed_regime = fixed_lidar(opponent);
 		robot.goTo(this.next_position);
 		robot.getCorners();
 		robot.borderColision();
 		robot.affiche(true);
 
 		// robot.position = get_position(); //à coder
-//
-		robot.speed_regime = fixed_lidar(opponent);
+
 		// this.find_the_opponent(opponent);
 		// this.id_current_task = find_best_task(); //à coder
 		// if(robot.position.isAround(this.tasks[this.id_current_task].position, 50))
@@ -108,18 +107,20 @@ class Strat
 							this.robot.position.y + sin(this.robot.angle) * LARGEUR_ROBOT/2);
 		float dist = capteur.dist(pos);
 
-		if (dist > 250)
+		if(dist > 250)
 			return false;
 
-		println("----");
 		float theta = arcos(capteur, pos);
-		println(theta);
-		println(this.robot.angle);
-		if (mod2Pi(abs(theta - this.robot.angle)) < PI/4)
-		{
-			println("OOOOOOOOOOOOOOOOOOOOOOOOKk");
+		println("theta: ", theta);
+		println("angle: ", this.robot.angle);
+
+		float diff_ang = mod2Pi(theta - this.robot.angle);
+		if (diff_ang > PI)
+			diff_ang = 2*PI - diff_ang;
+
+		if(diff_ang < PI/4)
 			return true;
-		}
+
 		else
 			return false;
 	}

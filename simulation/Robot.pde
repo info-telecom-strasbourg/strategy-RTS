@@ -53,8 +53,16 @@ class Robot
 		rotate(this.angle);
 		rectMode(CENTER);
 		rect(0, 0, LARGEUR_ROBOT, LONGUEUR_ROBOT);
-		fill(255, 255, 255, 150);
-		arc(LONGUEUR_ROBOT/2, 0, 300, 300, - PI/4,  PI/4);
+		if(our_robot)
+		{
+			fill(255, 255, 255, 150);
+			arc(LONGUEUR_ROBOT/2, 0, 300, 300, - PI/4,  PI/4);
+		}
+		else
+		{
+			fill(0,0,0);
+			triangle(LONGUEUR_ROBOT/2, 0, 0, -LARGEUR_ROBOT/2, 0, LARGEUR_ROBOT/2);
+		}
 		popMatrix();
 	}
 
@@ -62,11 +70,12 @@ class Robot
 	{
 		theta = mod2Pi(theta);
 		float angleDiff = theta - this.angle;
+
 		if (abs(angleDiff) < petite_rot)
 			this.angle = theta;
 		else
 		{
-			if (angleDiff > 0)
+			if ((angleDiff > 0 && angleDiff < PI) || (angleDiff < 0 && angleDiff < -PI))
 				this.angle = mod2Pi(this.angle + petite_rot);
 			else
 				this.angle = mod2Pi(this.angle - petite_rot);
@@ -80,7 +89,6 @@ class Robot
 
 		float dist = sqrt(pow((this.position.x - pos.x),2) + pow((this.position.y - pos.y),2));
 		float theta = arcos(this.position, pos);
-		println("theta", theta);
 
 
 		if (mod2Pi(theta - this.angle) > petite_rot && (this.new_position.x != pos.x || this.new_position.y != pos.y))
