@@ -54,15 +54,16 @@ class Robot
 		rectMode(CENTER);
 		rect(0, 0, LARGEUR_ROBOT, LONGUEUR_ROBOT);
 		fill(255, 255, 255, 150);
-		arc(-LONGUEUR_ROBOT/2, 0, 300, 300, PI - PI/4, PI + PI/4);
+		arc(LONGUEUR_ROBOT/2, 0, 300, 300, - PI/4,  PI/4);
 		popMatrix();
 	}
 
 	void goToAngle(float theta)
 	{
+		theta = mod2Pi(theta);
 		float angleDiff = theta - this.angle;
 		if (abs(angleDiff) < petite_rot)
-			this.angle = mod2Pi(theta);
+			this.angle = theta;
 		else
 		{
 			if (angleDiff > 0)
@@ -74,18 +75,15 @@ class Robot
 
 	void goTo(Pos pos)
 	{
-		if (this.position.isAround(pos, 50))
-		//le robot est à destination
+		if (this.position.isAround(pos, 50)) //le robot est à destination
 			return;
 
 		float dist = sqrt(pow((this.position.x - pos.x),2) + pow((this.position.y - pos.y),2));
-		float theta = acos((this.position.x - pos.x)/dist);
-		// println("dist", dist);
-		if (this.position.y - pos.y < 0)
-		//detination dans le bas du cercle
-			theta -= 2*theta;
+		float theta = arcos(this.position, pos);
+		println("theta", theta);
 
-		if (abs(theta - this.angle) > petite_rot && (this.new_position.x != pos.x || this.new_position.y != pos.y))
+
+		if (mod2Pi(theta - this.angle) > petite_rot && (this.new_position.x != pos.x || this.new_position.y != pos.y))
 		{
 			goToAngle(theta);
 			return;
@@ -104,8 +102,8 @@ class Robot
 		}
 		else
 		{
-			this.position.x -= this.speed_regime * cos(this.angle);
-			this.position.y -= this.speed_regime * sin(this.angle);
+			this.position.x += this.speed_regime * cos(this.angle);
+			this.position.y += this.speed_regime * sin(this.angle);
 		}
 		return;
 	}

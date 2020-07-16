@@ -112,7 +112,7 @@ class Strat
 			return false;
 
 		println("----");
-		float theta = acos((capteur.x - pos.x)/dist);
+		float theta = arcos(capteur, pos);
 		println(theta);
 		println(this.robot.angle);
 		if (mod2Pi(abs(theta - this.robot.angle)) < PI/4)

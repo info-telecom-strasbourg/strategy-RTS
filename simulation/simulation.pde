@@ -48,12 +48,6 @@ PImage img;
 Strat strat;
 Dep dep_robot;
 
-void affichePos(Pos pos, Pos position, float angle)
-{
-	fill(0, 0, 255);
-	rotate(-angle);
-	circle(pos.x - position.x, pos.y - position.y, 10);
-}
 
 float mod2Pi(float nb)
 {
@@ -67,12 +61,24 @@ float mod2Pi(float nb)
 	return nb;
 }
 
+float arcos(Pos pos_rob, Pos pos_des) {
+	float dist = pos_rob.dist(pos_des);
+	if(pos_des.y > pos_rob.y && pos_des.x > pos_rob.x)
+		return acos(abs(pos_des.x - pos_rob.x)/dist);
+	if(pos_des.y > pos_rob.y && pos_des.x < pos_rob.x)
+		return PI - acos(abs(pos_des.x - pos_rob.x)/dist);
+	if(pos_des.y < pos_rob.y && pos_des.x > pos_rob.x)
+		return 2*PI - acos(abs(pos_des.x - pos_rob.x)/dist);
+	else
+		return PI + acos(abs(pos_des.x - pos_rob.x)/dist);
+ }
+
 void init_robot(Dir dir)
 {
 	if (dir == Dir.left)
 	{
-		robot = new Robot(new Pos(100, 410), PI);
-		robot_op = new Robot(new Pos(1400, 410), 0);
+		robot = new Robot(new Pos(100, 410), 0);
+		robot_op = new Robot(new Pos(1400, 410), PI);
 		POS_WINDSOCK_1 = new Pos(0,0);
 		POS_WINDSOCK_2 = new Pos(0,0);
 		POS_LIGHTHOUSE = new Pos(0,0);
@@ -80,8 +86,8 @@ void init_robot(Dir dir)
 	}
 	else if (dir == Dir.right)
 	{
-		robot = new Robot(new Pos(1400, 410), 0);
-		robot_op = new Robot(new Pos(100, 410), PI);
+		robot = new Robot(new Pos(1400, 410), PI);
+		robot_op = new Robot(new Pos(100, 410), 0);
 		POS_WINDSOCK_1 = new Pos(0,0);
 		POS_WINDSOCK_2 = new Pos(0,0);
 		POS_LIGHTHOUSE = new Pos(0,0);
@@ -123,4 +129,5 @@ void draw()
 	background(img);
 	strat.apply(robot_op);
 	dep_robot.apply();
+	println("Angle: ", robot.angle);
 }
