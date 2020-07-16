@@ -16,10 +16,9 @@ final int FAST = 10;
 
 //Macro for tasks
 final int TASK_WEATHERCOCK = 1;
-final int TASK_WINDSOCK_1 = 2;
-final int TASK_WINDSOCK_2 = 3;
-final int TASK_LIGHTHOUSE = 4;
-final int TASK_FLAG = 5;
+final int TASK_WINDSOCK = 2;
+final int TASK_LIGHTHOUSE = 3;
+final int TASK_FLAG = 4;
 
 //Macro for colors (weathercock)
 final int NO_COLOR = 0;
@@ -118,10 +117,10 @@ void setup()
 	strat = new Strat(robot, tab_tasks);
 	dep_robot = new Dep(robot_op);
 	girouette = new Girouette();
-	Task task_weathercock = new Task(10, POS_WEATHERCOCK, 15000);
-	Task task_windsock = new Task(15, POS_WINDSOCK, 15000);
-	Task task_lighthouse = new Task(13, POS_LIGHTHOUSE, 15000);
-	Task task_flag = new Task(10, POS_FLAG, 5000);
+	Task task_weathercock = new Task(10, POS_WEATHERCOCK, 25);
+	Task task_windsock = new Task(15, POS_WINDSOCK, 20);
+	Task task_lighthouse = new Task(13, POS_LIGHTHOUSE, 15);
+	Task task_flag = new Task(10, POS_FLAG, 7);
 	Task[] tab_temp = {task_weathercock, task_windsock, task_lighthouse, task_flag};
 	tab_tasks = tab_temp;
 }

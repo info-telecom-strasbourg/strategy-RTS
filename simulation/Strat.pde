@@ -16,7 +16,7 @@ class Strat
 		this.id_current_task = -1;
 		this.opponent_positions = null;
 		this.color_weathercock = NO_COLOR;
-		this.time = millis();
+		this.time = second();
 		this.path = null;
 		this.tasks = tasks;
 		this.score = 0;
@@ -144,8 +144,24 @@ class Strat
 
 	int find_best_task()
 	{
-		return 1;
+		if ((100 - second() - time) < (tab_tasks[TASK_FLAG].max_time + tab_tasks[TASK_FLAG].position.dist(robot.position)/SLOW))
+			return TASK_FLAG;
+
+		if(!tab_tasks[TASK_LIGHTHOUSE].done)
+			return TASK_LIGHTHOUSE;
+
+		if(!tab_tasks[TASK_WINDSOCK].done)
+			return TASK_WINDSOCK;
+
+		if(!tab_tasks[TASK_WEATHERCOCK].done)
+			return TASK_WEATHERCOCK;
+
+		return TASK_FLAG;
 	}
-	//Manche à air ou phare en 1er car zone secu et points à la clé
-	//girouettes et pavillons à la fin (!!!! arriver au bon endroit !!!!)
+
+	int cost_task(Task task)
+	{
+		float dist = robot.position.dist(task.position);
+		float req_time = task.max_time + dist/FAST;
+	}
 }
