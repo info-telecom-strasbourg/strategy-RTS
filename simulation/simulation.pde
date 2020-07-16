@@ -28,17 +28,12 @@ final int WHITE = 2;
 
 Pos POS_LIGHTHOUSE = null;
 Pos POS_LIGHTHOUSE_OP = null;
-final Pos POS_WEATHERCOCK = new Pos(0,0);
-Pos POS_WINDSOCK_1 = null;
-Pos POS_WINDSOCK_2 = null;
+Pos POS_WEATHERCOCK = new Pos(LONGUEUR_TERRAIN/2, 75);
+Pos POS_WINDSOCK = null;
 Pos POS_FLAG = null;
 
 enum Dir {left , right };
-Task task_weathercock = new Task(10, POS_WEATHERCOCK, 15000);
-Task task_windsock_1 = new Task(5, POS_WINDSOCK_1, 15000);
-Task task_windsock_2 = new Task(5, POS_WINDSOCK_2, 15000);
-Task task_lighthouse = new Task(13, POS_LIGHTHOUSE, 15000);
-Task task_flag = new Task(10, null, 5000);
+Task[] tab_tasks = null;
 
 
 //Variables
@@ -80,19 +75,19 @@ void init_robot(Dir dir)
 	{
 		robot = new Robot(new Pos(100, 410), 0);
 		robot_op = new Robot(new Pos(1400, 410), PI);
-		POS_WINDSOCK_1 = new Pos(0,0);
-		POS_WINDSOCK_2 = new Pos(0,0);
-		POS_LIGHTHOUSE = new Pos(0,0);
-		POS_LIGHTHOUSE_OP = new Pos(0,0);
+		POS_WINDSOCK = new Pos(50,925);
+		POS_LIGHTHOUSE = new Pos(50,75);
+		POS_LIGHTHOUSE_OP = new Pos(1450, 75);
+		POS_FLAG = new Pos(50, -50);
 	}
 	else if (dir == Dir.right)
 	{
 		robot = new Robot(new Pos(1400, 410), PI);
 		robot_op = new Robot(new Pos(100, 410), 0);
-		POS_WINDSOCK_1 = new Pos(0,0);
-		POS_WINDSOCK_2 = new Pos(0,0);
-		POS_LIGHTHOUSE = new Pos(0,0);
-		POS_LIGHTHOUSE_OP = new Pos(0,0);
+		POS_WINDSOCK = new Pos(1450, 925);
+		POS_LIGHTHOUSE = new Pos(1450, 75);
+		POS_LIGHTHOUSE_OP = new Pos(50,75);
+		POS_FLAG = new Pos(1450, -50);
 	}
 
 	fill(0, 255, 0);
@@ -120,10 +115,15 @@ void setup()
 	frameRate(fps);
 	init_robot(Dir.left);
 
-	Task[] tab_tasks = {task_weathercock, task_windsock_1, task_windsock_2, task_lighthouse, task_flag};
 	strat = new Strat(robot, tab_tasks);
 	dep_robot = new Dep(robot_op);
 	girouette = new Girouette();
+	Task task_weathercock = new Task(10, POS_WEATHERCOCK, 15000);
+	Task task_windsock = new Task(15, POS_WINDSOCK, 15000);
+	Task task_lighthouse = new Task(13, POS_LIGHTHOUSE, 15000);
+	Task task_flag = new Task(10, POS_FLAG, 5000);
+	Task[] tab_temp = {task_weathercock, task_windsock, task_lighthouse, task_flag};
+	tab_tasks = tab_temp;
 }
 
 void draw()
@@ -132,4 +132,7 @@ void draw()
 	strat.apply(robot_op);
 	dep_robot.apply();
 	girouette.affiche();
+
+	for(int i = 0; i < tab_tasks.length; i++)
+		tab_tasks[i].affiche();
 }

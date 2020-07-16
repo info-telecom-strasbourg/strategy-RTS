@@ -15,5 +15,14 @@ class Task
 
 	void over() {this.done = true;}
 
+	void affiche()
+	{
+		if(!done)
+			fill(255,0,0);
+		else
+			fill(0,255,0);
+		triangle(position.x, position.y + 30, position.x - 30, position.y - 30, position.x + 30, position.y - 30);
+	}
+
 
 }

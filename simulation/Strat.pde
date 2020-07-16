@@ -25,7 +25,7 @@ class Strat
 
 	void apply(Robot opponent)
 	{
-		this.next_position = new Pos(LONGUEUR_TERRAIN, LARGEUR_TERRAIN/8); //our robot's dest
+		this.next_position = new Pos(100, 150); //our robot's dest
 		// robot.position = get_position(); //à coder
 		robot.speed_regime = fixed_lidar(opponent); //adaptation of the speed according to the environment
 		this.find_the_opponent(opponent); //identify the opponent
@@ -142,10 +142,10 @@ class Strat
 		return shapes;
 	}
 
-	// int find_best_task()
-	// {
-	//
-	// }
+	int find_best_task()
+	{
+		return 1;
+	}
 	//Manche à air ou phare en 1er car zone secu et points à la clé
 	//girouettes et pavillons à la fin (!!!! arriver au bon endroit !!!!)
 }

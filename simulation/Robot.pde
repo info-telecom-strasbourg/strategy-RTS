@@ -5,6 +5,7 @@ class Robot
 	float angle;
 	int speed_regime;
 	Pos next_position;
+	int detected_color;
 
 	Robot(Pos pos, float angle)
 	{
@@ -27,6 +28,7 @@ class Robot
 		//bas droite
 		this.corners[3].x = pos.x + DEMI_DIAG * cos(mod2Pi(this.angle - PI/4));
 		this.corners[3].y = pos.y + DEMI_DIAG * sin(mod2Pi(this.angle - PI/4));
+		detected_color = NO_COLOR;
 	}
 
 	void update_angle(float var){this.angle = mod2Pi(this.angle + var);}

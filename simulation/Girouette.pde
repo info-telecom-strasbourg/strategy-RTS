@@ -2,7 +2,7 @@ class Girouette
 {
 	int color_g;
 	boolean activate;
-	int begin;
+	long begin;
 
 	Girouette()
 	{
@@ -13,7 +13,20 @@ class Girouette
 	void decide_zone()
 	{
 		if((second() - begin > 5) && color_g == NO_COLOR)
+		{
 			color_g = int(random(50))%2 + 1;
+			switch (color_g)
+			{
+				case BLACK:
+					POS_FLAG.y = 150;
+					break;
+				case WHITE:
+					POS_FLAG.y = 850;
+					break;
+				default:
+					println("No color");
+			}
+		}
 	}
 
 	void affiche()
