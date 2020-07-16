@@ -25,20 +25,19 @@ class Strat
 
 	void apply(Robot opponent)
 	{
-		this.next_position = new Pos(LONGUEUR_TERRAIN, LARGEUR_TERRAIN/12);
+		this.next_position = new Pos(LONGUEUR_TERRAIN, LARGEUR_TERRAIN/8); //our robot's dest
 		// robot.position = get_position(); //à coder
 		robot.speed_regime = fixed_lidar(opponent); //adaptation of the speed according to the environment
 		this.find_the_opponent(opponent); //identify the opponent
-		robot.goTo(this.next_position); //move
-		robot.getCorners();
-		robot.borderColision();
-		robot.affiche(true);
-
 
 
 
 
 		// this.id_current_task = find_best_task(); //à coder
+
+		// nb de points
+		// temps (temps de trajet + temps_max de la tache)
+
 		// if(robot.position.isAround(this.tasks[this.id_current_task].position, 50))
 		// {
 		// 	do_task(this.id_current_task); //à coder
@@ -56,6 +55,11 @@ class Strat
 		// 		this.path[0].erase(); //trouver une alternative
 		// 	move(robot.speed_regime, this.next_position); //à coder
 		// }
+
+		robot.goTo(this.next_position); //move
+		robot.getCorners();
+		robot.borderColision();
+		robot.affiche(true);
 	}
 
 	void find_the_opponent(Robot opponent)
@@ -71,7 +75,7 @@ class Strat
 			return;
 
 
-		for (int i=0; i < obstacles.length; i++)
+		for (int i = 0; i < obstacles.length; i++)
 		{
 			if (!obstacles[i].isAround(POS_LIGHTHOUSE, 50) && !obstacles[i].isAround(POS_LIGHTHOUSE_OP, 50) && !obstacles[i].isAround(POS_WEATHERCOCK, 50))
 				this.opponent_positions = (Pos[]) splice(this.opponent_positions, obstacles[i], this.opponent_positions.length);
@@ -90,10 +94,6 @@ class Strat
 
 	int fixed_lidar(Robot opponent)
 	{
-		// for(int i = 0; i < 2; i++)
-		// 	if (capture(this.tasks[i].position))
-		// 		return SLOW;
-
 		Pos[] robot_op_shape = find_robot_op_shape(opponent);
 		for(int i = 0; i < robot_op_shape.length; i++)
 			if (capture(robot_op_shape[i]))
@@ -141,4 +141,11 @@ class Strat
 		shapes[7] = get_mid(opponent.corners[3], opponent.corners[0]);
 		return shapes;
 	}
+
+	// int find_best_task()
+	// {
+	//
+	// }
+	//Manche à air ou phare en 1er car zone secu et points à la clé
+	//girouettes et pavillons à la fin (!!!! arriver au bon endroit !!!!)
 }

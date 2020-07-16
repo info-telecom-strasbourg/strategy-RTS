@@ -22,9 +22,9 @@ final int TASK_LIGHTHOUSE = 4;
 final int TASK_FLAG = 5;
 
 //Macro for colors (weathercock)
-final int BLACK = 0;
-final int WHITE = 1;
-final int NO_COLOR = 2;
+final int NO_COLOR = 0;
+final int BLACK = 1;
+final int WHITE = 2;
 
 Pos POS_LIGHTHOUSE = null;
 Pos POS_LIGHTHOUSE_OP = null;
@@ -47,6 +47,7 @@ Robot robot_op;
 PImage img;
 Strat strat;
 Dep dep_robot;
+Girouette girouette;
 
 
 float mod2Pi(float nb)
@@ -122,6 +123,7 @@ void setup()
 	Task[] tab_tasks = {task_weathercock, task_windsock_1, task_windsock_2, task_lighthouse, task_flag};
 	strat = new Strat(robot, tab_tasks);
 	dep_robot = new Dep(robot_op);
+	girouette = new Girouette();
 }
 
 void draw()
@@ -129,4 +131,5 @@ void draw()
 	background(img);
 	strat.apply(robot_op);
 	dep_robot.apply();
+	girouette.affiche();
 }
