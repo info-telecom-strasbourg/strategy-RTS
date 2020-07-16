@@ -26,15 +26,16 @@ class Strat
 	void apply(Robot opponent)
 	{
 		this.next_position = new Pos(LONGUEUR_TERRAIN, LARGEUR_TERRAIN/12);
-		robot.speed_regime = fixed_lidar(opponent);
-		robot.goTo(this.next_position);
+		robot.speed_regime = fixed_lidar(opponent); //adaptation of the speed according to the environment
+		robot.goTo(this.next_position); //move
+		this.find_the_opponent(opponent); //identify the opponent
 		robot.getCorners();
 		robot.borderColision();
 		robot.affiche(true);
 
 		// robot.position = get_position(); //à coder
 
-		// this.find_the_opponent(opponent);
+
 		// this.id_current_task = find_best_task(); //à coder
 		// if(robot.position.isAround(this.tasks[this.id_current_task].position, 50))
 		// {
@@ -57,23 +58,27 @@ class Strat
 
 	void find_the_opponent(Robot opponent)
 	{
-		opponent_positions = null;
+		this.opponent_positions = null;
 		Pos[] obstacles = mobile_lidar(this.robot.position, opponent);
-		opponent_positions = find_opponent_positions(obstacles);
+		find_opponent_positions(obstacles);
 	}
 
-	Pos[] find_opponent_positions(Pos[] obstacles)
+	void find_opponent_positions(Pos[] obstacles)
 	{
 		if (obstacles.length == 0)
-			return opponent_positions;
+			return;
+
 
 		for (int i=0; i < obstacles.length; i++)
 		{
 			if (!obstacles[i].isAround(POS_LIGHTHOUSE, 50) && !obstacles[i].isAround(POS_LIGHTHOUSE_OP, 50) && !obstacles[i].isAround(POS_WEATHERCOCK, 50))
-				opponent_positions[opponent_positions.length] = obstacles[i];
+			{
+				println("ICI: ", i);
+				Pos[] temp = (Pos[]) append(this.opponent_positions, obstacles[i]);
+				this.opponent_positions = temp;
+			}
 		}
 
-		return opponent_positions;
 	}
 
 	Pos[] mobile_lidar(Pos pos, Robot opponent)
