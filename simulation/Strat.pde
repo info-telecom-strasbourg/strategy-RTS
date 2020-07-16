@@ -26,14 +26,16 @@ class Strat
 	void apply(Robot opponent)
 	{
 		this.next_position = new Pos(LONGUEUR_TERRAIN, LARGEUR_TERRAIN/12);
+		// robot.position = get_position(); //à coder
 		robot.speed_regime = fixed_lidar(opponent); //adaptation of the speed according to the environment
-		robot.goTo(this.next_position); //move
 		this.find_the_opponent(opponent); //identify the opponent
+		robot.goTo(this.next_position); //move
 		robot.getCorners();
 		robot.borderColision();
 		robot.affiche(true);
 
-		// robot.position = get_position(); //à coder
+
+
 
 
 		// this.id_current_task = find_best_task(); //à coder
@@ -58,7 +60,7 @@ class Strat
 
 	void find_the_opponent(Robot opponent)
 	{
-		this.opponent_positions = null;
+		this.opponent_positions = new Pos[0];
 		Pos[] obstacles = mobile_lidar(this.robot.position, opponent);
 		find_opponent_positions(obstacles);
 	}
@@ -72,11 +74,7 @@ class Strat
 		for (int i=0; i < obstacles.length; i++)
 		{
 			if (!obstacles[i].isAround(POS_LIGHTHOUSE, 50) && !obstacles[i].isAround(POS_LIGHTHOUSE_OP, 50) && !obstacles[i].isAround(POS_WEATHERCOCK, 50))
-			{
-				println("ICI: ", i);
-				Pos[] temp = (Pos[]) append(this.opponent_positions, obstacles[i]);
-				this.opponent_positions = temp;
-			}
+				this.opponent_positions = (Pos[]) splice(this.opponent_positions, obstacles[i], this.opponent_positions.length);
 		}
 
 	}
@@ -115,15 +113,10 @@ class Strat
 							this.robot.position.y + sin(this.robot.angle) * LARGEUR_ROBOT/2);
 		float dist = capteur.dist(pos);
 
-		if(dist < 250)
-			println("dist: ", dist);
-
 		if(dist > 250)
 			return false;
 
 		float theta = arcos(capteur, pos);
-		println("theta: ", theta);
-		println("angle: ", this.robot.angle);
 
 		float diff_ang = mod2Pi(theta - this.robot.angle);
 		if (diff_ang > PI)
