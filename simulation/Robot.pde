@@ -56,7 +56,7 @@ class Robot
 		if(our_robot)
 		{
 			fill(255, 255, 255, 150);
-			arc(LONGUEUR_ROBOT/2, 0, 300, 300, - PI/4,  PI/4);
+			arc(LONGUEUR_ROBOT/2, 0, 500, 500, - PI/4,  PI/4);
 		}
 		else
 		{

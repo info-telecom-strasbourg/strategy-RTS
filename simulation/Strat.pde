@@ -87,17 +87,20 @@ class Strat
 
 	int fixed_lidar(Robot opponent)
 	{
-		// for(int i = 0; i < this.tasks.length; i++)
+		// for(int i = 0; i < 2; i++)
 		// 	if (capture(this.tasks[i].position))
 		// 		return SLOW;
-		if (capture(opponent.position))
-			return STOP;
-		// for(int i = 0; i < LONGUEUR_TERRAIN; i+=10)
-		// 	if (capture(new Pos(i, 0)) || capture(new Pos(i, LARGEUR_TERRAIN)))
-		// 		return STOP;
-		// for(int i = 0; i < LARGEUR_TERRAIN; i+=10)
-		// 	if (capture(new Pos(0, i)) || capture(new Pos(LONGUEUR_TERRAIN, i)))
-		// 		return STOP;
+
+		Pos[] robot_op_shape = find_robot_op_shape(opponent);
+		for(int i = 0; i < robot_op_shape.length; i++)
+			if (capture(robot_op_shape[i]))
+				return SLOW;
+		for(int i = 0; i < LONGUEUR_TERRAIN; i+=10)
+			if (capture(new Pos(i, 0)) || capture(new Pos(i, LARGEUR_TERRAIN)))
+				return SLOW;
+		for(int i = 0; i < LARGEUR_TERRAIN; i+=10)
+			if (capture(new Pos(0, i)) || capture(new Pos(LONGUEUR_TERRAIN, i)))
+				return SLOW;
 		return FAST;
 	}
 
@@ -106,6 +109,9 @@ class Strat
 		Pos capteur = new Pos(this.robot.position.x + cos(this.robot.angle) * LARGEUR_ROBOT/2,
 							this.robot.position.y + sin(this.robot.angle) * LARGEUR_ROBOT/2);
 		float dist = capteur.dist(pos);
+
+		if(dist < 250)
+			println("dist: ", dist);
 
 		if(dist > 250)
 			return false;
@@ -120,8 +126,21 @@ class Strat
 
 		if(diff_ang < PI/4)
 			return true;
-
 		else
 			return false;
+	}
+
+	Pos[] find_robot_op_shape(Robot opponent)
+	{
+		Pos[] shapes = new Pos[8];
+		shapes[0] = opponent.corners[0];
+		shapes[1] = opponent.corners[1];
+		shapes[2] = opponent.corners[2];
+		shapes[3] = opponent.corners[3];
+		shapes[4] = get_mid(opponent.corners[0], opponent.corners[1]);
+		shapes[5] = get_mid(opponent.corners[1], opponent.corners[2]);
+		shapes[6] = get_mid(opponent.corners[2], opponent.corners[3]);
+		shapes[7] = get_mid(opponent.corners[3], opponent.corners[0]);
+		return shapes;
 	}
 }
