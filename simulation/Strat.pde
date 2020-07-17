@@ -3,20 +3,21 @@ class Strat
 	Robot robot;
 	int id_current_task;
 	Pos[] opponent_positions;
-	int color_weathercock;
 	int time;
 	Pos[] path;
 	int score;
 
 	//Simulation
 	int lighthouse_wait = -1;
+	int windsock_wait = -1;
+	int windsock_wait_2 = -1;
+	int weathercock_wait = -1;
 
 	Strat(Robot robot)
 	{
 		this.robot = robot;
 		this.id_current_task = -1;
 		this.opponent_positions = null;
-		this.color_weathercock = NO_COLOR;
 		this.time = millis();
 		this.path = null;
 		this.score = 0;
@@ -28,11 +29,10 @@ class Strat
 		robot.speed_regime = fixed_lidar(opponent); //adaptation of the speed according to the environment
 		this.find_the_opponent(opponent); //identify the opponent
 		this.id_current_task = find_best_task(); //choose the task we have to do now
-		if (this.id_current_task == TASK_FLAG && this.color_weathercock == NO_COLOR)
+		if (this.id_current_task == TASK_FLAG && this.robot.detected_color == NO_COLOR)
 			tab_tasks[TASK_FLAG].position = this.robot.position.closer(new Pos(POS_FLAG.x, 150), new Pos(POS_FLAG.x, 850));
 		this.robot.next_position = tab_tasks[this.id_current_task].position; //our robot's dest
 
-		println("Y : ",this.robot.position.y);
 		if(robot.position.isAround(tab_tasks[this.id_current_task].position, 50) || tab_tasks[this.id_current_task].done == IN_PROGRESS)
 		{
 			do_task();
@@ -48,7 +48,6 @@ class Strat
 			// robot.next_position = this.path[0];
 			// if (robot.position.isAround(this.path[0]))
 			// 	this.path[0].erase(); //trouver une alternative
-			// move(robot.speed_regime, this.next_position); //à coder
 			robot.goTo(); //move
 		}
 		robot.getCorners();
@@ -177,69 +176,169 @@ class Strat
 	}
 
 	void weathercock()
-	{
+	{	
+		
+		this.robot.checkpoint_weathercock.y = robot.position.y;
 		tab_tasks[TASK_WEATHERCOCK].in_progress();
-		tab_tasks[TASK_WEATHERCOCK].over();
+		this.robot.next_position = this.robot.checkpoint_weathercock;			
+		
+		if (this.robot.position.isAround(this.robot.checkpoint_weathercock, 50))
+		{
+			this.robot.checkpoint_weathercock.y = 50;
+			this.robot.next_position = this.robot.checkpoint_weathercock;
+		}
+
+		if (this.robot.position.isAround(this.robot.checkpoint_weathercock, 50))
+		{
+			println("weathercock done");
+			println("check weth x", this.robot.checkpoint_weathercock.x);
+			println("check weth y", this.robot.checkpoint_weathercock.y);
+			println("pos rob x", this.robot.position.x);
+			println("pos rob y", this.robot.position.y);
+			this.robot.goToAngle(3*PI/2);
+			if(mod2Pi(3*PI/2 - this.robot.angle) < petite_rot)
+			{
+				if(this.weathercock_wait == -1)
+					this.weathercock_wait = millis();
+
+				if((millis() - this.weathercock_wait) > 2000)
+				{
+					this.robot.detected_color = girouette.color_g;
+					switch (this.robot.detected_color)
+					{
+						case BLACK:
+							POS_FLAG.y = 150;
+							break;
+						case WHITE:
+							POS_FLAG.y = 850;
+							break;
+						default:
+							println("No color");
+					}
+					tab_tasks[TASK_WEATHERCOCK].over();
+				}
+			}
+		}
+				
+		this.robot.goTo();
 	}
 
 	void windsock()
 	{
+		if(this.robot.angle < PI - petite_rot)
+		{
+			this.robot.goToAngle(PI);
+			return;
+		}
+
+		if(this.windsock_wait == -1)
+			this.windsock_wait = millis();
+
+		if((millis() - this.windsock_wait) < 2000)
+		{
+			fill(0, 255, 0);
+			pushMatrix();
+			float dist_bord = LARGEUR_TERRAIN - this.robot.position.y - float(LONGUEUR_ROBOT)/2;
+			float coeff = float(millis() - this.windsock_wait)/2000.0;
+			float lg_bar = coeff * dist_bord;
+			lg_bar = (lg_bar > 25) ? 25 : lg_bar;
+			translate(this.robot.position.x, this.robot.position.y + LARGEUR_ROBOT/2 + lg_bar/2);//50
+			rect(0, 0, 10, lg_bar);
+			popMatrix();
+			this.robot.deployed = true;
+			return;
+		}
+
 		this.robot.checkpoint_windsock.y = robot.position.y;
 		tab_tasks[TASK_WINDSOCK].in_progress();
 		this.robot.next_position = this.robot.checkpoint_windsock;
-		this.robot.goTo();
+		fill(0, 255, 0);
+		pushMatrix();
+		translate(this.robot.position.x, this.robot.position.y + LARGEUR_ROBOT/2 + 25/2);//50
+		rect(0, 0, 10, 25);		
+		popMatrix();
+		this.robot.goTo();		
 
-		if (this.robot.position.isAround(this.robot.checkpoint_windsock, 50))
+		if(this.robot.position.isAround(this.robot.checkpoint_windsock, 50) && this.robot.deployed)
+		{
+			if(this.windsock_wait_2 == -1)
+				this.windsock_wait_2 = millis();
+			
+			if((millis() - this.windsock_wait_2) < 2000)
+			{
+				fill(0, 255, 0);
+				pushMatrix();
+				float dist_bord = float(LARGEUR_TERRAIN) - this.robot.position.y - float(LONGUEUR_ROBOT)/2;
+				float coeff = float(millis() - this.windsock_wait_2)/2000.0;
+				float lg_bar = (1 - coeff) * dist_bord;
+				lg_bar = (lg_bar > 25) ? 25 : lg_bar;
+				translate(this.robot.position.x, this.robot.position.y + LARGEUR_ROBOT/2 + lg_bar/2);//50
+				rect(0, 0, 10, lg_bar);
+				popMatrix();
+			}
+			else
+				this.robot.deployed = false;
+		}
+		else if(this.robot.position.isAround(this.robot.checkpoint_windsock, 50))
 			tab_tasks[TASK_WINDSOCK].over();
+
 	}
 
 	void lighthouse()
 	{
+		this.robot.checkpoint_lighthouse.x = robot.position.x;
 		tab_tasks[TASK_LIGHTHOUSE].in_progress();
-		this.robot.goToAngle((3*PI)/2);
-		if (mod2Pi(this.robot.angle - (3*PI)/2) < petite_rot)
+		this.robot.next_position = this.robot.checkpoint_lighthouse;
+		this.robot.goTo();
+		if (this.robot.position.isAround(this.robot.checkpoint_lighthouse, 50))
 		{
-			if(this.lighthouse_wait == -1)
-				this.lighthouse_wait = millis();
-			
-
-			if(((millis() - this.lighthouse_wait)*3) < (tab_tasks[TASK_LIGHTHOUSE].max_time))
+			this.robot.goToAngle((3*PI)/2);
+			if (mod2Pi(this.robot.angle - (3*PI)/2) < petite_rot)
 			{
-				float dist_bord = this.robot.position.y - float(LONGUEUR_ROBOT)/2;
-				float coeff = (millis() - float(this.lighthouse_wait))/(float(int(tab_tasks[TASK_LIGHTHOUSE].max_time))/3.0);
-				float adjust_dist = (1 - coeff) * dist_bord/2;
-				float to_print = dist_bord/2 + adjust_dist;
-				fill(0, 255, 0);
-				pushMatrix();
-				translate(this.robot.position.x, dist_bord/2 + adjust_dist);
-				rectMode(CENTER);
+				if(this.lighthouse_wait == -1)
+					this.lighthouse_wait = millis();
+				
 
-				rect(0, 0, 10, dist_bord - adjust_dist*2);
-				popMatrix();
-			}
-			else if (((millis() - this.lighthouse_wait)*3) < (tab_tasks[TASK_LIGHTHOUSE].max_time * 2))
-			{
-				float dist_bord = this.robot.position.y - float(LONGUEUR_ROBOT)/2;
-				float coeff = (millis() - float(this.lighthouse_wait) - float(int(tab_tasks[TASK_LIGHTHOUSE].max_time))/3.0)/(float(int(tab_tasks[TASK_LIGHTHOUSE].max_time))/3.0);
-				float adjust_dist = coeff * dist_bord/2;
-				float to_print = dist_bord/2 + adjust_dist;
-				fill(0, 255, 0);
-				pushMatrix();
-				translate(this.robot.position.x, dist_bord/2 + adjust_dist);
-				rectMode(CENTER);
+				if(((millis() - this.lighthouse_wait)*3) < (tab_tasks[TASK_LIGHTHOUSE].max_time))
+				{
+					float dist_bord = this.robot.position.y - float(LONGUEUR_ROBOT)/2;
+					float coeff = (millis() - float(this.lighthouse_wait))/(float(int(tab_tasks[TASK_LIGHTHOUSE].max_time))/3.0);
+					float adjust_dist = (1 - coeff) * dist_bord/2;
+					fill(0, 255, 0);
+					pushMatrix();
+					translate(this.robot.position.x, dist_bord/2 + adjust_dist);
+					rectMode(CENTER);
 
-				rect(0, 0, 10, dist_bord - adjust_dist*2);
-				popMatrix();
+					rect(0, 0, 10, dist_bord - adjust_dist*2);
+					popMatrix();
+				}
+				else if (((millis() - this.lighthouse_wait)*3) < (tab_tasks[TASK_LIGHTHOUSE].max_time * 2))
+				{
+					float dist_bord = this.robot.position.y - float(LONGUEUR_ROBOT)/2;
+					float coeff = (millis() - float(this.lighthouse_wait) - float(int(tab_tasks[TASK_LIGHTHOUSE].max_time))/3.0)/(float(int(tab_tasks[TASK_LIGHTHOUSE].max_time))/3.0);
+					float adjust_dist = coeff * dist_bord/2;
+					fill(0, 255, 0);
+					pushMatrix();
+					translate(this.robot.position.x, dist_bord/2 + adjust_dist);
+					rectMode(CENTER);
+
+					rect(0, 0, 10, dist_bord - adjust_dist*2);
+					popMatrix();
+				}
+				else
+					tab_tasks[TASK_LIGHTHOUSE].over();	
 			}
-			else
-				tab_tasks[TASK_LIGHTHOUSE].over();	
 		}
 	}
 
 	void flag()
 	{
 		tab_tasks[TASK_FLAG].in_progress();
-		tab_tasks[TASK_FLAG].over();
+		if (millis() - this.time > 95500)
+		{
+			this.robot.flag = true;
+			tab_tasks[TASK_FLAG].over();
+		}
 	}
 
 }

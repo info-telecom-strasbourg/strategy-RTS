@@ -73,6 +73,7 @@ void init_robot(Dir dir)
 		POS_FLAG = new Pos(50, -50);
 		POS_WEATHERCOCK = new Pos(450, 125);
 		robot.checkpoint_windsock = new Pos(500,-1);
+		robot.side = true;
 	}
 	else if (dir == Dir.right)
 	{
@@ -84,7 +85,11 @@ void init_robot(Dir dir)
 		POS_FLAG = new Pos(1450, -50);
 		POS_WEATHERCOCK = new Pos(1050, 125);
 		robot.checkpoint_windsock = new Pos(1000,-1);
+		robot.side = false;
 	}
+
+	robot.checkpoint_lighthouse = new Pos(-1,30);
+	robot.checkpoint_weathercock = new Pos(LONGUEUR_TERRAIN/2, -1);
 
 	fill(0, 255, 0);
 	pushMatrix();
@@ -116,7 +121,7 @@ void setup()
 	girouette = new Girouette();
 	Task task_weathercock = new Task(10, POS_WEATHERCOCK, 25000);
 	Task task_windsock = new Task(15, POS_WINDSOCK, 20000);
-	Task task_lighthouse = new Task(13, POS_LIGHTHOUSE, 15000);
+	Task task_lighthouse = new Task(13, POS_LIGHTHOUSE, 5000);
 	Task task_flag = new Task(10, POS_FLAG, 7000);
 	Task[] tab_temp = {task_weathercock, task_windsock, task_lighthouse, task_flag};
 	tab_tasks = tab_temp;
@@ -131,4 +136,8 @@ void draw()
 
 	for(int i = 0; i < tab_tasks.length; i++)
 		tab_tasks[i].affiche();
+
+	textSize(30);
+	textAlign(LEFT);
+	text((millis() - strat.time)/1000, 50/2-20, 50/2);
 }

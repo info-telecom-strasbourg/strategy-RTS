@@ -7,6 +7,11 @@ class Robot
 	Pos next_position;
 	int detected_color;
 	Pos checkpoint_windsock;
+	Pos checkpoint_lighthouse;
+	Pos checkpoint_weathercock;
+	boolean flag;
+	boolean side;
+	boolean deployed;
 
 	Robot(Pos pos, float angle)
 	{
@@ -14,6 +19,8 @@ class Robot
 		this.angle = angle;
 		this.speed_regime = STOP;
 		this.next_position = null;
+		this.flag = false;
+		this.deployed = false;
 
 
 		//SIMULATION
@@ -64,6 +71,11 @@ class Robot
 			arc(LONGUEUR_ROBOT/2, 0, 500, 500, - PI/12,  PI/12);
 			fill(255,255,255);
 			triangle(LONGUEUR_ROBOT/2, 0, 0, -LARGEUR_ROBOT/2, 0, LARGEUR_ROBOT/2);
+			if (flag)
+			{
+				fill(0, 0, 255);
+				ellipse(-25,0, 20, 20);
+			}
 		}
 		else
 		{
@@ -123,6 +135,7 @@ class Robot
 			this.position.y += this.speed_regime * sin(this.angle);
 		}
 	}
+
 
 	void getCorners()
 	{
