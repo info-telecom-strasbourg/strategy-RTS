@@ -61,18 +61,6 @@ float mod2Pi(float nb)
 	return nb;
 }
 
-float arcos(Pos pos_rob, Pos pos_des) {
-	float dist = pos_rob.dist(pos_des);
-	if(pos_des.y >= pos_rob.y && pos_des.x >= pos_rob.x)
-		return acos(abs(pos_des.x - pos_rob.x)/dist);
-	if(pos_des.y >= pos_rob.y && pos_des.x <= pos_rob.x)
-		return PI - acos(abs(pos_des.x - pos_rob.x)/dist);
-	if(pos_des.y <= pos_rob.y && pos_des.x >= pos_rob.x)
-		return 2*PI - acos(abs(pos_des.x - pos_rob.x)/dist);
-	else
-		return PI + acos(abs(pos_des.x - pos_rob.x)/dist);
- }
-
 void init_robot(Dir dir)
 {
 	if (dir == Dir.left)

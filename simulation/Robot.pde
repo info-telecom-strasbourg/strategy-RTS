@@ -97,7 +97,7 @@ class Robot
 
 
 		float dist = sqrt(pow((this.position.x - this.next_position.x),2) + pow((this.position.y - this.next_position.y),2));
-		float theta = arcos(this.position, this.next_position);
+		float theta = this.position.angle(this.next_position);
 		println("theta", theta);
 
 		if (mod2Pi(theta - this.angle) > petite_rot && (this.new_position.x != this.next_position.x || this.new_position.y != this.next_position.y))
