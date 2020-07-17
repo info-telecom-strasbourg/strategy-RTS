@@ -6,6 +6,7 @@ class Strat
 	int time;
 	Pos[] path;
 	int score;
+	boolean move_back;
 
 	//Simulation
 	int lighthouse_wait = -1;
@@ -21,6 +22,7 @@ class Strat
 		this.time = millis();
 		this.path = null;
 		this.score = 0;
+		this.move_back = false;
 	}
 
 	void apply(Robot opponent)
@@ -286,49 +288,65 @@ class Strat
 
 	void lighthouse()
 	{
-		this.robot.checkpoint_lighthouse.x = robot.position.x;
-		tab_tasks[TASK_LIGHTHOUSE].in_progress();
-		this.robot.next_position = this.robot.checkpoint_lighthouse;
-		this.robot.goTo();
-		if (this.robot.position.isAround(this.robot.checkpoint_lighthouse, 50))
+		if (!move_back)
 		{
-			this.robot.goToAngle((3*PI)/2);
-			if (mod2Pi(this.robot.angle - (3*PI)/2) < petite_rot)
+			this.robot.checkpoint_lighthouse.x = robot.position.x;
+			tab_tasks[TASK_LIGHTHOUSE].in_progress();
+			this.robot.next_position = this.robot.checkpoint_lighthouse;
+			this.robot.goTo();
+			if (this.robot.position.isAround(this.robot.checkpoint_lighthouse, 50))
 			{
-				if(this.lighthouse_wait == -1)
-					this.lighthouse_wait = millis();
-				
-
-				if(((millis() - this.lighthouse_wait)*3) < (tab_tasks[TASK_LIGHTHOUSE].max_time))
+				this.robot.goToAngle((3*PI)/2);
+				if (mod2Pi(this.robot.angle - (3*PI)/2) < petite_rot)
 				{
-					float dist_bord = this.robot.position.y - float(LONGUEUR_ROBOT)/2;
-					float coeff = (millis() - float(this.lighthouse_wait))/(float(int(tab_tasks[TASK_LIGHTHOUSE].max_time))/3.0);
-					float adjust_dist = (1 - coeff) * dist_bord/2;
-					fill(0, 255, 0);
-					pushMatrix();
-					translate(this.robot.position.x, dist_bord/2 + adjust_dist);
-					rectMode(CENTER);
+					if(this.lighthouse_wait == -1)
+						this.lighthouse_wait = millis();
+					
 
-					rect(0, 0, 10, dist_bord - adjust_dist*2);
-					popMatrix();
-				}
-				else if (((millis() - this.lighthouse_wait)*3) < (tab_tasks[TASK_LIGHTHOUSE].max_time * 2))
-				{
-					float dist_bord = this.robot.position.y - float(LONGUEUR_ROBOT)/2;
-					float coeff = (millis() - float(this.lighthouse_wait) - float(int(tab_tasks[TASK_LIGHTHOUSE].max_time))/3.0)/(float(int(tab_tasks[TASK_LIGHTHOUSE].max_time))/3.0);
-					float adjust_dist = coeff * dist_bord/2;
-					fill(0, 255, 0);
-					pushMatrix();
-					translate(this.robot.position.x, dist_bord/2 + adjust_dist);
-					rectMode(CENTER);
+					if(((millis() - this.lighthouse_wait)*3) < (tab_tasks[TASK_LIGHTHOUSE].max_time))
+					{
+						float dist_bord = this.robot.position.y - float(LONGUEUR_ROBOT)/2;
+						float coeff = (millis() - float(this.lighthouse_wait))/(float(int(tab_tasks[TASK_LIGHTHOUSE].max_time))/3.0);
+						float adjust_dist = (1 - coeff) * dist_bord/2;
+						fill(0, 255, 0);
+						pushMatrix();
+						translate(this.robot.position.x, dist_bord/2 + adjust_dist);
+						rectMode(CENTER);
 
-					rect(0, 0, 10, dist_bord - adjust_dist*2);
-					popMatrix();
+						rect(0, 0, 10, dist_bord - adjust_dist*2);
+						popMatrix();
+					}
+					else if (((millis() - this.lighthouse_wait)*3) < (tab_tasks[TASK_LIGHTHOUSE].max_time * 2))
+					{
+						float dist_bord = this.robot.position.y - float(LONGUEUR_ROBOT)/2;
+						float coeff = (millis() - float(this.lighthouse_wait) - float(int(tab_tasks[TASK_LIGHTHOUSE].max_time))/3.0)/(float(int(tab_tasks[TASK_LIGHTHOUSE].max_time))/3.0);
+						float adjust_dist = coeff * dist_bord/2;
+						fill(0, 255, 0);
+						pushMatrix();
+						translate(this.robot.position.x, dist_bord/2 + adjust_dist);
+						rectMode(CENTER);
+
+						rect(0, 0, 10, dist_bord - adjust_dist*2);
+						popMatrix();
+					}	
+					else
+						move_back = true;					
 				}
-				else
-					tab_tasks[TASK_LIGHTHOUSE].over();	
 			}
 		}
+		
+		if (move_back)
+		{
+			this.robot.next_position = POS_LIGHTHOUSE;
+			this.robot.goBack();
+			if (this.robot.position.isAround(POS_LIGHTHOUSE, 50))
+			{
+				tab_tasks[TASK_LIGHTHOUSE].over();
+				move_back = false;
+			}
+				
+		}
+		
 	}
 
 	void flag()

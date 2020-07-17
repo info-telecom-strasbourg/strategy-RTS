@@ -101,6 +101,23 @@ class Robot
 		}
  	}
 
+
+	// void goToAngleBack(float theta)
+	// {
+	// 	theta = mod2Pi(theta);
+	// 	float angleDiff = mod2Pi(theta + PI - this.angle);
+
+	// 	if (abs(angleDiff) < petite_rot)
+	// 		this.angle = theta;
+	// 	else
+	// 	{
+	// 		if ((angleDiff > 0 && angleDiff < PI) || (angleDiff < 0 && angleDiff < -PI))
+	// 			this.angle = mod2Pi(this.angle + petite_rot);
+	// 		else
+	// 			this.angle = mod2Pi(this.angle - petite_rot);
+	// 	}
+ 	// }
+
 	void goTo()
 	{
 
@@ -110,7 +127,6 @@ class Robot
 
 		float dist = sqrt(pow((this.position.x - this.next_position.x),2) + pow((this.position.y - this.next_position.y),2));
 		float theta = this.position.angle(this.next_position);
-		println("theta", theta);
 
 		if (mod2Pi(theta - this.angle) > petite_rot && (this.new_position.x != this.next_position.x || this.new_position.y != this.next_position.y))
 		{
@@ -135,6 +151,42 @@ class Robot
 			this.position.y += this.speed_regime * sin(this.angle);
 		}
 	}
+
+	void goBack ()
+	{
+		if (this.position.isAround(this.next_position, 50)) //le robot est à destination
+			return;
+
+		float dist = sqrt(pow((this.position.x - this.next_position.x),2) + pow((this.position.y - this.next_position.y),2));
+		float theta = this.position.angle(this.next_position);
+
+		if (mod2Pi(theta + PI - this.angle) > petite_rot && (this.new_position.x != this.next_position.x || this.new_position.y != this.next_position.y))
+		{
+			println("tourne");
+			goToAngle(theta + PI);
+			return;
+		}
+
+		println("LOOOOOOOOOOOOOOOOOOOOOOL");
+
+		if (this.new_position.x != this.next_position.x || this.new_position.y != this.next_position.y)
+		{
+			this.new_position.x = this.next_position.x;
+			this.new_position.y = this.next_position.y;
+		}
+
+		if (dist < this.speed_regime)
+		{
+			this.position.x = this.next_position.x;
+			this.position.y = this.next_position.y;
+		}
+		else
+		{
+			this.position.x -= this.speed_regime * cos(this.angle);
+			this.position.y -= this.speed_regime * sin(this.angle);
+		}
+	}
+
 
 
 	void getCorners()

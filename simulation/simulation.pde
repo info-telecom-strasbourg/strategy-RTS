@@ -88,7 +88,7 @@ void init_robot(Dir dir)
 		robot.side = false;
 	}
 
-	robot.checkpoint_lighthouse = new Pos(-1,30);
+	robot.checkpoint_lighthouse = new Pos(-1,15);
 	robot.checkpoint_weathercock = new Pos(LONGUEUR_TERRAIN/2, -1);
 
 	fill(0, 255, 0);
