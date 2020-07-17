@@ -12,10 +12,10 @@ git clone git@github.com:info-telecom-strasbourg/strategy-RTS.git
 At this point, the last update is on the branch `struct`. 
 To access it, just enter:
 
-`
-git checkout -b struct
+```
+git checkout struct
 git pull origin struct
-`
+```
 
 You can now start the simulation with your processing IDE.
 
