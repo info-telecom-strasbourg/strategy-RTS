@@ -111,7 +111,7 @@ class Strat
 		if(dist > 250)
 			return false;
 
-		float theta = arcos(capteur, pos);
+		float theta = capteur.angle(pos);
 
 		float diff_ang = mod2Pi(theta - this.robot.angle);
 		if (diff_ang > PI)
