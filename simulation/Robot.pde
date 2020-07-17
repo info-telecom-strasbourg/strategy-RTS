@@ -84,38 +84,38 @@ class Robot
 		}
  	}
 
-	void goTo(Pos pos)
+	void goTo()
 	{
-		if (this.position.isAround(pos, 50)) //le robot est à destination
+
+		if (this.position.isAround(this.next_position, 50)) //le robot est à destination
 			return;
 
-		float dist = sqrt(pow((this.position.x - pos.x),2) + pow((this.position.y - pos.y),2));
-		float theta = arcos(this.position, pos);
 
+		float dist = sqrt(pow((this.position.x - this.next_position.x),2) + pow((this.position.y - this.next_position.y),2));
+		float theta = arcos(this.position, this.next_position);
 
-		if (mod2Pi(theta - this.angle) > petite_rot && (this.new_position.x != pos.x || this.new_position.y != pos.y))
+		if (mod2Pi(theta - this.angle) > petite_rot && (this.new_position.x != this.next_position.x || this.new_position.y != this.next_position.y))
 		{
 			goToAngle(theta);
 			return;
 		}
 
-		if (this.new_position.x != pos.x || this.new_position.y != pos.y)
+		if (this.new_position.x != this.next_position.x || this.new_position.y != this.next_position.y)
 		{
-			this.new_position.x = pos.x;
-			this.new_position.y = pos.y;
+			this.new_position.x = this.next_position.x;
+			this.new_position.y = this.next_position.y;
 		}
 
 		if (dist < this.speed_regime)
 		{
-			this.position.x = pos.x;
-			this.position.y = pos.y;
+			this.position.x = this.next_position.x;
+			this.position.y = this.next_position.y;
 		}
 		else
 		{
 			this.position.x += this.speed_regime * cos(this.angle);
 			this.position.y += this.speed_regime * sin(this.angle);
 		}
-		return;
 	}
 
 	void getCorners()

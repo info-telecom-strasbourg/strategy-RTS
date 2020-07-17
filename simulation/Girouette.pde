@@ -12,10 +12,9 @@ class Girouette
 
 	void decide_zone()
 	{
-		println((millis() - begin)/1000);
+		// println((millis() - begin)/1000);
 		if((millis() - begin) > 25000 && color_g == NO_COLOR)
 		{
-			println("weathercock activated");
 			color_g = int(random(50))%2 + 1;
 			switch (color_g)
 			{
@@ -48,3 +47,4 @@ class Girouette
 		ellipse(LONGUEUR_TERRAIN/2, 0, 60, 60);
 	}
 }
+//Test

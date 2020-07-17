@@ -15,10 +15,10 @@ final int FAST = 10;
 
 
 //Macro for tasks
-final int TASK_WEATHERCOCK = 1;
-final int TASK_WINDSOCK = 2;
-final int TASK_LIGHTHOUSE = 3;
-final int TASK_FLAG = 4;
+final int TASK_WEATHERCOCK = 0;
+final int TASK_WINDSOCK = 1;
+final int TASK_LIGHTHOUSE = 2;
+final int TASK_FLAG = 3;
 
 //Macro for colors (weathercock)
 final int NO_COLOR = 0;
@@ -27,7 +27,7 @@ final int WHITE = 2;
 
 Pos POS_LIGHTHOUSE = null;
 Pos POS_LIGHTHOUSE_OP = null;
-Pos POS_WEATHERCOCK = new Pos(LONGUEUR_TERRAIN/2, 75);
+Pos POS_WEATHERCOCK = null;
 Pos POS_WINDSOCK = null;
 Pos POS_FLAG = null;
 
@@ -75,18 +75,20 @@ void init_robot(Dir dir)
 		robot = new Robot(new Pos(100, 410), 0);
 		robot_op = new Robot(new Pos(1400, 410), PI);
 		POS_WINDSOCK = new Pos(50,925);
-		POS_LIGHTHOUSE = new Pos(50,75);
-		POS_LIGHTHOUSE_OP = new Pos(1450, 75);
+		POS_LIGHTHOUSE = new Pos(250,125);
+		POS_LIGHTHOUSE_OP = new Pos(1250, 875);
 		POS_FLAG = new Pos(50, -50);
+		POS_WEATHERCOCK = new Pos(450, 125);
 	}
 	else if (dir == Dir.right)
 	{
 		robot = new Robot(new Pos(1400, 410), PI);
 		robot_op = new Robot(new Pos(100, 410), 0);
 		POS_WINDSOCK = new Pos(1450, 925);
-		POS_LIGHTHOUSE = new Pos(1450, 75);
-		POS_LIGHTHOUSE_OP = new Pos(50,75);
+		POS_LIGHTHOUSE = new Pos(1250, 875);
+		POS_LIGHTHOUSE_OP = new Pos(250,125);
 		POS_FLAG = new Pos(1450, -50);
+		POS_WEATHERCOCK = new Pos(1050, 125);
 	}
 
 	fill(0, 255, 0);
@@ -114,7 +116,7 @@ void setup()
 	frameRate(fps);
 	init_robot(Dir.left);
 
-	strat = new Strat(robot, tab_tasks);
+	strat = new Strat(robot);
 	dep_robot = new Dep(robot_op);
 	girouette = new Girouette();
 	Task task_weathercock = new Task(10, POS_WEATHERCOCK, 25000);

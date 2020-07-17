@@ -7,6 +7,7 @@ class Strat
 	long time;
 	Pos[] path;
 	int score;
+	Pos next_position;
 
 	Strat(Robot robot)
 	{
@@ -17,6 +18,7 @@ class Strat
 		this.time = millis();
 		this.path = null;
 		this.score = 0;
+		this.next_position = null;
 	}
 
 	void apply(Robot opponent)
@@ -25,33 +27,31 @@ class Strat
 		robot.speed_regime = fixed_lidar(opponent); //adaptation of the speed according to the environment
 		this.find_the_opponent(opponent); //identify the opponent
 		this.id_current_task = find_best_task(); //choose the task we have to do now
-		this.robot.next_position = tab_tasks[this.id_current_task].position; //our robot's dest
-		// println("current task :", this.id_current_task);
-		// println("x :", this.robot.next_position.x);
-		// println("y : ", this.robot.next_position.y);
+		this.next_position = tab_tasks[this.id_current_task].position; //our robot's dest
+		println(this.id_current_task);
 
 		if(robot.position.isAround(tab_tasks[this.id_current_task].position, 50))
 		{
 			do_task();
 			this.path = null;
 		}
-		else
-		{
-			// if (this.path == null)
-			// 	this.path = find_path(); //à coder
-			// else
-			// 	this.path = checkPath(); //à coder
-			//
-			// robot.next_position = this.path[0];
-			// if (robot.position.isAround(this.path[0]))
-			// 	this.path[0].erase(); //trouver une alternative
-			// move(robot.speed_regime, this.next_position); //à coder
-			robot.goTo(); //move
-			robot.getCorners();
-			robot.borderColision();
-			robot.affiche(true);
-		}
+		// else
+		// {
+		// 	if (this.path == null)
+		// 		this.path = find_path(); //à coder
+		// 	else
+		// 		this.path = checkPath(); //à coder
+		//
+		// 	robot.next_position = this.path[0];
+		// 	if (robot.position.isAround(this.path[0]))
+		// 		this.path[0].erase(); //trouver une alternative
+		// 	move(robot.speed_regime, this.next_position); //à coder
+		// }
 
+		robot.goTo(this.next_position); //move
+		robot.getCorners();
+		robot.borderColision();
+		robot.affiche(true);
 	}
 
 	void find_the_opponent(Robot opponent)
@@ -136,9 +136,8 @@ class Strat
 
 	int find_best_task()
 	{
-		if ((tab_tasks[TASK_WEATHERCOCK].done && (((100000 - millis() - time) < (tab_tasks[TASK_FLAG].max_time + tab_tasks[TASK_FLAG].position.dist(robot.position)/SLOW)))) ||
-				((100000 - millis() - time < tab_tasks[TASK_FLAG].max_time + new Pos(POS_FLAG.x, 150).dist(robot.position)/SLOW) &&
-				(100000 - millis() - time < tab_tasks[TASK_FLAG].max_time + new Pos(POS_FLAG.x, 850).dist(robot.position)/SLOW)))
+		if ((100000 - millis() - time < tab_tasks[TASK_FLAG].max_time + new Pos(POS_FLAG.x, 150).dist(robot.position)/SLOW) &&
+				(100000 - millis() - time < tab_tasks[TASK_FLAG].max_time + new Pos(POS_FLAG.x, 850).dist(robot.position)/SLOW))
 			return TASK_FLAG;
 
 		if(!tab_tasks[TASK_LIGHTHOUSE].done)
@@ -147,17 +146,14 @@ class Strat
 		if(!tab_tasks[TASK_WINDSOCK].done)
 			return TASK_WINDSOCK;
 
-			if(!tab_tasks[TASK_WEATHERCOCK].done)
+		if(!tab_tasks[TASK_WEATHERCOCK].done)
 			return TASK_WEATHERCOCK;
 
 		return TASK_FLAG;
 	}
 
-	// void do_task()
-	// {
-	// 	switch (this.id_current_task) {
-	// 		case Task:
-	// 	}
-	// 	tab_tasks[this.id_current_task].over();
-	// }
+	void do_task()
+	{
+		tab_tasks[this.id_current_task].over();
+	}
 }
