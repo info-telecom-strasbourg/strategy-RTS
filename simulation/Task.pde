@@ -17,6 +17,8 @@ class Task
 
 	void over() {done = DONE;}
 
+	void in_progress() {done = IN_PROGRESS;}
+
 	void affiche()
 	{
 		switch (done) 

@@ -6,6 +6,7 @@ class Robot
 	int speed_regime;
 	Pos next_position;
 	int detected_color;
+	Pos checkpoint_windsock;
 
 	Robot(Pos pos, float angle)
 	{
@@ -59,6 +60,10 @@ class Robot
 		{
 			fill(255, 255, 255, 150);
 			arc(LONGUEUR_ROBOT/2, 0, 500, 500, - PI/4,  PI/4);
+			fill(255,165,0, 150);
+			arc(LONGUEUR_ROBOT/2, 0, 500, 500, - PI/12,  PI/12);
+			fill(255,255,255);
+			triangle(LONGUEUR_ROBOT/2, 0, 0, -LARGEUR_ROBOT/2, 0, LARGEUR_ROBOT/2);
 		}
 		else
 		{
@@ -93,6 +98,7 @@ class Robot
 
 		float dist = sqrt(pow((this.position.x - this.next_position.x),2) + pow((this.position.y - this.next_position.y),2));
 		float theta = arcos(this.position, this.next_position);
+		println("theta", theta);
 
 		if (mod2Pi(theta - this.angle) > petite_rot && (this.new_position.x != this.next_position.x || this.new_position.y != this.next_position.y))
 		{

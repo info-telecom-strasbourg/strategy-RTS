@@ -63,11 +63,11 @@ float mod2Pi(float nb)
 
 float arcos(Pos pos_rob, Pos pos_des) {
 	float dist = pos_rob.dist(pos_des);
-	if(pos_des.y > pos_rob.y && pos_des.x > pos_rob.x)
+	if(pos_des.y >= pos_rob.y && pos_des.x >= pos_rob.x)
 		return acos(abs(pos_des.x - pos_rob.x)/dist);
-	if(pos_des.y > pos_rob.y && pos_des.x < pos_rob.x)
+	if(pos_des.y >= pos_rob.y && pos_des.x <= pos_rob.x)
 		return PI - acos(abs(pos_des.x - pos_rob.x)/dist);
-	if(pos_des.y < pos_rob.y && pos_des.x > pos_rob.x)
+	if(pos_des.y <= pos_rob.y && pos_des.x >= pos_rob.x)
 		return 2*PI - acos(abs(pos_des.x - pos_rob.x)/dist);
 	else
 		return PI + acos(abs(pos_des.x - pos_rob.x)/dist);
@@ -79,21 +79,23 @@ void init_robot(Dir dir)
 	{
 		robot = new Robot(new Pos(100, 410), 0);
 		robot_op = new Robot(new Pos(1400, 410), PI);
-		POS_WINDSOCK = new Pos(50,925);
+		POS_WINDSOCK = new Pos(100,925);
 		POS_LIGHTHOUSE = new Pos(250,125);
-		POS_LIGHTHOUSE_OP = new Pos(1250, 875);
+		POS_LIGHTHOUSE_OP = new Pos(1250, 125);
 		POS_FLAG = new Pos(50, -50);
 		POS_WEATHERCOCK = new Pos(450, 125);
+		robot.checkpoint_windsock = new Pos(500,-1);
 	}
 	else if (dir == Dir.right)
 	{
 		robot = new Robot(new Pos(1400, 410), PI);
 		robot_op = new Robot(new Pos(100, 410), 0);
-		POS_WINDSOCK = new Pos(1450, 925);
-		POS_LIGHTHOUSE = new Pos(1250, 875);
+		POS_WINDSOCK = new Pos(1400, 925);
+		POS_LIGHTHOUSE = new Pos(1250, 125);
 		POS_LIGHTHOUSE_OP = new Pos(250,125);
 		POS_FLAG = new Pos(1450, -50);
 		POS_WEATHERCOCK = new Pos(1050, 125);
+		robot.checkpoint_windsock = new Pos(1000,-1);
 	}
 
 	fill(0, 255, 0);
@@ -119,7 +121,7 @@ void setup()
 	size(1500,1000);
 	background(img);
 	frameRate(fps);
-	init_robot(Dir.left);
+	init_robot(Dir.right);
 
 	strat = new Strat(robot);
 	dep_robot = new Dep(robot_op);
