@@ -25,6 +25,11 @@ final int NO_COLOR = 0;
 final int BLACK = 1;
 final int WHITE = 2;
 
+//Macro for done
+final int NOT_DONE = 0;
+final int IN_PROGRESS = 1;
+final int DONE = 2;
+
 Pos POS_LIGHTHOUSE = null;
 Pos POS_LIGHTHOUSE_OP = null;
 Pos POS_WEATHERCOCK = null;

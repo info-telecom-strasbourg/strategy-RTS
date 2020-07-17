@@ -8,6 +8,9 @@ class Strat
 	Pos[] path;
 	int score;
 
+	//Simulation
+	long lighthouse_wait = -1;
+
 	Strat(Robot robot)
 	{
 		this.robot = robot;
@@ -25,6 +28,8 @@ class Strat
 		robot.speed_regime = fixed_lidar(opponent); //adaptation of the speed according to the environment
 		this.find_the_opponent(opponent); //identify the opponent
 		this.id_current_task = find_best_task(); //choose the task we have to do now
+		if (this.id_current_task == TASK_FLAG && this.color_weathercock == NO_COLOR)
+			tab_tasks[TASK_FLAG].position = this.robot.position.closer(new Pos(POS_FLAG.x, 150), new Pos(POS_FLAG.x, 850));
 		this.robot.next_position = tab_tasks[this.id_current_task].position; //our robot's dest
 		// println("current task :", this.id_current_task);
 		// println("x :", this.robot.next_position.x);
@@ -47,10 +52,10 @@ class Strat
 			// 	this.path[0].erase(); //trouver une alternative
 			// move(robot.speed_regime, this.next_position); //à coder
 			robot.goTo(); //move
-			robot.getCorners();
-			robot.borderColision();
-			robot.affiche(true);
 		}
+		robot.getCorners();
+		robot.borderColision();
+		robot.affiche(true);
 
 	}
 
@@ -136,28 +141,54 @@ class Strat
 
 	int find_best_task()
 	{
-		if ((tab_tasks[TASK_WEATHERCOCK].done && (((100000 - millis() - time) < (tab_tasks[TASK_FLAG].max_time + tab_tasks[TASK_FLAG].position.dist(robot.position)/SLOW)))) ||
+		if (((tab_tasks[TASK_WEATHERCOCK].done == DONE) && (((100000 - millis() - time) < (tab_tasks[TASK_FLAG].max_time + tab_tasks[TASK_FLAG].position.dist(robot.position)/SLOW)))) ||
 				((100000 - millis() - time < tab_tasks[TASK_FLAG].max_time + new Pos(POS_FLAG.x, 150).dist(robot.position)/SLOW) &&
 				(100000 - millis() - time < tab_tasks[TASK_FLAG].max_time + new Pos(POS_FLAG.x, 850).dist(robot.position)/SLOW)))
 			return TASK_FLAG;
 
-		if(!tab_tasks[TASK_LIGHTHOUSE].done)
+		if(tab_tasks[TASK_LIGHTHOUSE].done != DONE)
 			return TASK_LIGHTHOUSE;
 
-		if(!tab_tasks[TASK_WINDSOCK].done)
+		if(tab_tasks[TASK_WINDSOCK].done != DONE)
 			return TASK_WINDSOCK;
 
-			if(!tab_tasks[TASK_WEATHERCOCK].done)
+		if(tab_tasks[TASK_WEATHERCOCK].done != DONE)
 			return TASK_WEATHERCOCK;
 
 		return TASK_FLAG;
 	}
 
-	// void do_task()
-	// {
-	// 	switch (this.id_current_task) {
-	// 		case Task:
-	// 	}
-	// 	tab_tasks[this.id_current_task].over();
-	// }
+	void do_task()
+	{
+		switch (this.id_current_task) {
+			case TASK_WEATHERCOCK:
+				// weathercock();
+				break;
+			case TASK_WINDSOCK:
+				// windsock();
+				break;
+			case TASK_LIGHTHOUSE:
+				lighthouse();
+				break;
+			case TASK_FLAG:
+				// flag();
+				break;
+		}
+
+	}
+
+	void lighthouse()
+	{
+		tab_tasks[TASK_LIGHTHOUSE].done = IN_PROGRESS;
+		this.robot.goToAngle((3*PI)/2);
+		if (mod2Pi(this.robot.angle - (3*PI)/2) < petite_rot)
+		{
+			if(this.lighthouse_wait == -1)
+				this.lighthouse_wait = millis();
+
+			if((millis() - this.lighthouse_wait) > 5000)
+				tab_tasks[this.id_current_task].over();
+		}
+	}
+
 }

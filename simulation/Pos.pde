@@ -18,6 +18,10 @@ class Pos
 		return sqrt(pow(this.x - pos.x, 2) + pow(this.y - pos.y, 2));
 	}
 
+	Pos closer(Pos pos_1, Pos pos_2)
+	{
+		return (this.dist(pos_1) < this.dist(pos_2)) ? pos_1 : pos_2;
+	}
 }
 
 Pos get_mid(Pos pos_1, Pos pos_2)
