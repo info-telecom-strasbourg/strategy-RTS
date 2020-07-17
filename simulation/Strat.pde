@@ -21,7 +21,7 @@ class Strat
 		this.opponent_positions = null;
 		this.time = millis();
 		this.path = null;
-		this.score = 0;
+		this.score = 7;
 		this.move_back = false;
 	}
 
@@ -143,7 +143,8 @@ class Strat
 	{
 		if (((tab_tasks[TASK_WEATHERCOCK].done == DONE) && (((100000 - millis() - time) < (tab_tasks[TASK_FLAG].max_time + tab_tasks[TASK_FLAG].position.dist(robot.position)/SLOW)))) ||
 				((100000 - millis() - time < tab_tasks[TASK_FLAG].max_time + new Pos(POS_FLAG.x, 150).dist(robot.position)/SLOW) &&
-				(100000 - millis() - time < tab_tasks[TASK_FLAG].max_time + new Pos(POS_FLAG.x, 850).dist(robot.position)/SLOW)))
+				(100000 - millis() - time < tab_tasks[TASK_FLAG].max_time + new Pos(POS_FLAG.x, 850).dist(robot.position)/SLOW)) &&
+				tab_tasks[TASK_FLAG].done != DONE)
 			return TASK_FLAG;
 
 		if(tab_tasks[TASK_LIGHTHOUSE].done != DONE)
@@ -192,11 +193,6 @@ class Strat
 
 		if (this.robot.position.isAround(this.robot.checkpoint_weathercock, 50))
 		{
-			println("weathercock done");
-			println("check weth x", this.robot.checkpoint_weathercock.x);
-			println("check weth y", this.robot.checkpoint_weathercock.y);
-			println("pos rob x", this.robot.position.x);
-			println("pos rob y", this.robot.position.y);
 			this.robot.goToAngle(3*PI/2);
 			if(mod2Pi(3*PI/2 - this.robot.angle) < petite_rot)
 			{
@@ -254,11 +250,6 @@ class Strat
 		this.robot.checkpoint_windsock.y = robot.position.y;
 		tab_tasks[TASK_WINDSOCK].in_progress();
 		this.robot.next_position = this.robot.checkpoint_windsock;
-		fill(0, 255, 0);
-		pushMatrix();
-		translate(this.robot.position.x, this.robot.position.y + LARGEUR_ROBOT/2 + 25/2);//50
-		rect(0, 0, 10, 25);		
-		popMatrix();
 		this.robot.goTo();		
 
 		if(this.robot.position.isAround(this.robot.checkpoint_windsock, 50) && this.robot.deployed)
@@ -280,9 +271,21 @@ class Strat
 			}
 			else
 				this.robot.deployed = false;
+			return;
 		}
 		else if(this.robot.position.isAround(this.robot.checkpoint_windsock, 50))
+		{
 			tab_tasks[TASK_WINDSOCK].over();
+			this.score += tab_tasks[TASK_WINDSOCK].points;
+			return;
+		}
+
+
+		fill(0, 255, 0);
+		pushMatrix();
+		translate(this.robot.position.x, this.robot.position.y + LARGEUR_ROBOT/2 + 25/2);//50
+		rect(0, 0, 10, 25);		
+		popMatrix();
 
 	}
 
@@ -342,6 +345,7 @@ class Strat
 			if (this.robot.position.isAround(POS_LIGHTHOUSE, 50))
 			{
 				tab_tasks[TASK_LIGHTHOUSE].over();
+				this.score += tab_tasks[TASK_LIGHTHOUSE].points;
 				move_back = false;
 			}
 				
@@ -351,11 +355,28 @@ class Strat
 
 	void flag()
 	{
-		tab_tasks[TASK_FLAG].in_progress();
-		if (millis() - this.time > 95500)
+		if(tab_tasks[TASK_FLAG].done != DONE)
 		{
-			this.robot.flag = true;
-			tab_tasks[TASK_FLAG].over();
+			if(tab_tasks[TASK_FLAG].done != IN_PROGRESS)
+			{
+				Pos weth_1 = new Pos(POS_FLAG.x, 150);
+				Pos weth_2 = new Pos(POS_FLAG.x, 850);
+				if (this.robot.position.isAround(weth_1, 50) || this.robot.position.isAround(weth_2, 50))
+				{
+					this.score += 5;
+					if (tab_tasks[TASK_WEATHERCOCK].done == DONE)
+						this.score += 5;
+				}
+			}
+
+
+			tab_tasks[TASK_FLAG].in_progress();
+			if (millis() - this.time > 95500)
+			{
+				this.robot.flag = true;
+				tab_tasks[TASK_FLAG].over();
+				this.score += tab_tasks[TASK_FLAG].points;
+			}
 		}
 	}
 

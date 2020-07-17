@@ -67,7 +67,7 @@ void init_robot(Dir dir)
 	{
 		robot = new Robot(new Pos(100, 410), 0);
 		robot_op = new Robot(new Pos(1400, 410), PI);
-		POS_WINDSOCK = new Pos(100,925);
+		POS_WINDSOCK = new Pos(100,950);
 		POS_LIGHTHOUSE = new Pos(250,125);
 		POS_LIGHTHOUSE_OP = new Pos(1250, 125);
 		POS_FLAG = new Pos(50, -50);
@@ -79,7 +79,7 @@ void init_robot(Dir dir)
 	{
 		robot = new Robot(new Pos(1400, 410), PI);
 		robot_op = new Robot(new Pos(100, 410), 0);
-		POS_WINDSOCK = new Pos(1400, 925);
+		POS_WINDSOCK = new Pos(1400, 950);
 		POS_LIGHTHOUSE = new Pos(1250, 125);
 		POS_LIGHTHOUSE_OP = new Pos(250,125);
 		POS_FLAG = new Pos(1450, -50);
@@ -117,7 +117,8 @@ void setup()
 	init_robot(Dir.right);
 
 	strat = new Strat(robot);
-	dep_robot = new Dep(robot_op);
+	Pos[] path_op = {new Pos(200,200), new Pos(1000, 700), new Pos(50, 800)};
+	dep_robot = new Dep(robot_op, path_op);
 	girouette = new Girouette();
 	Task task_weathercock = new Task(10, POS_WEATHERCOCK, 25000);
 	Task task_windsock = new Task(15, POS_WINDSOCK, 20000);
@@ -139,5 +140,6 @@ void draw()
 
 	textSize(30);
 	textAlign(LEFT);
-	text((millis() - strat.time)/1000, 50/2-20, 50/2);
+	text((millis() - strat.time)/1000, 1, 21);
+	text(strat.score, 1450, 21);
 }

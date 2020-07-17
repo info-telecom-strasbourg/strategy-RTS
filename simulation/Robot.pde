@@ -162,12 +162,10 @@ class Robot
 
 		if (mod2Pi(theta + PI - this.angle) > petite_rot && (this.new_position.x != this.next_position.x || this.new_position.y != this.next_position.y))
 		{
-			println("tourne");
 			goToAngle(theta + PI);
 			return;
 		}
 
-		println("LOOOOOOOOOOOOOOOOOOOOOOL");
 
 		if (this.new_position.x != this.next_position.x || this.new_position.y != this.next_position.y)
 		{
