@@ -70,6 +70,20 @@ float mod2Pi(float angle)
 	return angle;
 }
 
+ArrayList<Pos> random_positions(int nb)
+{
+	ArrayList <Pos> path_op = new ArrayList<Pos>();
+	for (int i = 0; i < nb; i++)
+	{
+		int rand_x = int(random(ARENA_HEIGHT - 200)) + 100;
+		int rand_y = int(random(ARENA_WIDTH - 200)) + 100;
+		path_op.add(new Pos(rand_x,rand_y));
+	}
+
+	return path_op;
+}
+
+
 /**
  * Initialize robot parameters and tasks position according to the start position
  * @param dir: the start position (left or right)
@@ -124,7 +138,7 @@ void init_tab_tasks()
 void init_robots_strat()
 {
 	strat = new Strat(robot);
-	Pos[] path_op = {new Pos(1300,800), new Pos(300,800), new Pos(1300,800), new Pos(300,800), new Pos(1300,800), new Pos(300,800), new Pos(1300,800)};
+	ArrayList <Pos> path_op = random_positions(53);
 	robot_moves = new Moves(robot_op, path_op);
 }
 

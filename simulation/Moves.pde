@@ -4,7 +4,7 @@
 class Moves
 {
 	Robot robot_op;
-	Pos[] list_moves;
+	ArrayList <Pos> list_moves;
 	int ind_moves;
 
 	/**
@@ -12,12 +12,12 @@ class Moves
 	 * @param robot_op: the opponent's robot
 	 * @param tab_pos: the list of position the robot will go to
 	 */
-	Moves(Robot robot_op, Pos[] tab_pos)
+	Moves(Robot robot_op, ArrayList <Pos> tab_pos)
 	{
 		this.robot_op = robot_op;
 		this.list_moves = tab_pos;
 		this.ind_moves = 0;
-		this.robot_op.next_destination = list_moves[this.ind_moves];
+		this.robot_op.next_destination = this.list_moves.get(this.ind_moves);
 	}
 
 	/**
@@ -31,10 +31,10 @@ class Moves
 		this.robot_op.getCorners();
 		this.robot_op.borderColision();
 
-		if((this.ind_moves < (this.list_moves.length - 1)) && this.robot_op.position.is_around(this.list_moves[this.ind_moves], 5))
+		if((this.ind_moves < (this.list_moves.size() - 1)) && this.robot_op.position.is_around(this.list_moves.get(this.ind_moves), 5))
 		{
 			this.ind_moves++;
-			this.robot_op.next_destination = list_moves[this.ind_moves];
+			this.robot_op.next_destination = list_moves.get(this.ind_moves);
 		}
 
 		this.robot_op.display(false);
