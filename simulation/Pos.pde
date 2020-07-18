@@ -8,6 +8,13 @@ class Pos
 		this.x = x;
 		this.y = y;
 	}
+
+	Pos(Pos pos)
+	{
+		this.x = pos.x;
+		this.y = pos.y;
+	}
+
 	boolean isAround(Pos pos, int distance)
 	{
 		return abs(this.x - pos.x) < distance && abs(this.y - pos.y) < distance;

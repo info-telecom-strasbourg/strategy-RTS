@@ -36,7 +36,8 @@ class Strat
 		if(robot.position.isAround(tab_tasks[this.id_current_task].position, 50) || tab_tasks[this.id_current_task].done == IN_PROGRESS)
 		{
 			do_task();
-			this.path = new ArrayList();
+			if (!this.path.isEmpty())
+				this.path = new ArrayList();
 		}
 		else
 		{
@@ -46,12 +47,17 @@ class Strat
 			// 	this.path = checkPath(); //à coder
 			//
 			robot.next_position = this.path.get(0);
+			println("NEXT_POS X : ", this.robot.next_position.x);
+			println("NEXT_POS Y : ", this.robot.next_position.y);
+			println("POS X : ", this.robot.next_position.x);
+			println("POS Y : ", this.robot.next_position.y);
+
 			if (robot.position.isAround(this.path.get(0), 50))
 				this.path.remove(0);
 			robot.goTo(); //move
 		}
-		if (access(this.robot.position, tab_tasks[this.id_current_task].position) == null)
-			println("YESSSSSSSSSSSSSS!");
+		// if (access(this.robot.position, tab_tasks[this.id_current_task].position) == null)
+		// 	println("YESSSSSSSSSSSSSS!");
 
 		robot.getCorners();
 		robot.borderColision();
@@ -404,13 +410,11 @@ class Strat
 		for (float i = 0; i < nb_seg; i++)
 		{
 			Pos new_pos = new Pos(point_1.x + i*delta_x/nb_seg, point_1.y + i*delta_y/nb_seg);
-			fill(0,0,255);
-			ellipse(new_pos.x, new_pos.y, 100, 100);
 			for (int j = 0; j < this.opponent_positions.length; j++)
-				if (new_pos.dist(this.opponent_positions[j]) < 100)
+				if (new_pos.dist(this.opponent_positions[j]) < 250)
 				{
-					fill(255,0,0);
-					ellipse(new_pos.x, new_pos.y, 100, 100);
+					// fill(255,0,0);
+					// ellipse(new_pos.x, new_pos.y, 100, 100);
 					return new_pos;
 				}
 		}
@@ -419,7 +423,8 @@ class Strat
 
 	Pos find_step(Pos intersection)
 	{
-		float angle_step = PI/36;
+		float distance = this.robot.position.dist(intersection);
+		float angle_step = distance / 1000;
 		float angle_dep = this.robot.position.angle(this.robot.next_position);
 		for(float i = angle_dep; i < angle_dep + PI/2; i+=angle_step)
 		{
@@ -437,7 +442,7 @@ class Strat
 	Pos find_checkpoint(float angle)
 	{
 		float step = 5;
-		Pos checkpoint = this.robot.position;
+		Pos checkpoint = new Pos(this.robot.position);
 
 		while (checkpoint.onArena())
 		{
