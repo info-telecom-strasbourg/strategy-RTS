@@ -36,7 +36,7 @@ class Pos
 	 * @param distance: the approximation you want to make
 	 * @return a boolean that indicate if the point is arround "pos"
 	 */
-	boolean isAround(Pos pos, int distance)
+	boolean is_around(Pos pos, int distance)
 	{
 		return abs(this.x - pos.x) < distance && abs(this.y - pos.y) < distance;
 	}
@@ -90,7 +90,7 @@ class Pos
 	 */
 	boolean onArena()
 	{
-		return this.x > 0 && this.x < ARENA_HEIGHT && this.y > 0 && this.y < ARENA_WIDTH;
+		return ((this.x > 0) && (this.x < ARENA_HEIGHT) && (this.y > 0) && (this.y < ARENA_WIDTH));
 	}
 	/**
 	* Find the point in the middle of 2 points

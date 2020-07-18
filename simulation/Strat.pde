@@ -6,7 +6,7 @@ class Strat
 	//STRATEGY
 	Robot robot;
 	int id_current_task;
-	Pos[] opponent_positions;
+	ArrayList <Pos> opponent_positions = new ArrayList();
 	int time;
 	ArrayList <Pos> path = new ArrayList();
 	int score;
@@ -18,6 +18,10 @@ class Strat
 	int windsock_wait_2 = -1;
 	int weathercock_wait = -1;
 
+	/**
+	 * Constructor of Strat
+	 * @param robot: the robot that must apply the strategy
+	 */
 	Strat(Robot robot)
 	{
 		this.robot = robot;
@@ -28,19 +32,18 @@ class Strat
 		this.move_back = false;
 	}
 
+	/**
+	 * Apply the strategy
+	 * @param: opponent: the opponent's robot (for simulation)
+	 */
 	void apply(Robot opponent)
 	{
-		// robot.position = get_position(); //à coder
 		robot.speed_regime = fixed_lidar(opponent); //adaptation of the speed according to the environment
 		this.find_the_opponent(opponent); //identify the opponent
 		this.id_current_task = find_best_task(); //choose the task we have to do now
-		if (this.id_current_task == TASK_FLAG && this.robot.detected_color == NO_COLOR)
-		{
-			Pos[] points_for_closer = new Pos [] {new Pos(POS_FLAG.x, 150), new Pos(POS_FLAG.x, 850)};
-			tab_tasks[TASK_FLAG].position = this.robot.position.closer(points_for_closer);
-		}
 		
-		if(robot.position.isAround(tab_tasks[this.id_current_task].position, 50) || tab_tasks[this.id_current_task].done == IN_PROGRESS)
+		if(robot.position.is_around(tab_tasks[this.id_current_task].position, 50) 
+		   || tab_tasks[this.id_current_task].done == IN_PROGRESS)
 		{
 			do_task();
 			if (!this.path.isEmpty())
@@ -50,52 +53,58 @@ class Strat
 		{
 			if (this.path.isEmpty())
 				find_path();
-			// else
-			// 	this.path = checkPath(); //à coder
-			//
-			robot.next_destination = this.path.get(0);
-
-			if (robot.position.isAround(this.path.get(0), 50))
+			else
+				check_path(); 
+			
+			if (robot.position.is_around(this.path.get(0), 50))
 				this.path.remove(0);
-			robot.goTo(true); //move
-		}
 
-		robot.getCorners();
-		robot.borderColision();
-		robot.display(true);
+			if (!this.path.isEmpty())
+			{
+				robot.next_destination = this.path.get(0);
+
+				robot.goTo(true); 
+			}
+		}
+		println("REG : ", this.robot.speed_regime);
 	}
 
-
+	/**
+	 * Identify the opponents position with the mobile lidar
+	 * @param: opponent: the opponent's robot (for simulation)
+	 */
 	void find_the_opponent(Robot opponent)
 	{
-		this.opponent_positions = new Pos[0];
+		this.opponent_positions = new ArrayList();
 		Pos[] obstacles = mobile_lidar(this.robot.position, opponent);
-		find_opponent_positions(obstacles);
-	}
-
-	void find_opponent_positions(Pos[] obstacles)
-	{
+		
 		if (obstacles.length == 0)
 			return;
 
-
 		for (int i = 0; i < obstacles.length; i++)
-		{
-			if (!obstacles[i].isAround(POS_LIGHTHOUSE, 50) && !obstacles[i].isAround(POS_LIGHTHOUSE_OP, 50) && !obstacles[i].isAround(POS_WEATHERCOCK, 50))
-				this.opponent_positions = (Pos[]) splice(this.opponent_positions, obstacles[i], this.opponent_positions.length);
-		}
-
+			if (!obstacles[i].is_around(POS_LIGHTHOUSE, 50) && 
+			!obstacles[i].is_around(POS_LIGHTHOUSE_OP, 50) && 
+			!obstacles[i].is_around(POS_WEATHERCOCK, 50))
+				this.opponent_positions.add(obstacles[i]);
 	}
 
+	/**
+	 * Detect all the objects that are taller than the mobile lidar
+	 * @param pos: position of the robot
+	 * @param: opponent: the opponent's robot (for simulation)
+	 * @return a table of objetcs' position
+	 */
 	Pos[] mobile_lidar(Pos pos, Robot opponent)
 	{
-		Pos[] tab  = {POS_LIGHTHOUSE, POS_LIGHTHOUSE_OP, POS_WEATHERCOCK, opponent.position};
-		return tab;
+		return new Pos[] {POS_LIGHTHOUSE, POS_LIGHTHOUSE_OP, POS_WEATHERCOCK, opponent.position};
 	}
 
-	void update_time(){this.time = millis();}
-
-
+	/**
+	 * Adapt the robot speed according to the environment detected by the bottom
+	 * fixed lidars
+	 * @param: opponent: the opponent's robot (for simulation)
+	 * @return the speed regime
+	 */
 	int fixed_lidar(Robot opponent)
 	{
 		Pos[] robot_op_shape = find_robot_op_shape(opponent);
@@ -111,47 +120,66 @@ class Strat
 		return FAST;
 	}
 
+	/**
+	 * Detect if the "pos" is detected by the fixed lidars
+	 * @param: pos: the position to detect
+	 * @return if "pos" is detected by the fixed lidars
+	 */
 	boolean capture(Pos pos)
 	{
-		Pos capteur = new Pos(this.robot.position.x + cos(this.robot.angle) * ROBOT_WIDTH/2,
+		Pos sensor = new Pos(this.robot.position.x + cos(this.robot.angle) * ROBOT_WIDTH/2,
 							this.robot.position.y + sin(this.robot.angle) * ROBOT_WIDTH/2);
-		float dist = capteur.dist(pos);
 
-		if(dist > 250)
+		if(sensor.dist(pos) > 250)
 			return false;
 
-		float theta = capteur.angle(pos);
+		float delt_ang = mod2Pi(sensor.angle(pos) - this.robot.angle);
+		delt_ang = (delt_ang < PI) ? delt_ang : 2*PI - delt_ang;
 
-		float delt_ang = mod2Pi(theta - this.robot.angle);
-		if (delt_ang > PI)
-			delt_ang = 2*PI - delt_ang;
-
-		if(delt_ang < PI/4)
-			return true;
-		else
-			return false;
+		return (delt_ang < PI/4);
 	}
 
+	/**
+	 * Detect if the "pos" is detected by the fixed lidars
+	 * @param: pos: the position to detect
+	 * @return if "pos" is detected by the fixed lidars
+	 */
 	Pos[] find_robot_op_shape(Robot opponent)
 	{
 		Pos[] shapes = new Pos[8];
-		shapes[0] = opponent.corners[0];
-		shapes[1] = opponent.corners[1];
-		shapes[2] = opponent.corners[2];
-		shapes[3] = opponent.corners[3];
-		shapes[4] = opponent.corners[0].get_mid(opponent.corners[1]);
-		shapes[5] = opponent.corners[1].get_mid(opponent.corners[2]);
-		shapes[6] = opponent.corners[2].get_mid(opponent.corners[3]);
-		shapes[7] = opponent.corners[3].get_mid(opponent.corners[0]);
+
+		for(int i = 0; i < 4; i++)
+		{
+			shapes[i] = opponent.corners[i];
+			shapes[i+4] = opponent.corners[i].get_mid(opponent.corners[(i+1)%4]);
+		}
+
 		return shapes;
 	}
 
+	/**
+	 * Select the closer mooring area (use if we do not know the weathercock color)
+	 * The position of the flag's task is changed to fit to the decision
+	 */
+	void select_mooring_area()
+	{
+		Pos[] points_for_closer = new Pos [] {new Pos(POS_FLAG.x, 150), new Pos(POS_FLAG.x, 850)};
+		tab_tasks[TASK_FLAG].position = this.robot.position.closer(points_for_closer);
+	}
+
+	/**
+	 * Find the task to do
+	 * @return the index of the task in tab_tasks
+	 */
 	int find_best_task()
 	{
-		if (((tab_tasks[TASK_WEATHERCOCK].done == DONE) && (((100000 - millis() - time) < (tab_tasks[TASK_FLAG].max_time + tab_tasks[TASK_FLAG].position.dist(robot.position)/SLOW)))) ||
-				((100000 - millis() - time < tab_tasks[TASK_FLAG].max_time + new Pos(POS_FLAG.x, 150).dist(robot.position)/SLOW) &&
-				(100000 - millis() - time < tab_tasks[TASK_FLAG].max_time + new Pos(POS_FLAG.x, 850).dist(robot.position)/SLOW)) &&
-				tab_tasks[TASK_FLAG].done != DONE)
+		if (this.id_current_task == TASK_FLAG && this.robot.detected_color == NO_COLOR)
+			select_mooring_area();
+
+
+		long time_left = 100000 - millis() - time;
+
+		if (final_move_with_color(time_left) || final_move_without_color(time_left))		
 			return TASK_FLAG;
 
 		if(tab_tasks[TASK_LIGHTHOUSE].done != DONE)
@@ -166,6 +194,42 @@ class Strat
 		return TASK_FLAG;
 	}
 
+	/**
+	 * Calculate if we have to move to the mooring area with the color of the weathercock
+	 * @param: time_left: the time before the end of the game
+	 * @return if we have to move to the mooring area 
+	 */
+	boolean final_move_with_color(long time_left)
+	{
+		return (tab_tasks[TASK_WEATHERCOCK].done == DONE && is_final_move(tab_tasks[TASK_FLAG].position, time_left));
+	}
+
+	/**
+	 * Calculate if we have to move to the closest mooring area without the color of the weathercock
+	 * @param: time_left: the time before the end of the game
+	 * @return if we have to move to the closest mooring area 
+	 */
+	boolean final_move_without_color(long time_left)
+	{
+		return (is_final_move(new Pos(POS_FLAG.x, 150), time_left) 
+			&& is_final_move(new Pos(POS_FLAG.x, 850), time_left) 
+			&& tab_tasks[TASK_FLAG].done != DONE);
+	}
+	
+	/**
+	 * Calculate if we have the time to move to "pos" before the end of the game
+	 * @param: pos: position of the robot
+	 * @param: time_left: the time before the end of the game
+	 * @return if we have the time to move to "pos" before the end of the game
+	 */
+	boolean is_final_move (Pos pos, long time_left)
+	{
+		return time_left < (tab_tasks[TASK_FLAG].max_time + pos.dist(robot.position)/SLOW);
+	}
+
+	/**
+	 * Do the current task
+	 */
 	void do_task()
 	{
 		switch (this.id_current_task) {
@@ -181,53 +245,62 @@ class Strat
 			case TASK_FLAG:
 				flag();
 				break;
+			default:
+				println("No task found");
 		}
+	}
 
+	/**
+	 * Detect the weathercock color and update POS_FLAG
+	 */
+	void detect_weathercock_col()
+	{
+		switch (this.robot.detected_color = weathercock.color_w)
+		{
+			case BLACK:
+				POS_FLAG.y = 150;
+				break;
+			case WHITE:
+				POS_FLAG.y = 850;
+				break;
+			default:
+				println("No color found");
+		}
+		tab_tasks[TASK_WEATHERCOCK].over();
 	}
 
 	void weathercock()
 	{
 
-		this.robot.checkpoint_weathercock.y = robot.position.y;
 		tab_tasks[TASK_WEATHERCOCK].in_progress();
+		this.robot.checkpoint_weathercock.y = robot.position.y;
 		this.robot.next_destination = this.robot.checkpoint_weathercock;
 
-		if (this.robot.position.isAround(this.robot.checkpoint_weathercock, 50))
+		if (this.robot.position.is_around(this.robot.checkpoint_weathercock, 50))
 		{
 			this.robot.checkpoint_weathercock.y = 50;
 			this.robot.next_destination = this.robot.checkpoint_weathercock;
 		}
 
-		if (this.robot.position.isAround(this.robot.checkpoint_weathercock, 50))
-		{
-			this.robot.goToAngle(3*PI/2);
+		if (this.robot.position.is_around(this.robot.checkpoint_weathercock, 50))
 			if(mod2Pi(3*PI/2 - this.robot.angle) < rot_step)
 			{
 				if(this.weathercock_wait == -1)
 					this.weathercock_wait = millis();
 
 				if((millis() - this.weathercock_wait) > 2000)
-				{
-					this.robot.detected_color = weathercock.color_w;
-					switch (this.robot.detected_color)
-					{
-						case BLACK:
-							POS_FLAG.y = 150;
-							break;
-						case WHITE:
-							POS_FLAG.y = 850;
-							break;
-						default:
-							println("No color");
-					}
-					tab_tasks[TASK_WEATHERCOCK].over();
-				}
+					detect_weathercock_col();
 			}
-		}
+			else
+				this.robot.goToAngle(3*PI/2);
 
 		this.robot.goTo(true);
 	}
 
+	/**
+	 * Dress the windsocks
+	 * THIS METHOD WILL BE MODIFIED SOON
+	 */
 	void windsock()
 	{
 		if(this.robot.angle < PI - rot_step)
@@ -259,7 +332,7 @@ class Strat
 		this.robot.next_destination = this.robot.checkpoint_windsock;
 		this.robot.goTo(true);
 
-		if(this.robot.position.isAround(this.robot.checkpoint_windsock, 50) && this.robot.deployed)
+		if(this.robot.position.is_around(this.robot.checkpoint_windsock, 50) && this.robot.deployed)
 		{
 			if(this.windsock_wait_2 == -1)
 				this.windsock_wait_2 = millis();
@@ -280,7 +353,7 @@ class Strat
 				this.robot.deployed = false;
 			return;
 		}
-		else if(this.robot.position.isAround(this.robot.checkpoint_windsock, 50))
+		else if(this.robot.position.is_around(this.robot.checkpoint_windsock, 50))
 		{
 			tab_tasks[TASK_WINDSOCK].over();
 			this.score += tab_tasks[TASK_WINDSOCK].points;
@@ -296,6 +369,55 @@ class Strat
 
 	}
 
+	/**
+	 * Deploy the actuator to push the lighthouse button (simulation only)
+	 */
+	void deploy_actuator_lighthouse()
+	{
+		float dist_bord = this.robot.position.y - float(ROBOT_HEIGHT)/2;
+		float adjust_dist;
+
+		if(((millis() - this.lighthouse_wait)*3) < (tab_tasks[TASK_LIGHTHOUSE].max_time))
+		{
+			float coeff = (millis() - float(this.lighthouse_wait))/(float(int(tab_tasks[TASK_LIGHTHOUSE].max_time))/3.0);
+			adjust_dist = (1 - coeff) * dist_bord/2;
+		}
+		else
+		{
+			float coeff = (millis() - float(this.lighthouse_wait) - 
+						  float(int(tab_tasks[TASK_LIGHTHOUSE].max_time))/3.0)/(float(int(tab_tasks[TASK_LIGHTHOUSE].max_time))/3.0);
+			adjust_dist = coeff * dist_bord/2;
+		}
+		fill(0, 255, 0);
+		pushMatrix();
+		translate(this.robot.position.x, dist_bord/2 + adjust_dist);
+		rectMode(CENTER);
+
+		rect(0, 0, 10, dist_bord - adjust_dist*2);
+		popMatrix();
+	}
+
+	/**
+	 * Turn the robot to the right direction and push the button
+	 */
+	void push_button()
+	{
+		this.robot.goToAngle((3*PI)/2);
+		if (mod2Pi(this.robot.angle - (3*PI)/2) < rot_step)
+		{
+			if(this.lighthouse_wait == -1)
+				this.lighthouse_wait = millis();
+				
+			if (((millis() - this.lighthouse_wait)*3) < (tab_tasks[TASK_LIGHTHOUSE].max_time * 2))
+				deploy_actuator_lighthouse();
+			else
+				move_back = true;
+		}
+	}
+
+	/**
+	 * Simulate the execution of the lighthouse task
+	 */
 	void lighthouse()
 	{
 		if (!move_back)
@@ -304,89 +426,53 @@ class Strat
 			tab_tasks[TASK_LIGHTHOUSE].in_progress();
 			this.robot.next_destination = this.robot.checkpoint_lighthouse;
 			this.robot.goTo(true);
-			if (this.robot.position.isAround(this.robot.checkpoint_lighthouse, 50))
-			{
-				this.robot.goToAngle((3*PI)/2);
-				if (mod2Pi(this.robot.angle - (3*PI)/2) < rot_step)
-				{
-					if(this.lighthouse_wait == -1)
-						this.lighthouse_wait = millis();
-
-
-					if(((millis() - this.lighthouse_wait)*3) < (tab_tasks[TASK_LIGHTHOUSE].max_time))
-					{
-						float dist_bord = this.robot.position.y - float(ROBOT_HEIGHT)/2;
-						float coeff = (millis() - float(this.lighthouse_wait))/(float(int(tab_tasks[TASK_LIGHTHOUSE].max_time))/3.0);
-						float adjust_dist = (1 - coeff) * dist_bord/2;
-						fill(0, 255, 0);
-						pushMatrix();
-						translate(this.robot.position.x, dist_bord/2 + adjust_dist);
-						rectMode(CENTER);
-
-						rect(0, 0, 10, dist_bord - adjust_dist*2);
-						popMatrix();
-					}
-					else if (((millis() - this.lighthouse_wait)*3) < (tab_tasks[TASK_LIGHTHOUSE].max_time * 2))
-					{
-						float dist_bord = this.robot.position.y - float(ROBOT_HEIGHT)/2;
-						float coeff = (millis() - float(this.lighthouse_wait) - float(int(tab_tasks[TASK_LIGHTHOUSE].max_time))/3.0)/(float(int(tab_tasks[TASK_LIGHTHOUSE].max_time))/3.0);
-						float adjust_dist = coeff * dist_bord/2;
-						fill(0, 255, 0);
-						pushMatrix();
-						translate(this.robot.position.x, dist_bord/2 + adjust_dist);
-						rectMode(CENTER);
-
-						rect(0, 0, 10, dist_bord - adjust_dist*2);
-						popMatrix();
-					}
-					else
-						move_back = true;
-				}
-			}
+			if (this.robot.position.is_around(this.robot.checkpoint_lighthouse, 50))
+				push_button();
 		}
-
-		if (move_back)
+		else
 		{
 			this.robot.next_destination = POS_LIGHTHOUSE;
 			this.robot.goTo(false);
-			if (this.robot.position.isAround(POS_LIGHTHOUSE, 50))
+			if (this.robot.position.is_around(POS_LIGHTHOUSE, 50))
 			{
 				tab_tasks[TASK_LIGHTHOUSE].over();
 				this.score += tab_tasks[TASK_LIGHTHOUSE].points;
 				move_back = false;
 			}
-
 		}
-
 	}
 
+	/**
+	 * Simulate the task linked to the flag
+	 */
 	void flag()
 	{
-		if(tab_tasks[TASK_FLAG].done != DONE)
+		if(tab_tasks[TASK_FLAG].done == DONE)
+			return;
+
+		if(tab_tasks[TASK_FLAG].done != IN_PROGRESS)
 		{
-			if(tab_tasks[TASK_FLAG].done != IN_PROGRESS)
-			{
-				Pos weth_1 = new Pos(POS_FLAG.x, 150);
-				Pos weth_2 = new Pos(POS_FLAG.x, 850);
-				if (this.robot.position.isAround(weth_1, 50) || this.robot.position.isAround(weth_2, 50))
-				{
+			Pos weth_1 = new Pos(POS_FLAG.x, 150), weth_2 = new Pos(POS_FLAG.x, 850);
+			if (this.robot.position.is_around(weth_1, 50) || this.robot.position.is_around(weth_2, 50))
+				if (tab_tasks[TASK_WEATHERCOCK].done == DONE)
+					this.score += 10;
+				else
 					this.score += 5;
-					if (tab_tasks[TASK_WEATHERCOCK].done == DONE)
-						this.score += 5;
-				}
-			}
+		}
 
-
-			tab_tasks[TASK_FLAG].in_progress();
-			if (millis() - this.time > 95500)
-			{
-				this.robot.flag = true;
-				tab_tasks[TASK_FLAG].over();
-				this.score += tab_tasks[TASK_FLAG].points;
-			}
+		tab_tasks[TASK_FLAG].in_progress();
+		if (millis() - this.time > 95500)
+		{
+			this.robot.flag = true;
+			tab_tasks[TASK_FLAG].over();
+			this.score += tab_tasks[TASK_FLAG].points;
 		}
 	}
 
+	/**
+	 * Calculate the best path to move to the next task (we use a checkpoint in the
+	 * case we have to avoid the opponent), but if no path is found, we stop the robot
+	 */
 	void find_path()
 	{
 		Pos intersection = access(this.robot.position, tab_tasks[this.id_current_task].position);
@@ -394,13 +480,28 @@ class Strat
 		{
 			Pos checkpoint = this.find_step(intersection);
 			if(checkpoint != null)
+			{
 				this.path.add(checkpoint);
+				this.path.add(tab_tasks[this.id_current_task].position);
+			}
 			else
+			{
 				this.robot.speed_regime = STOP;
+				println("IL EST LA LE BONHEUUUUUR");
+			}
 		}
-		this.path.add(tab_tasks[this.id_current_task].position);
+		else
+			this.path.add(tab_tasks[this.id_current_task].position);
 	}
 
+	/**
+	 * Indicate if is possible to move from the "point_1" to the "point_2" without
+	 * collapsing with the opponent
+	 * @param: point_1: start point
+	 * @param: point_2: arrival point
+	 * @return null if a direct route is possible between point_1 and point_2, 
+	 * otherwise the intersection point with the opponent
+	 */
 	Pos access (Pos point_1, Pos point_2)
 	{
 		float nb_seg = 15;
@@ -409,22 +510,24 @@ class Strat
 
 		for (float i = 0; i < nb_seg; i++)
 		{
+
 			Pos new_pos = new Pos(point_1.x + i*delta_x/nb_seg, point_1.y + i*delta_y/nb_seg);
-			for (int j = 0; j < this.opponent_positions.length; j++)
-				if (new_pos.dist(this.opponent_positions[j]) < 250)
-				{
-					// fill(255,0,0);
-					// ellipse(new_pos.x, new_pos.y, 100, 100);
+			for (int j = 0; j < this.opponent_positions.size(); j++)
+				if (new_pos.dist(this.opponent_positions.get(j)) < 100)
 					return new_pos;
-				}
 		}
 		return null;
 	}
 
+	/**
+	 * Find a checkpoint to avoid the opponent robot by testing different drifts 
+	 * @param: intersection: point where our robot collapse with the opponent 
+	 * @return null if no checkpoint is found, otherwise the found checkpoint
+	 */
 	Pos find_step(Pos intersection)
 	{
 		float distance = this.robot.position.dist(intersection);
-		float angle_step = distance / 1000;
+		float angle_step = 3 * distance / 1000;
 		float angle_dep = this.robot.position.angle(this.robot.next_destination);
 		for(float i = angle_dep; i < angle_dep + PI/2; i+=angle_step)
 		{
@@ -439,9 +542,14 @@ class Strat
 		return null;
 	}
 
+	/**
+	 * Find a checkpoint on a specific drift
+	 * @param: angle: the drift angle
+	 * @return null if no checkpoint is found, otherwise the found checkpoint
+	 */
 	Pos find_checkpoint(float angle)
 	{
-		float step = 5;
+		float step = 10;
 		Pos checkpoint = new Pos(this.robot.position);
 
 		while (checkpoint.onArena())
@@ -449,9 +557,25 @@ class Strat
 			checkpoint.x += step*cos(angle);
 			checkpoint.y += step*sin(angle);
 
-			if(access(this.robot.position, checkpoint) == null && access(checkpoint, tab_tasks[this.id_current_task].position) == null)
-				return checkpoint;
+			if(access(this.robot.position, checkpoint) == null 
+				&& access(checkpoint, tab_tasks[this.id_current_task].position) == null)
+				{
+					println("CP X : ", checkpoint.x);
+					println("CP Y : ", checkpoint.y);
+					return checkpoint;
+				}
 		}
 		return null;
+	}
+
+
+	void check_path()
+	{
+		if (!tab_tasks[this.id_current_task].position.is_around(this.path.get(path.size() - 1), 50) 
+			|| access(this.robot.position, this.path.get(0)) != null)
+			{				
+				this.path = new ArrayList();
+				find_path();
+			}
 	}
 }

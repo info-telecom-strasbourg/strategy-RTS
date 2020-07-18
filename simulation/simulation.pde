@@ -163,6 +163,13 @@ void display_infos()
 	text(strat.score, 1450, 21);
 }
 
+void display_robot()
+{
+	robot.getCorners();
+	robot.borderColision();
+	robot.display(true);
+}
+
 /**
  * Draw the simulation on the screen
  */
@@ -171,7 +178,9 @@ void draw()
 	background(img);
 
 	strat.apply(robot_op);
+	
 	robot_moves.apply();
+	display_robot();
 
 	weathercock.display();
 

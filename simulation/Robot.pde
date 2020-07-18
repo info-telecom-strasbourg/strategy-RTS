@@ -25,7 +25,7 @@ class Robot
 	Pos[] corners = new Pos[4];
 
 	/**
-	 * Constructor of robot
+	 * Constructor of Robot
 	 * @param pos: the initial position of the robot
 	 * @param angle: the initial position of the robot
 	 */
@@ -151,34 +151,21 @@ class Robot
 	{
 		float turn = (forward) ? 0 : PI;
 			
-		if (this.position.isAround(this.next_destination, 50))
+		if (this.position.is_around(this.next_destination, 50))
 			return;
 
 		float dist = this.position.dist(this.next_destination);
 		float theta = this.position.angle(this.next_destination);
 
-		if (mod2Pi(theta + turn - this.angle) > rot_step && !this.new_position.isAround(this.next_destination, 50))
+		if (mod2Pi(theta + turn - this.angle) > rot_step && !this.position.is_around(this.next_destination, 50))
 		{
 			goToAngle(theta + turn);
 			return;
 		}
-
-		if (!this.new_position.isAround(this.next_destination, 50))
-		{
-			this.new_position.x = this.next_destination.x;
-			this.new_position.y = this.next_destination.y;
-		}
-
-		if (dist < this.speed_regime)
-		{
-			this.position.x = this.next_destination.x;
-			this.position.y = this.next_destination.y;
-		}
-		else
-		{
-			this.position.x += this.speed_regime * cos(this.angle + turn);
-			this.position.y += this.speed_regime * sin(this.angle + turn);
-		}
+		
+		this.position.x += this.speed_regime * cos(this.angle + turn);
+		this.position.y += this.speed_regime * sin(this.angle + turn);
+		
 	}
 
 	/**

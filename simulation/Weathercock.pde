@@ -8,7 +8,7 @@ class Weathercock
 	long begin;
 
 	/**
-	 * Weathercock constructor
+	 * Constructor of Weathercock
 	 */
 	Weathercock()
 	{
