@@ -57,3 +57,4 @@ You can find the rules of the competition [by clicking here](https://www.coupede
 - [Thomas RIVES](https://github.com/ThomasRives)
 - [Thomas LEFEVRE](https://github.com/Zaicu)
 - [Arnaud SCHLUMBERGER](https://github.com/ArnaudSchlumberger)
+- [Jonathan PLASSE](https://github.com/JonathanPlasse)

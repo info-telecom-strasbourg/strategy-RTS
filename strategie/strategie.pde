@@ -61,13 +61,13 @@ class Pos
 class Robot
 {
   //Attributes for simulation
-  float angle;
   Pos[] corners = new Pos[] {new Pos(0,0), new Pos(0,0), new Pos(0,0), new Pos(0,0)};
   Pos new_position = new Pos(0,0);
   
   //Attributes for real strategy
   int speed_regime = STOP;
 	Pos position = new Pos(0,0);
+  float angle;
 	
   
   
