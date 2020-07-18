@@ -117,7 +117,7 @@ void setup()
 	init_robot(Dir.right);
 
 	strat = new Strat(robot);
-	Pos[] path_op = {new Pos(200,200), new Pos(1000, 700), new Pos(50, 800)};
+	Pos[] path_op = {new Pos(1300,950)};
 	dep_robot = new Dep(robot_op, path_op);
 	girouette = new Girouette();
 	Task task_weathercock = new Task(10, POS_WEATHERCOCK, 25000);

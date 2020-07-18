@@ -4,7 +4,7 @@ class Strat
 	int id_current_task;
 	Pos[] opponent_positions;
 	int time;
-	Pos[] path;
+	ArrayList <Pos> path = new ArrayList();
 	int score;
 	boolean move_back;
 
@@ -20,7 +20,6 @@ class Strat
 		this.id_current_task = -1;
 		this.opponent_positions = null;
 		this.time = millis();
-		this.path = null;
 		this.score = 7;
 		this.move_back = false;
 	}
@@ -33,25 +32,27 @@ class Strat
 		this.id_current_task = find_best_task(); //choose the task we have to do now
 		if (this.id_current_task == TASK_FLAG && this.robot.detected_color == NO_COLOR)
 			tab_tasks[TASK_FLAG].position = this.robot.position.closer(new Pos(POS_FLAG.x, 150), new Pos(POS_FLAG.x, 850));
-		this.robot.next_position = tab_tasks[this.id_current_task].position; //our robot's dest
 
 		if(robot.position.isAround(tab_tasks[this.id_current_task].position, 50) || tab_tasks[this.id_current_task].done == IN_PROGRESS)
 		{
 			do_task();
-			this.path = null;
+			this.path = new ArrayList();
 		}
 		else
 		{
-			// if (this.path == null)
-			// 	this.path = find_path(); //à coder
+			if (this.path.isEmpty())
+				find_path(); 
 			// else
 			// 	this.path = checkPath(); //à coder
 			//
-			// robot.next_position = this.path[0];
-			// if (robot.position.isAround(this.path[0]))
-			// 	this.path[0].erase(); //trouver une alternative
+			robot.next_position = this.path.get(0);
+			if (robot.position.isAround(this.path.get(0), 50))
+				this.path.remove(0);
 			robot.goTo(); //move
 		}
+		if (access(this.robot.position, tab_tasks[this.id_current_task].position))
+			println("YESSSSSSSSSSSSSS!");
+		
 		robot.getCorners();
 		robot.borderColision();
 		robot.affiche(true);
@@ -239,7 +240,7 @@ class Strat
 			float dist_bord = LARGEUR_TERRAIN - this.robot.position.y - float(LONGUEUR_ROBOT)/2;
 			float coeff = float(millis() - this.windsock_wait)/2000.0;
 			float lg_bar = coeff * dist_bord;
-			lg_bar = (lg_bar > 25) ? 25 : lg_bar;
+			lg_bar = (lg_bar > 36) ? 36 : lg_bar;
 			translate(this.robot.position.x, this.robot.position.y + LARGEUR_ROBOT/2 + lg_bar/2);//50
 			rect(0, 0, 10, lg_bar);
 			popMatrix();
@@ -264,7 +265,7 @@ class Strat
 				float dist_bord = float(LARGEUR_TERRAIN) - this.robot.position.y - float(LONGUEUR_ROBOT)/2;
 				float coeff = float(millis() - this.windsock_wait_2)/2000.0;
 				float lg_bar = (1 - coeff) * dist_bord;
-				lg_bar = (lg_bar > 25) ? 25 : lg_bar;
+				lg_bar = (lg_bar > 36) ? 36 : lg_bar;
 				translate(this.robot.position.x, this.robot.position.y + LARGEUR_ROBOT/2 + lg_bar/2);//50
 				rect(0, 0, 10, lg_bar);
 				popMatrix();
@@ -283,8 +284,8 @@ class Strat
 
 		fill(0, 255, 0);
 		pushMatrix();
-		translate(this.robot.position.x, this.robot.position.y + LARGEUR_ROBOT/2 + 25/2);//50
-		rect(0, 0, 10, 25);		
+		translate(this.robot.position.x, this.robot.position.y + LARGEUR_ROBOT/2 + 18);//50
+		rect(0, 0, 10, 36);		
 		popMatrix();
 
 	}
@@ -378,6 +379,35 @@ class Strat
 				this.score += tab_tasks[TASK_FLAG].points;
 			}
 		}
+	}
+
+	void find_path()
+	{
+		this.path.add(tab_tasks[this.id_current_task].position);
+		
+	}
+
+	boolean access (Pos point_1, Pos point_2)
+	{
+		float nb_seg = 15;
+		float delta_x = point_2.x - point_1.x;
+		float delta_y = point_2.y - point_1.y;
+		println("----------");
+		for (float i = 0; i < nb_seg; i++)
+		{
+			Pos new_pos = new Pos(point_1.x + i*delta_x/nb_seg, point_1.y + i*delta_y/nb_seg);
+			for (int j = 0; j < this.opponent_positions.length; j++)
+				if (new_pos.dist(this.opponent_positions[j]) < 30)
+				{
+					
+					println("Dist: ", new_pos.dist(this.opponent_positions[j]));
+					println ("New pos x : ", new_pos.x);
+					println ("New pos y : ", new_pos.y);
+					return false;
+				}
+					
+		}
+		return true;
 	}
 
 }
