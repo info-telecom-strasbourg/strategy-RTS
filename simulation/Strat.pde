@@ -1,5 +1,9 @@
+/**
+ * Simulate a strategy
+ */
 class Strat
 {
+	//STRATEGY
 	Robot robot;
 	int id_current_task;
 	Pos[] opponent_positions;
@@ -8,7 +12,7 @@ class Strat
 	int score;
 	boolean move_back;
 
-	//Simulation
+	//SIMULATION
 	int lighthouse_wait = -1;
 	int windsock_wait = -1;
 	int windsock_wait_2 = -1;
@@ -49,23 +53,16 @@ class Strat
 			// else
 			// 	this.path = checkPath(); //à coder
 			//
-			robot.next_position = this.path.get(0);
-			println("NEXT_POS X : ", this.robot.next_position.x);
-			println("NEXT_POS Y : ", this.robot.next_position.y);
-			println("POS X : ", this.robot.next_position.x);
-			println("POS Y : ", this.robot.next_position.y);
+			robot.next_destination = this.path.get(0);
 
 			if (robot.position.isAround(this.path.get(0), 50))
 				this.path.remove(0);
-			robot.goTo(); //move
+			robot.goTo(true); //move
 		}
-		// if (access(this.robot.position, tab_tasks[this.id_current_task].position) == null)
-		// 	println("YESSSSSSSSSSSSSS!");
 
 		robot.getCorners();
 		robot.borderColision();
 		robot.display(true);
-
 	}
 
 
@@ -193,12 +190,12 @@ class Strat
 
 		this.robot.checkpoint_weathercock.y = robot.position.y;
 		tab_tasks[TASK_WEATHERCOCK].in_progress();
-		this.robot.next_position = this.robot.checkpoint_weathercock;
+		this.robot.next_destination = this.robot.checkpoint_weathercock;
 
 		if (this.robot.position.isAround(this.robot.checkpoint_weathercock, 50))
 		{
 			this.robot.checkpoint_weathercock.y = 50;
-			this.robot.next_position = this.robot.checkpoint_weathercock;
+			this.robot.next_destination = this.robot.checkpoint_weathercock;
 		}
 
 		if (this.robot.position.isAround(this.robot.checkpoint_weathercock, 50))
@@ -228,7 +225,7 @@ class Strat
 			}
 		}
 
-		this.robot.goTo();
+		this.robot.goTo(true);
 	}
 
 	void windsock()
@@ -259,8 +256,8 @@ class Strat
 
 		this.robot.checkpoint_windsock.y = robot.position.y;
 		tab_tasks[TASK_WINDSOCK].in_progress();
-		this.robot.next_position = this.robot.checkpoint_windsock;
-		this.robot.goTo();
+		this.robot.next_destination = this.robot.checkpoint_windsock;
+		this.robot.goTo(true);
 
 		if(this.robot.position.isAround(this.robot.checkpoint_windsock, 50) && this.robot.deployed)
 		{
@@ -305,8 +302,8 @@ class Strat
 		{
 			this.robot.checkpoint_lighthouse.x = robot.position.x;
 			tab_tasks[TASK_LIGHTHOUSE].in_progress();
-			this.robot.next_position = this.robot.checkpoint_lighthouse;
-			this.robot.goTo();
+			this.robot.next_destination = this.robot.checkpoint_lighthouse;
+			this.robot.goTo(true);
 			if (this.robot.position.isAround(this.robot.checkpoint_lighthouse, 50))
 			{
 				this.robot.goToAngle((3*PI)/2);
@@ -350,8 +347,8 @@ class Strat
 
 		if (move_back)
 		{
-			this.robot.next_position = POS_LIGHTHOUSE;
-			this.robot.goBack();
+			this.robot.next_destination = POS_LIGHTHOUSE;
+			this.robot.goTo(false);
 			if (this.robot.position.isAround(POS_LIGHTHOUSE, 50))
 			{
 				tab_tasks[TASK_LIGHTHOUSE].over();
@@ -428,7 +425,7 @@ class Strat
 	{
 		float distance = this.robot.position.dist(intersection);
 		float angle_step = distance / 1000;
-		float angle_dep = this.robot.position.angle(this.robot.next_position);
+		float angle_dep = this.robot.position.angle(this.robot.next_destination);
 		for(float i = angle_dep; i < angle_dep + PI/2; i+=angle_step)
 		{
 			float angle_to_check = mod2Pi(i);

@@ -35,6 +35,7 @@ final int NOT_DONE = 0;
 final int IN_PROGRESS = 1;
 final int DONE = 2;
 
+//Macro for tasks positions
 Pos POS_LIGHTHOUSE = null;
 Pos POS_LIGHTHOUSE_OP = null;
 Pos POS_WEATHERCOCK = null;

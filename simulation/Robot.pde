@@ -1,10 +1,13 @@
+/**
+ * Simulate a robot
+ */
 class Robot
 {
 	//STRATEGY
 	Pos position;
 	float angle;
 	int speed_regime;
-	Pos next_position;
+	Pos next_destination;
 	int detected_color;
 	Pos checkpoint_windsock;
 	Pos checkpoint_lighthouse;
@@ -12,76 +15,118 @@ class Robot
 	boolean flag;
 	boolean side;
 	boolean deployed;
+	
+	//SIMULATION
+	Pos new_position = new Pos(0,0);
+	// 0: bottom - left
+	// 1: top - left
+	// 2: top - right
+	// 3: bottom - right
+	Pos[] corners = new Pos[4];
 
+	/**
+	 * Constructor of robot
+	 * @param pos: the initial position of the robot
+	 * @param angle: the initial position of the robot
+	 */
 	Robot(Pos pos, float angle)
 	{
 		this.position = pos;
 		this.angle = angle;
 		this.speed_regime = STOP;
-		this.next_position = null;
+		this.next_destination = null;
 		this.flag = false;
 		this.deployed = false;
+		this.detected_color = NO_COLOR;
 
-
-		//SIMULATION
-		// 0: bas gauche
-		// 1: haut gauche
-		// 2: haut droite
-		// 3: bas droite
 		for (int i = 0; i < 4; ++i)
 		{
-			this.corners[i].x = pos.x + HALF_DIAG * cos(this.angle + PI/4 + i*PI/2);
-			this.corners[i].y = pos.y + HALF_DIAG * sin(this.angle + PI/4 + i*PI/2);
+			float angle_corner = this.angle + PI/4 + i*PI/2;
+			this.corners[i] = new Pos(
+									  pos.x + HALF_DIAG * cos(angle_corner), 
+									  pos.y + HALF_DIAG * sin(angle_corner)
+									 );
 		}
-		detected_color = NO_COLOR;
 	}
 
-	void update_angle(float var){this.angle = mod2Pi(this.angle + var);}
-
-	void update_pos(Pos var)
+	/**
+	 * Draw a cone to visualise what the lidar in the front of the robot detect
+	 * The angle of the white one is PI/2 => 90°
+	 * The angle of the orange one is PI/6 => 30°
+	 */
+	void draw_lidar_vision()
 	{
-		this.position.x += var.x;
-		this.position.y += var.y;
+		fill(255, 255, 255, 150);
+		arc(ROBOT_HEIGHT/2, 0, 500, 500, - PI/4,  PI/4);
+		fill(255,165,0, 150);
+		arc(ROBOT_HEIGHT/2, 0, 500, 500, - PI/12,  PI/12);
 	}
 
-
-	//SIMULATION
-	Pos new_position = new Pos(0,0);
-	Pos[] corners = new Pos[] {new Pos(0,0), new Pos(0,0), new Pos(0,0), new Pos(0,0)};
-
-	void display(boolean our_robot)
+	/**
+	 * Draw a square representing the robot (green if our, red if opponent)
+	 * @param our_robot: indicate if it is our robot
+	 */
+	void draw_robot(boolean our_robot)
 	{
 		if (our_robot)
 			fill(0, 255, 0);
 		else
 			fill(255, 0, 0);
-		pushMatrix();
 		translate(this.position.x, this.position.y);
 		rotate(this.angle);
 		rectMode(CENTER);
 		rect(0, 0, ROBOT_WIDTH, ROBOT_HEIGHT);
+	}
+
+	/**
+	 * Draw the flag when it is hoisted
+	 */
+	void draw_flag()
+	{
+		fill(0, 0, 255);
+		ellipse(-25,0, 20, 20);
+	}
+
+	/**
+	 * Draw the triangle to show the robot direction and if it's our robot,
+	 * a cone to visualise what the lidar in the front of the robot detect
+	 * @param our_robot: indicate if it is our robot
+	 */
+	void draw_extra(boolean our_robot)
+	{
 		if(our_robot)
 		{
-			fill(255, 255, 255, 150);
-			arc(ROBOT_HEIGHT/2, 0, 500, 500, - PI/4,  PI/4);
-			fill(255,165,0, 150);
-			arc(ROBOT_HEIGHT/2, 0, 500, 500, - PI/12,  PI/12);
+			draw_lidar_vision();
 			fill(255,255,255);
 			triangle(ROBOT_HEIGHT/2, 0, 0, -ROBOT_WIDTH/2, 0, ROBOT_WIDTH/2);
-			if (flag)
-			{
-				fill(0, 0, 255);
-				ellipse(-25,0, 20, 20);
-			}
 		}
 		else
 		{
 			fill(0,0,0);
 			triangle(ROBOT_HEIGHT/2, 0, 0, -ROBOT_WIDTH/2, 0, ROBOT_WIDTH/2);
 		}
+	}
+	
+	/**
+	 * Display the robot and its components
+	 * @param our_robot: indicate if it is our robot
+	 */
+	void display(boolean our_robot)
+	{
+		pushMatrix();
+		
+		draw_robot(our_robot);
+		draw_extra(our_robot);
+		if (this.flag)
+			draw_flag();
+
 		popMatrix();
 	}
 
+	/**
+	 * Rotate the robot
+	 * @param theta: the angle final the robot has to reach
+	 */
 	void goToAngle(float theta)
 	{
 		theta = mod2Pi(theta);
@@ -90,86 +135,57 @@ class Robot
 		if (abs(delta_angle) < rot_step)
 			this.angle = theta;
 		else
-		{
-			if ((delta_angle > 0 && delta_angle < PI) || (delta_angle < 0 && delta_angle < -PI))
+			if ((delta_angle > 0 && delta_angle < PI) || (delta_angle < 0 && delta_angle < - PI))
 				this.angle = mod2Pi(this.angle + rot_step);
 			else
 				this.angle = mod2Pi(this.angle - rot_step);
-		}
  	}
 
-	void goTo()
-	{
+	/**
+	* Move the robot to the attribute "next_destination" using the method
+	* turn and go, and can go back if forward is false
+	* @param forward: indicate if we go forward or back
+	*/
 
-		if (this.position.isAround(this.next_position, 50)) //le robot est à destination
+	void goTo(boolean forward)
+	{
+		float turn = (forward) ? 0 : PI;
+			
+		if (this.position.isAround(this.next_destination, 50))
 			return;
 
+		float dist = this.position.dist(this.next_destination);
+		float theta = this.position.angle(this.next_destination);
 
-		float dist = sqrt(pow((this.position.x - this.next_position.x),2) + pow((this.position.y - this.next_position.y),2));
-		float theta = this.position.angle(this.next_position);
-
-		if (mod2Pi(theta - this.angle) > rot_step && (this.new_position.x != this.next_position.x || this.new_position.y != this.next_position.y))
+		if (mod2Pi(theta + turn - this.angle) > rot_step && !this.new_position.isAround(this.next_destination, 50))
 		{
-			goToAngle(theta);
+			goToAngle(theta + turn);
 			return;
 		}
 
-		if (this.new_position.x != this.next_position.x || this.new_position.y != this.next_position.y)
+		if (!this.new_position.isAround(this.next_destination, 50))
 		{
-			this.new_position.x = this.next_position.x;
-			this.new_position.y = this.next_position.y;
+			this.new_position.x = this.next_destination.x;
+			this.new_position.y = this.next_destination.y;
 		}
 
 		if (dist < this.speed_regime)
 		{
-			this.position.x = this.next_position.x;
-			this.position.y = this.next_position.y;
+			this.position.x = this.next_destination.x;
+			this.position.y = this.next_destination.y;
 		}
 		else
 		{
-			this.position.x += this.speed_regime * cos(this.angle);
-			this.position.y += this.speed_regime * sin(this.angle);
+			this.position.x += this.speed_regime * cos(this.angle + turn);
+			this.position.y += this.speed_regime * sin(this.angle + turn);
 		}
 	}
 
-	void goBack ()
-	{
-		if (this.position.isAround(this.next_position, 50)) //le robot est à destination
-			return;
-
-		float dist = sqrt(pow((this.position.x - this.next_position.x),2) + pow((this.position.y - this.next_position.y),2));
-		float theta = this.position.angle(this.next_position);
-
-		if (mod2Pi(theta + PI - this.angle) > rot_step && (this.new_position.x != this.next_position.x || this.new_position.y != this.next_position.y))
-		{
-			goToAngle(theta + PI);
-			return;
-		}
-
-
-		if (this.new_position.x != this.next_position.x || this.new_position.y != this.next_position.y)
-		{
-			this.new_position.x = this.next_position.x;
-			this.new_position.y = this.next_position.y;
-		}
-
-		if (dist < this.speed_regime)
-		{
-			this.position.x = this.next_position.x;
-			this.position.y = this.next_position.y;
-		}
-		else
-		{
-			this.position.x -= this.speed_regime * cos(this.angle);
-			this.position.y -= this.speed_regime * sin(this.angle);
-		}
-	}
-
-
-
+	/**
+	 * Calcul the positions of the corners
+	 */
 	void getCorners()
 	{
-		//le PI/4 est vrai que si le robot est carré
 		for (int i = 0; i < 4; ++i)
 		{
 			this.corners[i].x = this.position.x + HALF_DIAG * cos(this.angle + PI/4 + i*PI/2);
@@ -203,6 +219,7 @@ class Robot
 			this.position.y = ARENA_WIDTH - 1 - ROBOT_HEIGHT/2;
 			getCorners();
 		}
+
 		if ((corners[0].x < 0) && corners[3].x < 0)
 		{
 			this.angle = PI;

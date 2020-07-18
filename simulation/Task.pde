@@ -1,7 +1,6 @@
 /**
  * A task (weathercock, windsocks, flag and lighthouse)
  */
-
 class Task
 {
 	int points;
