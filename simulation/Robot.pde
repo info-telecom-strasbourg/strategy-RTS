@@ -24,18 +24,15 @@ class Robot
 
 
 		//SIMULATION
-		//bas gauche
-		this.corners[0].x = pos.x + HALF_DIAG * cos(mod2Pi(this.angle + PI/4));
-		this.corners[0].y = pos.y + HALF_DIAG * sin(mod2Pi(this.angle + PI/4));
-		//haut gauche
-		this.corners[1].x = pos.x + HALF_DIAG * cos(mod2Pi(this.angle + 3 * PI/4));
-		this.corners[1].y = pos.y + HALF_DIAG * sin(mod2Pi(this.angle + 3 * PI/4));
-		//haut droite
-		this.corners[2].x = pos.x + HALF_DIAG * cos(mod2Pi(this.angle - 3 * PI/4));
-		this.corners[2].y = pos.y + HALF_DIAG * sin(mod2Pi(this.angle - 3 * PI/4));
-		//bas droite
-		this.corners[3].x = pos.x + HALF_DIAG * cos(mod2Pi(this.angle - PI/4));
-		this.corners[3].y = pos.y + HALF_DIAG * sin(mod2Pi(this.angle - PI/4));
+		// 0: bas gauche
+		// 1: haut gauche
+		// 2: haut droite
+		// 3: bas droite
+		for (int i = 0; i < 4; ++i)
+		{
+			this.corners[i].x = pos.x + HALF_DIAG * cos(this.angle + PI/4 + i*PI/2);
+			this.corners[i].y = pos.y + HALF_DIAG * sin(this.angle + PI/4 + i*PI/2);
+		}
 		detected_color = NO_COLOR;
 	}
 
@@ -173,19 +170,11 @@ class Robot
 	void getCorners()
 	{
 		//le PI/4 est vrai que si le robot est carré
-
-		//haut gauche
-		corners[0].x = this.position.x + HALF_DIAG * cos(this.angle + PI/4);
-		corners[0].y = this.position.y + HALF_DIAG * sin(this.angle + PI/4);
-		//bas gauche
-		corners[1].x = this.position.x + HALF_DIAG * cos(this.angle + 3 * PI/4);
-		corners[1].y = this.position.y + HALF_DIAG * sin(this.angle + 3 * PI/4);
-		//bas droite
-		corners[2].x = this.position.x + HALF_DIAG * cos(this.angle - 3 * PI/4);
-		corners[2].y = this.position.y + HALF_DIAG * sin(this.angle - 3 * PI/4);
-		//haut droite
-		corners[3].x = this.position.x + HALF_DIAG * cos(this.angle - PI/4);
-		corners[3].y = this.position.y + HALF_DIAG * sin(this.angle - PI/4);
+		for (int i = 0; i < 4; ++i)
+		{
+			this.corners[i].x = this.position.x + HALF_DIAG * cos(this.angle + PI/4 + i*PI/2);
+			this.corners[i].y = this.position.y + HALF_DIAG * sin(this.angle + PI/4 + i*PI/2);
+		}
 	}
 
 	void borderColision()

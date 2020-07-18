@@ -31,8 +31,11 @@ class Strat
 		this.find_the_opponent(opponent); //identify the opponent
 		this.id_current_task = find_best_task(); //choose the task we have to do now
 		if (this.id_current_task == TASK_FLAG && this.robot.detected_color == NO_COLOR)
-			tab_tasks[TASK_FLAG].position = this.robot.position.closer(new Pos(POS_FLAG.x, 150), new Pos(POS_FLAG.x, 850));
-
+		{
+			Pos[] points_for_closer = new Pos [] {new Pos(POS_FLAG.x, 150), new Pos(POS_FLAG.x, 850)};
+			tab_tasks[TASK_FLAG].position = this.robot.position.closer(points_for_closer);
+		}
+		
 		if(robot.position.isAround(tab_tasks[this.id_current_task].position, 50) || tab_tasks[this.id_current_task].done == IN_PROGRESS)
 		{
 			do_task();
@@ -139,10 +142,10 @@ class Strat
 		shapes[1] = opponent.corners[1];
 		shapes[2] = opponent.corners[2];
 		shapes[3] = opponent.corners[3];
-		shapes[4] = get_mid(opponent.corners[0], opponent.corners[1]);
-		shapes[5] = get_mid(opponent.corners[1], opponent.corners[2]);
-		shapes[6] = get_mid(opponent.corners[2], opponent.corners[3]);
-		shapes[7] = get_mid(opponent.corners[3], opponent.corners[0]);
+		shapes[4] = opponent.corners[0].get_mid(opponent.corners[1]);
+		shapes[5] = opponent.corners[1].get_mid(opponent.corners[2]);
+		shapes[6] = opponent.corners[2].get_mid(opponent.corners[3]);
+		shapes[7] = opponent.corners[3].get_mid(opponent.corners[0]);
 		return shapes;
 	}
 
@@ -208,7 +211,7 @@ class Strat
 
 				if((millis() - this.weathercock_wait) > 2000)
 				{
-					this.robot.detected_color = girouette.color_g;
+					this.robot.detected_color = weathercock.color_w;
 					switch (this.robot.detected_color)
 					{
 						case BLACK:

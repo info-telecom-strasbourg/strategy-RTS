@@ -1,3 +1,7 @@
+/**
+ * A task (weathercock, windsocks, flag and lighthouse)
+ */
+
 class Task
 {
 	int points;
@@ -5,6 +9,13 @@ class Task
 	int done;
 	long max_time;
 
+
+	/**
+	 * Constructor of Task
+	 * @param points: the number of points that this task brings
+	 * @param position: the position of the task
+	 * @param max_time: the maximum time this task should last
+	 */
 	Task(int points, Pos position, long max_time)
 	{
 		this.points = points;
@@ -13,12 +24,24 @@ class Task
 		this.max_time = max_time;
 	}
 
-
-
+	/**
+	 * Indicate that the task in done
+	 */
 	void over() {done = DONE;}
 
+	/**
+	 * Indicate that the task is in progress
+	 */
 	void in_progress() {done = IN_PROGRESS;}
 
+	/**
+	 * Indicate that the task is interrupted
+	 */
+	void interrupted() {done = NOT_DONE;}
+
+	/**
+	 * Display the task (red if not done, orange if in progress and green if done)
+	 */
 	void display()
 	{
 		switch (done)

@@ -45,8 +45,8 @@ Robot robot;
 Robot robot_op;
 PImage img;
 Strat strat;
-Dep dep_robot;
-Girouette girouette;
+Moves robot_moves;
+Weathercock weathercock;
 
 
 float mod2Pi(float nb)
@@ -118,8 +118,8 @@ void setup()
 
 	strat = new Strat(robot);
 	Pos[] path_op = {new Pos(1300,ARENA_WIDTH/2)};
-	dep_robot = new Dep(robot_op, path_op);
-	girouette = new Girouette();
+	robot_moves = new Moves(robot_op, path_op);
+	weathercock = new Weathercock();
 	Task task_weathercock = new Task(10, POS_WEATHERCOCK, 25000);
 	Task task_windsock = new Task(15, POS_WINDSOCK, 20000);
 	Task task_lighthouse = new Task(13, POS_LIGHTHOUSE, 5000);
@@ -132,8 +132,8 @@ void draw()
 {
 	background(img);
 	strat.apply(robot_op);
-	dep_robot.apply();
-	girouette.display();
+	robot_moves.apply();
+	weathercock.display();
 
 	for(int i = 0; i < tab_tasks.length; i++)
 		tab_tasks[i].display();
