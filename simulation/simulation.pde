@@ -80,7 +80,7 @@ void init_robots(Dir dir)
 	{
 		robot = new Robot(new Pos(100, 410), 0);
 		robot_op = new Robot(new Pos(1400, 410), PI);
-		POS_WINDSOCK = new Pos(100,950);
+		POS_WINDSOCK = new Pos(100,800);
 		POS_LIGHTHOUSE = new Pos(250,125);
 		POS_LIGHTHOUSE_OP = new Pos(1250, 125);
 		POS_FLAG = new Pos(50, -50);
@@ -92,7 +92,7 @@ void init_robots(Dir dir)
 	{
 		robot = new Robot(new Pos(1400, 410), PI);
 		robot_op = new Robot(new Pos(100, 410), 0);
-		POS_WINDSOCK = new Pos(1400, 950);
+		POS_WINDSOCK = new Pos(1400, 800);
 		POS_LIGHTHOUSE = new Pos(1250, 125);
 		POS_LIGHTHOUSE_OP = new Pos(250,125);
 		POS_FLAG = new Pos(1450, -50);
@@ -101,7 +101,7 @@ void init_robots(Dir dir)
 		robot.side = false;
 	}
 	
-	robot.checkpoint_lighthouse = new Pos(-1,15);
+	robot.checkpoint_lighthouse = new Pos(-1,100);
 	robot.checkpoint_weathercock = new Pos(ARENA_HEIGHT/2, -1);
 }
 
@@ -124,7 +124,7 @@ void init_tab_tasks()
 void init_robots_strat()
 {
 	strat = new Strat(robot);
-	Pos[] path_op = {new Pos(1300,ARENA_WIDTH/2)};
+	Pos[] path_op = {new Pos(1300,800), new Pos(300,800), new Pos(1300,800), new Pos(300,800), new Pos(1300,800), new Pos(300,800), new Pos(1300,800)};
 	robot_moves = new Moves(robot_op, path_op);
 }
 

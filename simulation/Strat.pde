@@ -38,11 +38,11 @@ class Strat
 	 */
 	void apply(Robot opponent)
 	{
-		robot.speed_regime = fixed_lidar(opponent); //adaptation of the speed according to the environment
+		this.robot.speed_regime = fixed_lidar(opponent); //adaptation of the speed according to the environment
 		this.find_the_opponent(opponent); //identify the opponent
 		this.id_current_task = find_best_task(); //choose the task we have to do now
 		
-		if(robot.position.is_around(tab_tasks[this.id_current_task].position, 50) 
+		if(this.robot.position.is_around(tab_tasks[this.id_current_task].position, 5) 
 		   || tab_tasks[this.id_current_task].done == IN_PROGRESS)
 		{
 			do_task();
@@ -54,19 +54,20 @@ class Strat
 			if (this.path.isEmpty())
 				find_path();
 			else
+			{
 				check_path(); 
+			}
 			
-			if (robot.position.is_around(this.path.get(0), 50))
+			if (!this.path.isEmpty() && this.robot.position.is_around(this.path.get(0), 5))
 				this.path.remove(0);
 
 			if (!this.path.isEmpty())
 			{
-				robot.next_destination = this.path.get(0);
+				this.robot.next_destination = this.path.get(0);
 
-				robot.goTo(true); 
+				this.robot.goTo(true); 
 			}
 		}
-		println("REG : ", this.robot.speed_regime);
 	}
 
 	/**
@@ -82,9 +83,9 @@ class Strat
 			return;
 
 		for (int i = 0; i < obstacles.length; i++)
-			if (!obstacles[i].is_around(POS_LIGHTHOUSE, 50) && 
-			!obstacles[i].is_around(POS_LIGHTHOUSE_OP, 50) && 
-			!obstacles[i].is_around(POS_WEATHERCOCK, 50))
+			if (!obstacles[i].is_around(POS_LIGHTHOUSE, 5) && 
+			!obstacles[i].is_around(POS_LIGHTHOUSE_OP, 5) && 
+			!obstacles[i].is_around(POS_WEATHERCOCK, 5))
 				this.opponent_positions.add(obstacles[i]);
 	}
 
@@ -266,30 +267,31 @@ class Strat
 			default:
 				println("No color found");
 		}
-		tab_tasks[TASK_WEATHERCOCK].over();
 	}
 
 	void weathercock()
 	{
-
 		tab_tasks[TASK_WEATHERCOCK].in_progress();
 		this.robot.checkpoint_weathercock.y = robot.position.y;
 		this.robot.next_destination = this.robot.checkpoint_weathercock;
 
-		if (this.robot.position.is_around(this.robot.checkpoint_weathercock, 50))
+		if (this.robot.position.is_around(this.robot.checkpoint_weathercock, 5))
 		{
-			this.robot.checkpoint_weathercock.y = 50;
+			this.robot.checkpoint_weathercock.y = 100;
 			this.robot.next_destination = this.robot.checkpoint_weathercock;
 		}
 
-		if (this.robot.position.is_around(this.robot.checkpoint_weathercock, 50))
+		if (this.robot.position.is_around(this.robot.checkpoint_weathercock, 5))
 			if(mod2Pi(3*PI/2 - this.robot.angle) < rot_step)
 			{
 				if(this.weathercock_wait == -1)
 					this.weathercock_wait = millis();
 
 				if((millis() - this.weathercock_wait) > 2000)
+				{
 					detect_weathercock_col();
+					tab_tasks[TASK_WEATHERCOCK].over();
+				}
 			}
 			else
 				this.robot.goToAngle(3*PI/2);
@@ -332,7 +334,7 @@ class Strat
 		this.robot.next_destination = this.robot.checkpoint_windsock;
 		this.robot.goTo(true);
 
-		if(this.robot.position.is_around(this.robot.checkpoint_windsock, 50) && this.robot.deployed)
+		if(this.robot.position.is_around(this.robot.checkpoint_windsock, 5) && this.robot.deployed)
 		{
 			if(this.windsock_wait_2 == -1)
 				this.windsock_wait_2 = millis();
@@ -353,13 +355,12 @@ class Strat
 				this.robot.deployed = false;
 			return;
 		}
-		else if(this.robot.position.is_around(this.robot.checkpoint_windsock, 50))
+		else if(this.robot.position.is_around(this.robot.checkpoint_windsock, 5))
 		{
 			tab_tasks[TASK_WINDSOCK].over();
 			this.score += tab_tasks[TASK_WINDSOCK].points;
 			return;
 		}
-
 
 		fill(0, 255, 0);
 		pushMatrix();
@@ -411,7 +412,10 @@ class Strat
 			if (((millis() - this.lighthouse_wait)*3) < (tab_tasks[TASK_LIGHTHOUSE].max_time * 2))
 				deploy_actuator_lighthouse();
 			else
-				move_back = true;
+			{
+				tab_tasks[TASK_LIGHTHOUSE].over();
+				this.score += tab_tasks[TASK_LIGHTHOUSE].points;
+			}
 		}
 	}
 
@@ -420,26 +424,13 @@ class Strat
 	 */
 	void lighthouse()
 	{
-		if (!move_back)
-		{
-			this.robot.checkpoint_lighthouse.x = robot.position.x;
-			tab_tasks[TASK_LIGHTHOUSE].in_progress();
-			this.robot.next_destination = this.robot.checkpoint_lighthouse;
-			this.robot.goTo(true);
-			if (this.robot.position.is_around(this.robot.checkpoint_lighthouse, 50))
-				push_button();
-		}
-		else
-		{
-			this.robot.next_destination = POS_LIGHTHOUSE;
-			this.robot.goTo(false);
-			if (this.robot.position.is_around(POS_LIGHTHOUSE, 50))
-			{
-				tab_tasks[TASK_LIGHTHOUSE].over();
-				this.score += tab_tasks[TASK_LIGHTHOUSE].points;
-				move_back = false;
-			}
-		}
+		this.robot.checkpoint_lighthouse.x = robot.position.x;
+		tab_tasks[TASK_LIGHTHOUSE].in_progress();
+		this.robot.next_destination = this.robot.checkpoint_lighthouse;
+		this.robot.goTo(true);
+		if (this.robot.position.is_around(this.robot.checkpoint_lighthouse, 5))
+			push_button();
+		
 	}
 
 	/**
@@ -453,7 +444,7 @@ class Strat
 		if(tab_tasks[TASK_FLAG].done != IN_PROGRESS)
 		{
 			Pos weth_1 = new Pos(POS_FLAG.x, 150), weth_2 = new Pos(POS_FLAG.x, 850);
-			if (this.robot.position.is_around(weth_1, 50) || this.robot.position.is_around(weth_2, 50))
+			if (this.robot.position.is_around(weth_1, 5) || this.robot.position.is_around(weth_2, 2))
 				if (tab_tasks[TASK_WEATHERCOCK].done == DONE)
 					this.score += 10;
 				else
@@ -475,7 +466,7 @@ class Strat
 	 */
 	void find_path()
 	{
-		Pos intersection = access(this.robot.position, tab_tasks[this.id_current_task].position, 250);
+		Pos intersection = access(this.robot.position, tab_tasks[this.id_current_task].position, 280);
 		if(intersection != null)
 		{
 			Pos checkpoint = this.find_step(intersection);
@@ -526,16 +517,17 @@ class Strat
 		float distance = this.robot.position.dist(intersection);
 		float angle_step = 3 * distance / 1000;
 		float angle_dep = this.robot.position.angle(this.robot.next_destination);
-		for(float i = angle_dep; i < angle_dep + PI/2; i+=angle_step)
-		{
-			float angle_to_check = mod2Pi(i);
-			Pos check_1 = find_checkpoint(angle_to_check);
-			if(check_1 != null)
-				return check_1;
-			Pos check_2 = find_checkpoint(mod2Pi(-angle_to_check));
-			if(check_2 != null)
-				return check_2;
-		}
+		if(angle_step != 0)
+			for(float i = angle_dep; i < angle_dep + PI/2; i+=angle_step)
+			{
+				float angle_to_check = mod2Pi(i);
+				Pos check_1 = find_checkpoint(angle_to_check);
+				if(check_1 != null)
+					return check_1;
+				Pos check_2 = find_checkpoint(mod2Pi(-angle_to_check));
+				if(check_2 != null)
+					return check_2;
+			}
 		return null;
 	}
 
@@ -555,15 +547,9 @@ class Strat
 			checkpoint.y += step*sin(angle);
 
 
-			if(access(this.robot.position, checkpoint, 250) == null 
-				&& access(checkpoint, tab_tasks[this.id_current_task].position, 250) == null)
-				{
-					fill(0, 0, 255);
-					ellipse(checkpoint.x, checkpoint.y, 500, 500);
-					println("CP X : ", checkpoint.x);
-					println("CP Y : ", checkpoint.y);
+			if(access(this.robot.position, checkpoint, 280) == null 
+				&& access(checkpoint, tab_tasks[this.id_current_task].position, 280) == null)
 					return checkpoint;
-				}
 		}
 		return null;
 	}
@@ -573,7 +559,7 @@ class Strat
 	 */
 	void check_path()
 	{
-		if (!tab_tasks[this.id_current_task].position.is_around(this.path.get(path.size() - 1), 50) 
+		if (!tab_tasks[this.id_current_task].position.is_around(this.path.get(path.size() - 1), 5) 
 			|| access(this.robot.position, this.path.get(0), 200) != null)
 			{				
 				this.path = new ArrayList();

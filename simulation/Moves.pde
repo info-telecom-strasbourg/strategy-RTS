@@ -31,7 +31,7 @@ class Moves
 		this.robot_op.getCorners();
 		this.robot_op.borderColision();
 
-		if((this.ind_moves < (this.list_moves.length - 1)) && this.robot_op.position.is_around(this.list_moves[this.ind_moves], 50))
+		if((this.ind_moves < (this.list_moves.length - 1)) && this.robot_op.position.is_around(this.list_moves[this.ind_moves], 5))
 		{
 			this.ind_moves++;
 			this.robot_op.next_destination = list_moves[this.ind_moves];

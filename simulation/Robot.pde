@@ -151,13 +151,13 @@ class Robot
 	{
 		float turn = (forward) ? 0 : PI;
 			
-		if (this.position.is_around(this.next_destination, 50))
+		if (this.position.is_around(this.next_destination, 5))
 			return;
 
 		float dist = this.position.dist(this.next_destination);
 		float theta = this.position.angle(this.next_destination);
 
-		if (mod2Pi(theta + turn - this.angle) > rot_step && !this.position.is_around(this.next_destination, 50))
+		if (mod2Pi(theta + turn - this.angle) > rot_step && !this.position.is_around(this.next_destination, 5))
 		{
 			goToAngle(theta + turn);
 			return;

@@ -90,7 +90,7 @@ class Pos
 	 */
 	boolean onArena()
 	{
-		return ((this.x > 0) && (this.x < ARENA_HEIGHT) && (this.y > 0) && (this.y < ARENA_WIDTH));
+		return ((this.x > 0) && (this.x < ARENA_HEIGHT - 50) && (this.y > 0) && (this.y < ARENA_WIDTH - 50));
 	}
 	/**
 	* Find the point in the middle of 2 points
