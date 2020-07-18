@@ -123,13 +123,8 @@ class Strat
 		float theta = capteur.angle(pos);
 
 		float diff_ang = mod2Pi(theta - this.robot.angle);
-		if (diff_ang > PI)
-			diff_ang = 2*PI - diff_ang;
 
-		if(diff_ang < PI/4)
-			return true;
-		else
-			return false;
+		return diff_ang < PI/4 || diff_ang > 3*PI/4;
 	}
 
 	Pos[] find_robot_op_shape(Robot opponent)
@@ -201,7 +196,7 @@ class Strat
 		if (this.robot.position.isAround(this.robot.checkpoint_weathercock, 50))
 		{
 			this.robot.goToAngle(3*PI/2);
-			if(mod2Pi(3*PI/2 - this.robot.angle) < petite_rot)
+			if(mod2Pi(3*PI/2 - this.robot.angle) < petite_rot || 2*PI-mod2Pi(3*PI/2 - this.robot.angle) < petite_rot)
 			{
 				if(this.weathercock_wait == -1)
 					this.weathercock_wait = millis();
@@ -230,7 +225,7 @@ class Strat
 
 	void windsock()
 	{
-		if(this.robot.angle < PI - petite_rot)
+		if(this.robot.angle < mod2Pi(PI - petite_rot))
 		{
 			this.robot.goToAngle(PI);
 			return;
@@ -307,7 +302,7 @@ class Strat
 			if (this.robot.position.isAround(this.robot.checkpoint_lighthouse, 50))
 			{
 				this.robot.goToAngle((3*PI)/2);
-				if (mod2Pi(this.robot.angle - (3*PI)/2) < petite_rot)
+				if (mod2Pi(this.robot.angle - (3*PI)/2) < petite_rot || 2*PI-mod2Pi(this.robot.angle - (3*PI)/2) < petite_rot)
 				{
 					if(this.lighthouse_wait == -1)
 						this.lighthouse_wait = millis();

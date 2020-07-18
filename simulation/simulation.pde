@@ -51,13 +51,9 @@ Girouette girouette;
 
 float mod2Pi(float nb)
 {
-	while ((nb < 0) || (nb >= 2 * PI))
-	{
-		if (nb < 0)
-			nb += 2 * PI;
-		else
-			nb -= 2 * PI;
-	}
+	nb = nb % (2*PI);
+	if (nb < 0)
+		nb += 2*PI;
 	return nb;
 }
 

@@ -27,7 +27,7 @@ class Pos
 
 	float angle(Pos pos)
 	{
-		return atan2(pos.y - this.y, pos.x - this.x);
+		return mod2Pi(atan2(pos.y - this.y, pos.x - this.x));
 	}
 
 	Pos closer(Pos pos_1, Pos pos_2)
