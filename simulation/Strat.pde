@@ -41,7 +41,7 @@ class Strat
 		else
 		{
 			if (this.path.isEmpty())
-				find_path(); 
+				find_path();
 			// else
 			// 	this.path = checkPath(); //à coder
 			//
@@ -50,9 +50,9 @@ class Strat
 				this.path.remove(0);
 			robot.goTo(); //move
 		}
-		if (access(this.robot.position, tab_tasks[this.id_current_task].position))
+		if (access(this.robot.position, tab_tasks[this.id_current_task].position) == null)
 			println("YESSSSSSSSSSSSSS!");
-		
+
 		robot.getCorners();
 		robot.borderColision();
 		robot.affiche(true);
@@ -180,12 +180,12 @@ class Strat
 	}
 
 	void weathercock()
-	{	
-		
+	{
+
 		this.robot.checkpoint_weathercock.y = robot.position.y;
 		tab_tasks[TASK_WEATHERCOCK].in_progress();
-		this.robot.next_position = this.robot.checkpoint_weathercock;			
-		
+		this.robot.next_position = this.robot.checkpoint_weathercock;
+
 		if (this.robot.position.isAround(this.robot.checkpoint_weathercock, 50))
 		{
 			this.robot.checkpoint_weathercock.y = 50;
@@ -218,7 +218,7 @@ class Strat
 				}
 			}
 		}
-				
+
 		this.robot.goTo();
 	}
 
@@ -251,13 +251,13 @@ class Strat
 		this.robot.checkpoint_windsock.y = robot.position.y;
 		tab_tasks[TASK_WINDSOCK].in_progress();
 		this.robot.next_position = this.robot.checkpoint_windsock;
-		this.robot.goTo();		
+		this.robot.goTo();
 
 		if(this.robot.position.isAround(this.robot.checkpoint_windsock, 50) && this.robot.deployed)
 		{
 			if(this.windsock_wait_2 == -1)
 				this.windsock_wait_2 = millis();
-			
+
 			if((millis() - this.windsock_wait_2) < 2000)
 			{
 				fill(0, 255, 0);
@@ -285,7 +285,7 @@ class Strat
 		fill(0, 255, 0);
 		pushMatrix();
 		translate(this.robot.position.x, this.robot.position.y + LARGEUR_ROBOT/2 + 18);//50
-		rect(0, 0, 10, 36);		
+		rect(0, 0, 10, 36);
 		popMatrix();
 
 	}
@@ -305,7 +305,7 @@ class Strat
 				{
 					if(this.lighthouse_wait == -1)
 						this.lighthouse_wait = millis();
-					
+
 
 					if(((millis() - this.lighthouse_wait)*3) < (tab_tasks[TASK_LIGHTHOUSE].max_time))
 					{
@@ -332,13 +332,13 @@ class Strat
 
 						rect(0, 0, 10, dist_bord - adjust_dist*2);
 						popMatrix();
-					}	
+					}
 					else
-						move_back = true;					
+						move_back = true;
 				}
 			}
 		}
-		
+
 		if (move_back)
 		{
 			this.robot.next_position = POS_LIGHTHOUSE;
@@ -349,9 +349,9 @@ class Strat
 				this.score += tab_tasks[TASK_LIGHTHOUSE].points;
 				move_back = false;
 			}
-				
+
 		}
-		
+
 	}
 
 	void flag()
@@ -383,31 +383,70 @@ class Strat
 
 	void find_path()
 	{
+		Pos intersection = access(this.robot.position, tab_tasks[this.id_current_task].position);
+		if(intersection != null)
+		{
+			Pos checkpoint = this.find_step(intersection);
+			if(checkpoint != null)
+				this.path.add(checkpoint);
+			else
+				this.robot.speed_regime = STOP;
+		}
 		this.path.add(tab_tasks[this.id_current_task].position);
-		
 	}
 
-	boolean access (Pos point_1, Pos point_2)
+	Pos access (Pos point_1, Pos point_2)
 	{
 		float nb_seg = 15;
 		float delta_x = point_2.x - point_1.x;
 		float delta_y = point_2.y - point_1.y;
-		println("----------");
+
 		for (float i = 0; i < nb_seg; i++)
 		{
 			Pos new_pos = new Pos(point_1.x + i*delta_x/nb_seg, point_1.y + i*delta_y/nb_seg);
+			fill(0,0,255);
+			ellipse(new_pos.x, new_pos.y, 100, 100);
 			for (int j = 0; j < this.opponent_positions.length; j++)
-				if (new_pos.dist(this.opponent_positions[j]) < 30)
+				if (new_pos.dist(this.opponent_positions[j]) < 100)
 				{
-					
-					println("Dist: ", new_pos.dist(this.opponent_positions[j]));
-					println ("New pos x : ", new_pos.x);
-					println ("New pos y : ", new_pos.y);
-					return false;
+					fill(255,0,0);
+					ellipse(new_pos.x, new_pos.y, 100, 100);
+					return new_pos;
 				}
-					
 		}
-		return true;
+		return null;
 	}
 
+	Pos find_step(Pos intersection)
+	{
+		float angle_step = PI/36;
+		float angle_dep = this.robot.position.angle(this.robot.next_position);
+		for(float i = angle_dep; i < angle_dep + PI/2; i+=angle_step)
+		{
+			float angle_to_check = mod2Pi(i);
+			Pos check_1 = find_checkpoint(angle_to_check);
+			if(check_1 != null)
+				return check_1;
+			Pos check_2 = find_checkpoint(mod2Pi(-angle_to_check));
+			if(check_2 != null)
+				return check_2;
+		}
+		return null;
+	}
+
+	Pos find_checkpoint(float angle)
+	{
+		float step = 5;
+		Pos checkpoint = this.robot.position;
+
+		while (checkpoint.onArena())
+		{
+			checkpoint.x += step*cos(angle);
+			checkpoint.y += step*sin(angle);
+
+			if(access(this.robot.position, checkpoint) == null && access(checkpoint, tab_tasks[this.id_current_task].position) == null)
+				return checkpoint;
+		}
+		return null;
+	}
 }

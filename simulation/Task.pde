@@ -13,7 +13,7 @@ class Task
 		this.max_time = max_time;
 	}
 
-	
+
 
 	void over() {done = DONE;}
 
@@ -21,7 +21,7 @@ class Task
 
 	void affiche()
 	{
-		switch (done) 
+		switch (done)
 		{
 			case NOT_DONE:
 				fill(255,0,0);
@@ -35,7 +35,7 @@ class Task
 			default :
 				fill(0,0,0);
 		}
-			
+
 		triangle(position.x, position.y + 30, position.x - 30, position.y - 30, position.x + 30, position.y - 30);
 	}
 }

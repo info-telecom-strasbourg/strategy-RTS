@@ -27,6 +27,11 @@ class Pos
 	{
 		return (this.dist(pos_1) < this.dist(pos_2)) ? pos_1 : pos_2;
 	}
+
+	boolean onArena()
+	{
+		return this.x > 0 && this.x < LONGUEUR_TERRAIN && this.y > 0 && this.y < LARGEUR_TERRAIN;
+	}
 }
 
 Pos get_mid(Pos pos_1, Pos pos_2)
