@@ -41,6 +41,11 @@ class Robot
 		this.angle = mod2Pi(new_angle);
 	}
 
+	float angle_diff(float angle)
+	{
+		return mod2Pi(angle - this.angle);
+	}
+
 	void update_angle(float var){set_angle(this.angle + var);}
 
 	void update_pos(Pos var)
@@ -89,7 +94,7 @@ class Robot
 
 	void goToAngle(float theta)
 	{
-		float angleDiff = mod2Pi(theta - this.angle);
+		float angleDiff = angle_diff(theta);
 
 		if (angleDiff < petite_rot || 2*PI - angleDiff < petite_rot)
 			set_angle(theta);
@@ -98,23 +103,6 @@ class Robot
 		else
 			set_angle(this.angle - petite_rot);
  	}
-
-
-	// void goToAngleBack(float theta)
-	// {
-	// 	theta = mod2Pi(theta);
-	// 	float angleDiff = mod2Pi(theta + PI - this.angle);
-
-	// 	if (abs(angleDiff) < petite_rot)
-	// 		set_angle(theta);
-	// 	else
-	// 	{
-	// 		if ((angleDiff > 0 && angleDiff < PI) || (angleDiff < 0 && angleDiff < -PI))
-	// 			set_angle(this.angle + petite_rot);
-	// 		else
-	// 			set_angle(this.angle - petite_rot);
-	// 	}
- 	// }
 
 	void goTo()
 	{
@@ -126,7 +114,7 @@ class Robot
 		float dist = sqrt(pow((this.position.x - this.next_position.x),2) + pow((this.position.y - this.next_position.y),2));
 		float theta = this.position.angle(this.next_position);
 
-		if (mod2Pi(theta - this.angle) > petite_rot && 2*PI - mod2Pi(theta - this.angle) > petite_rot && (this.new_position.x != this.next_position.x || this.new_position.y != this.next_position.y))
+		if (angle_diff(theta) > petite_rot && 2*PI - angle_diff(theta) > petite_rot && (this.new_position.x != this.next_position.x || this.new_position.y != this.next_position.y))
 		{
 			goToAngle(theta);
 			return;
@@ -158,7 +146,7 @@ class Robot
 		float dist = sqrt(pow((this.position.x - this.next_position.x),2) + pow((this.position.y - this.next_position.y),2));
 		float theta = this.position.angle(this.next_position);
 
-		if (mod2Pi(theta + PI - this.angle) > petite_rot && 2*PI-mod2Pi(theta + PI - this.angle) > petite_rot && (this.new_position.x != this.next_position.x || this.new_position.y != this.next_position.y))
+		if (angle_diff(theta + PI) > petite_rot && 2*PI-angle_diff(theta + PI) > petite_rot && (this.new_position.x != this.next_position.x || this.new_position.y != this.next_position.y))
 		{
 			goToAngle(theta + PI);
 			return;
