@@ -475,7 +475,7 @@ class Strat
 	 */
 	void find_path()
 	{
-		Pos intersection = access(this.robot.position, tab_tasks[this.id_current_task].position);
+		Pos intersection = access(this.robot.position, tab_tasks[this.id_current_task].position, 250);
 		if(intersection != null)
 		{
 			Pos checkpoint = this.find_step(intersection);
@@ -485,10 +485,7 @@ class Strat
 				this.path.add(tab_tasks[this.id_current_task].position);
 			}
 			else
-			{
 				this.robot.speed_regime = STOP;
-				println("IL EST LA LE BONHEUUUUUR");
-			}
 		}
 		else
 			this.path.add(tab_tasks[this.id_current_task].position);
@@ -499,10 +496,11 @@ class Strat
 	 * collapsing with the opponent
 	 * @param: point_1: start point
 	 * @param: point_2: arrival point
+	 * @param: dist: the security distance
 	 * @return null if a direct route is possible between point_1 and point_2, 
 	 * otherwise the intersection point with the opponent
 	 */
-	Pos access (Pos point_1, Pos point_2)
+	Pos access (Pos point_1, Pos point_2, int dist)
 	{
 		float nb_seg = 15;
 		float delta_x = point_2.x - point_1.x;
@@ -510,10 +508,9 @@ class Strat
 
 		for (float i = 0; i < nb_seg; i++)
 		{
-
 			Pos new_pos = new Pos(point_1.x + i*delta_x/nb_seg, point_1.y + i*delta_y/nb_seg);
 			for (int j = 0; j < this.opponent_positions.size(); j++)
-				if (new_pos.dist(this.opponent_positions.get(j)) < 100)
+				if (new_pos.dist(this.opponent_positions.get(j)) < dist)
 					return new_pos;
 		}
 		return null;
@@ -557,9 +554,12 @@ class Strat
 			checkpoint.x += step*cos(angle);
 			checkpoint.y += step*sin(angle);
 
-			if(access(this.robot.position, checkpoint) == null 
-				&& access(checkpoint, tab_tasks[this.id_current_task].position) == null)
+
+			if(access(this.robot.position, checkpoint, 250) == null 
+				&& access(checkpoint, tab_tasks[this.id_current_task].position, 250) == null)
 				{
+					fill(0, 0, 255);
+					ellipse(checkpoint.x, checkpoint.y, 500, 500);
 					println("CP X : ", checkpoint.x);
 					println("CP Y : ", checkpoint.y);
 					return checkpoint;
@@ -568,11 +568,13 @@ class Strat
 		return null;
 	}
 
-
+	/**
+	 * Check if our robot won't collapse by following the path
+	 */
 	void check_path()
 	{
 		if (!tab_tasks[this.id_current_task].position.is_around(this.path.get(path.size() - 1), 50) 
-			|| access(this.robot.position, this.path.get(0)) != null)
+			|| access(this.robot.position, this.path.get(0), 200) != null)
 			{				
 				this.path = new ArrayList();
 				find_path();
