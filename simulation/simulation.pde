@@ -49,12 +49,14 @@ Dep dep_robot;
 Girouette girouette;
 
 
-float mod2Pi(float nb)
+float mod2Pi(float angle)
 {
-	nb = nb % (2*PI);
-	if (nb < 0)
-		nb += 2*PI;
-	return nb;
+	angle = angle % (2*PI);
+	if (angle > PI)
+		return angle - 2*PI;
+	if (angle < -PI)
+		return angle + 2*PI;
+	return angle;
 }
 
 void init_robot(Dir dir)

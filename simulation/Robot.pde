@@ -96,9 +96,9 @@ class Robot
 	{
 		float angleDiff = angle_diff(theta);
 
-		if (angleDiff < petite_rot || 2*PI - angleDiff < petite_rot)
+		if (abs(angleDiff) < petite_rot)
 			set_angle(theta);
-		else if (angleDiff < PI)
+		else if (angleDiff > 0)
 			set_angle(this.angle + petite_rot);
 		else
 			set_angle(this.angle - petite_rot);
@@ -114,7 +114,7 @@ class Robot
 		float dist = sqrt(pow((this.position.x - this.next_position.x),2) + pow((this.position.y - this.next_position.y),2));
 		float theta = this.position.angle(this.next_position);
 
-		if (angle_diff(theta) > petite_rot && 2*PI - angle_diff(theta) > petite_rot && (this.new_position.x != this.next_position.x || this.new_position.y != this.next_position.y))
+		if (abs(angle_diff(theta)) > petite_rot && (this.new_position.x != this.next_position.x || this.new_position.y != this.next_position.y))
 		{
 			goToAngle(theta);
 			return;
@@ -146,7 +146,7 @@ class Robot
 		float dist = sqrt(pow((this.position.x - this.next_position.x),2) + pow((this.position.y - this.next_position.y),2));
 		float theta = this.position.angle(this.next_position);
 
-		if (angle_diff(theta + PI) > petite_rot && 2*PI-angle_diff(theta + PI) > petite_rot && (this.new_position.x != this.next_position.x || this.new_position.y != this.next_position.y))
+		if (abs(angle_diff(theta + PI)) > petite_rot && (this.new_position.x != this.next_position.x || this.new_position.y != this.next_position.y))
 		{
 			goToAngle(theta + PI);
 			return;
