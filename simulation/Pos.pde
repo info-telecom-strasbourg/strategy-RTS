@@ -37,7 +37,7 @@ class Pos
 
 	boolean onArena()
 	{
-		return this.x > 0 && this.x < LONGUEUR_TERRAIN && this.y > 0 && this.y < LARGEUR_TERRAIN;
+		return this.x > 0 && this.x < ARENA_HEIGHT && this.y > 0 && this.y < ARENA_WIDTH;
 	}
 }
 

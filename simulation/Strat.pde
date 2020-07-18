@@ -61,7 +61,7 @@ class Strat
 
 		robot.getCorners();
 		robot.borderColision();
-		robot.affiche(true);
+		robot.display(true);
 
 	}
 
@@ -102,19 +102,19 @@ class Strat
 		for(int i = 0; i < robot_op_shape.length; i++)
 			if (capture(robot_op_shape[i]))
 				return SLOW;
-		for(int i = 0; i < LONGUEUR_TERRAIN; i+=10)
-			if (capture(new Pos(i, 0)) || capture(new Pos(i, LARGEUR_TERRAIN)))
+		for(int i = 0; i < ARENA_HEIGHT; i+=10)
+			if (capture(new Pos(i, 0)) || capture(new Pos(i, ARENA_WIDTH)))
 				return SLOW;
-		for(int i = 0; i < LARGEUR_TERRAIN; i+=10)
-			if (capture(new Pos(0, i)) || capture(new Pos(LONGUEUR_TERRAIN, i)))
+		for(int i = 0; i < ARENA_WIDTH; i+=10)
+			if (capture(new Pos(0, i)) || capture(new Pos(ARENA_HEIGHT, i)))
 				return SLOW;
 		return FAST;
 	}
 
 	boolean capture(Pos pos)
 	{
-		Pos capteur = new Pos(this.robot.position.x + cos(this.robot.angle) * LARGEUR_ROBOT/2,
-							this.robot.position.y + sin(this.robot.angle) * LARGEUR_ROBOT/2);
+		Pos capteur = new Pos(this.robot.position.x + cos(this.robot.angle) * ROBOT_WIDTH/2,
+							this.robot.position.y + sin(this.robot.angle) * ROBOT_WIDTH/2);
 		float dist = capteur.dist(pos);
 
 		if(dist > 250)
@@ -122,11 +122,11 @@ class Strat
 
 		float theta = capteur.angle(pos);
 
-		float diff_ang = mod2Pi(theta - this.robot.angle);
-		if (diff_ang > PI)
-			diff_ang = 2*PI - diff_ang;
+		float delt_ang = mod2Pi(theta - this.robot.angle);
+		if (delt_ang > PI)
+			delt_ang = 2*PI - delt_ang;
 
-		if(diff_ang < PI/4)
+		if(delt_ang < PI/4)
 			return true;
 		else
 			return false;
@@ -201,7 +201,7 @@ class Strat
 		if (this.robot.position.isAround(this.robot.checkpoint_weathercock, 50))
 		{
 			this.robot.goToAngle(3*PI/2);
-			if(mod2Pi(3*PI/2 - this.robot.angle) < petite_rot)
+			if(mod2Pi(3*PI/2 - this.robot.angle) < rot_step)
 			{
 				if(this.weathercock_wait == -1)
 					this.weathercock_wait = millis();
@@ -230,7 +230,7 @@ class Strat
 
 	void windsock()
 	{
-		if(this.robot.angle < PI - petite_rot)
+		if(this.robot.angle < PI - rot_step)
 		{
 			this.robot.goToAngle(PI);
 			return;
@@ -243,12 +243,12 @@ class Strat
 		{
 			fill(0, 255, 0);
 			pushMatrix();
-			float dist_bord = LARGEUR_TERRAIN - this.robot.position.y - float(LONGUEUR_ROBOT)/2;
+			float dist_bord = ARENA_WIDTH - this.robot.position.y - float(ROBOT_HEIGHT)/2;
 			float coeff = float(millis() - this.windsock_wait)/2000.0;
-			float lg_bar = coeff * dist_bord;
-			lg_bar = (lg_bar > 36) ? 36 : lg_bar;
-			translate(this.robot.position.x, this.robot.position.y + LARGEUR_ROBOT/2 + lg_bar/2);//50
-			rect(0, 0, 10, lg_bar);
+			float act_height = coeff * dist_bord;
+			act_height = (act_height > 36) ? 36 : act_height;
+			translate(this.robot.position.x, this.robot.position.y + ROBOT_WIDTH/2 + act_height/2);//50
+			rect(0, 0, 10, act_height);
 			popMatrix();
 			this.robot.deployed = true;
 			return;
@@ -268,12 +268,12 @@ class Strat
 			{
 				fill(0, 255, 0);
 				pushMatrix();
-				float dist_bord = float(LARGEUR_TERRAIN) - this.robot.position.y - float(LONGUEUR_ROBOT)/2;
+				float dist_bord = float(ARENA_WIDTH) - this.robot.position.y - float(ROBOT_HEIGHT)/2;
 				float coeff = float(millis() - this.windsock_wait_2)/2000.0;
-				float lg_bar = (1 - coeff) * dist_bord;
-				lg_bar = (lg_bar > 36) ? 36 : lg_bar;
-				translate(this.robot.position.x, this.robot.position.y + LARGEUR_ROBOT/2 + lg_bar/2);//50
-				rect(0, 0, 10, lg_bar);
+				float act_height = (1 - coeff) * dist_bord;
+				act_height = (act_height > 36) ? 36 : act_height;
+				translate(this.robot.position.x, this.robot.position.y + ROBOT_WIDTH/2 + act_height/2);//50
+				rect(0, 0, 10, act_height);
 				popMatrix();
 			}
 			else
@@ -290,7 +290,7 @@ class Strat
 
 		fill(0, 255, 0);
 		pushMatrix();
-		translate(this.robot.position.x, this.robot.position.y + LARGEUR_ROBOT/2 + 18);//50
+		translate(this.robot.position.x, this.robot.position.y + ROBOT_WIDTH/2 + 18);//50
 		rect(0, 0, 10, 36);
 		popMatrix();
 
@@ -307,7 +307,7 @@ class Strat
 			if (this.robot.position.isAround(this.robot.checkpoint_lighthouse, 50))
 			{
 				this.robot.goToAngle((3*PI)/2);
-				if (mod2Pi(this.robot.angle - (3*PI)/2) < petite_rot)
+				if (mod2Pi(this.robot.angle - (3*PI)/2) < rot_step)
 				{
 					if(this.lighthouse_wait == -1)
 						this.lighthouse_wait = millis();
@@ -315,7 +315,7 @@ class Strat
 
 					if(((millis() - this.lighthouse_wait)*3) < (tab_tasks[TASK_LIGHTHOUSE].max_time))
 					{
-						float dist_bord = this.robot.position.y - float(LONGUEUR_ROBOT)/2;
+						float dist_bord = this.robot.position.y - float(ROBOT_HEIGHT)/2;
 						float coeff = (millis() - float(this.lighthouse_wait))/(float(int(tab_tasks[TASK_LIGHTHOUSE].max_time))/3.0);
 						float adjust_dist = (1 - coeff) * dist_bord/2;
 						fill(0, 255, 0);
@@ -328,7 +328,7 @@ class Strat
 					}
 					else if (((millis() - this.lighthouse_wait)*3) < (tab_tasks[TASK_LIGHTHOUSE].max_time * 2))
 					{
-						float dist_bord = this.robot.position.y - float(LONGUEUR_ROBOT)/2;
+						float dist_bord = this.robot.position.y - float(ROBOT_HEIGHT)/2;
 						float coeff = (millis() - float(this.lighthouse_wait) - float(int(tab_tasks[TASK_LIGHTHOUSE].max_time))/3.0)/(float(int(tab_tasks[TASK_LIGHTHOUSE].max_time))/3.0);
 						float adjust_dist = coeff * dist_bord/2;
 						fill(0, 255, 0);

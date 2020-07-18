@@ -19,7 +19,7 @@ class Task
 
 	void in_progress() {done = IN_PROGRESS;}
 
-	void affiche()
+	void display()
 	{
 		switch (done)
 		{

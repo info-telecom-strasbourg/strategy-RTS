@@ -1,10 +1,10 @@
 //Macro for simulation
-final int LARGEUR_ROBOT = 100;
-final int LONGUEUR_ROBOT = 100;
-final int LARGEUR_TERRAIN = 1000;
-final int LONGUEUR_TERRAIN = 1500;
-final float DEMI_DIAG = sqrt(pow(LARGEUR_ROBOT/2,2) + pow(LONGUEUR_ROBOT/2,2));
-final float petite_rot = PI/50;
+final int ROBOT_WIDTH = 100;
+final int ROBOT_HEIGHT = 100;
+final int ARENA_WIDTH = 1000;
+final int ARENA_HEIGHT = 1500;
+final float HALF_DIAG = sqrt(pow(ROBOT_WIDTH/2,2) + pow(ROBOT_HEIGHT/2,2));
+final float rot_step = PI/50;
 final int fps = 30;
 
 
@@ -89,14 +89,14 @@ void init_robot(Dir dir)
 	}
 
 	robot.checkpoint_lighthouse = new Pos(-1,15);
-	robot.checkpoint_weathercock = new Pos(LONGUEUR_TERRAIN/2, -1);
+	robot.checkpoint_weathercock = new Pos(ARENA_HEIGHT/2, -1);
 
 	fill(0, 255, 0);
 	pushMatrix();
 	translate(robot.position.x, robot.position.y);
 	rotate(robot.angle);
 	rectMode(CENTER);
-	rect(0, 0, LARGEUR_ROBOT, LONGUEUR_ROBOT);
+	rect(0, 0, ROBOT_WIDTH, ROBOT_HEIGHT);
 	popMatrix();
 
 	pushMatrix();
@@ -104,7 +104,7 @@ void init_robot(Dir dir)
 	translate(robot_op.position.x, robot_op.position.y);
 	rotate(robot_op.angle);
 	rectMode(CENTER);
-	rect(0, 0, LARGEUR_ROBOT, LONGUEUR_ROBOT);
+	rect(0, 0, ROBOT_WIDTH, ROBOT_HEIGHT);
 	popMatrix();
 }
 
@@ -117,7 +117,7 @@ void setup()
 	init_robot(Dir.right);
 
 	strat = new Strat(robot);
-	Pos[] path_op = {new Pos(1300,LARGEUR_TERRAIN/2)};
+	Pos[] path_op = {new Pos(1300,ARENA_WIDTH/2)};
 	dep_robot = new Dep(robot_op, path_op);
 	girouette = new Girouette();
 	Task task_weathercock = new Task(10, POS_WEATHERCOCK, 25000);
@@ -133,10 +133,10 @@ void draw()
 	background(img);
 	strat.apply(robot_op);
 	dep_robot.apply();
-	girouette.affiche();
+	girouette.display();
 
 	for(int i = 0; i < tab_tasks.length; i++)
-		tab_tasks[i].affiche();
+		tab_tasks[i].display();
 
 	textSize(30);
 	textAlign(LEFT);

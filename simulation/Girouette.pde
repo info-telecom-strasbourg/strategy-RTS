@@ -19,7 +19,7 @@ class Girouette
 		}
 	}
 
-	void affiche()
+	void display()
 	{
 		decide_zone();
 		switch (color_g)
@@ -33,7 +33,7 @@ class Girouette
 			default:
 				fill(127,127,127);
 		}
-		ellipse(LONGUEUR_TERRAIN/2, 0, 60, 60);
+		ellipse(ARENA_HEIGHT/2, 0, 60, 60);
 	}
 }
 //Test

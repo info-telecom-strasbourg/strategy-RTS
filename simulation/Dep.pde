@@ -26,6 +26,6 @@ class Dep
 			this.robot_op.next_position = list_dep[this.ind_dep];
 		}
 
-		this.robot_op.affiche(false);
+		this.robot_op.display(false);
 	}
 }
