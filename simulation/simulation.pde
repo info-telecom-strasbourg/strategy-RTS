@@ -1,3 +1,8 @@
+/**
+* Launcher of the simulation
+*/
+
+
 //Macro for simulation
 final int ROBOT_WIDTH = 100;
 final int ROBOT_HEIGHT = 100;
@@ -48,20 +53,27 @@ Strat strat;
 Moves robot_moves;
 Weathercock weathercock;
 
-
-float mod2Pi(float nb)
+/**
+ * Using radians, find the angle in [0, 2 pi]
+ * @param angle: the initial angle
+ * @return the angle's value in [0, 2 pi]
+ */
+float mod2Pi(float angle)
 {
-	while ((nb < 0) || (nb >= 2 * PI))
-	{
-		if (nb < 0)
-			nb += 2 * PI;
+	while ((angle < 0) || (angle >= 2 * PI))
+		if (angle < 0)
+			angle += 2 * PI;
 		else
-			nb -= 2 * PI;
-	}
-	return nb;
+			angle -= 2 * PI;
+
+	return angle;
 }
 
-void init_robot(Dir dir)
+/**
+ * Initialize robot parameters and tasks position according to the start position
+ * @param dir: the start position (left or right)
+ */
+void init_robots(Dir dir)
 {
 	if (dir == Dir.left)
 	{
@@ -75,7 +87,7 @@ void init_robot(Dir dir)
 		robot.checkpoint_windsock = new Pos(500,-1);
 		robot.side = true;
 	}
-	else if (dir == Dir.right)
+	else
 	{
 		robot = new Robot(new Pos(1400, 410), PI);
 		robot_op = new Robot(new Pos(100, 410), 0);
@@ -87,39 +99,16 @@ void init_robot(Dir dir)
 		robot.checkpoint_windsock = new Pos(1000,-1);
 		robot.side = false;
 	}
-
+	
 	robot.checkpoint_lighthouse = new Pos(-1,15);
 	robot.checkpoint_weathercock = new Pos(ARENA_HEIGHT/2, -1);
-
-	fill(0, 255, 0);
-	pushMatrix();
-	translate(robot.position.x, robot.position.y);
-	rotate(robot.angle);
-	rectMode(CENTER);
-	rect(0, 0, ROBOT_WIDTH, ROBOT_HEIGHT);
-	popMatrix();
-
-	pushMatrix();
-	fill(255, 0, 0);
-	translate(robot_op.position.x, robot_op.position.y);
-	rotate(robot_op.angle);
-	rectMode(CENTER);
-	rect(0, 0, ROBOT_WIDTH, ROBOT_HEIGHT);
-	popMatrix();
 }
 
-void setup()
+/**
+ * Initialise the table of tasks
+ */
+void init_tab_tasks()
 {
-	img = loadImage("map.png");
-	size(1500,1000);
-	background(img);
-	frameRate(fps);
-	init_robot(Dir.right);
-
-	strat = new Strat(robot);
-	Pos[] path_op = {new Pos(1300,ARENA_WIDTH/2)};
-	robot_moves = new Moves(robot_op, path_op);
-	weathercock = new Weathercock();
 	Task task_weathercock = new Task(10, POS_WEATHERCOCK, 25000);
 	Task task_windsock = new Task(15, POS_WINDSOCK, 20000);
 	Task task_lighthouse = new Task(13, POS_LIGHTHOUSE, 5000);
@@ -128,18 +117,64 @@ void setup()
 	tab_tasks = tab_temp;
 }
 
-void draw()
+/**
+ * Initialise the robots strategies
+ */
+void init_robots_strat()
 {
-	background(img);
-	strat.apply(robot_op);
-	robot_moves.apply();
-	weathercock.display();
+	strat = new Strat(robot);
+	Pos[] path_op = {new Pos(1300,ARENA_WIDTH/2)};
+	robot_moves = new Moves(robot_op, path_op);
+}
 
+/**
+ * Initialization of the simulation
+ */
+void setup()
+{
+	img = loadImage("map.png");
+	size(1500,1000);
+	background(img);
+	frameRate(fps);
+	init_robots(Dir.right);
+	init_tab_tasks();
+	init_robots_strat();
+	weathercock = new Weathercock();
+}
+
+/**
+ * Display the task when our robot know their position
+ */
+void display_tasks()
+{
 	for(int i = 0; i < tab_tasks.length; i++)
 		tab_tasks[i].display();
+}
 
+/**
+ * Display the score and the time
+ */
+void display_infos()
+{
 	textSize(30);
 	textAlign(LEFT);
 	text((millis() - strat.time)/1000, 1, 21);
 	text(strat.score, 1450, 21);
+}
+
+/**
+ * Draw the simulation on the screen
+ */
+void draw()
+{
+	background(img);
+
+	strat.apply(robot_op);
+	robot_moves.apply();
+
+	weathercock.display();
+
+	display_tasks();
+
+	display_infos();
 }
