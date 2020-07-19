@@ -10,14 +10,11 @@ class Strat
 	int time;
 	ArrayList <Pos> path = new ArrayList();
 	int score;
-	boolean move_back;
 
 	//SIMULATION
 	int lighthouse_wait = -1;
-	int windsock_1_wait = -1;
-	int windsock_1_wait_2 = -1;
-	int windsock_2_wait = -1;
-	int windsock_2_wait_2 = -1;
+	int windsock_wait = -1;
+	int windsock_wait_2 = -1;
 	int weathercock_wait = -1;
 
 	/**
@@ -31,7 +28,6 @@ class Strat
 		this.opponent_positions = null;
 		this.time = millis();
 		this.score = 7;
-		this.move_back = false;
 	}
 
 	/**
@@ -250,10 +246,10 @@ class Strat
 				weathercock();
 				break;
 			case TASK_WINDSOCK_1:
-				windsock_1();
+				windsock(TASK_WINDSOCK_2);
 				break;
 			case TASK_WINDSOCK_2:
-				windsock_2();
+				windsock(TASK_WINDSOCK_1);
 				break;
 			case TASK_LIGHTHOUSE:
 				lighthouse();
@@ -314,119 +310,46 @@ class Strat
 		this.robot.goTo(true);
 	}
 
-	/**
-	 * Dress the windsocks
-	 * THIS METHOD WILL BE MODIFIED SOON
-	 */
-	// void windsock()
-	// {
-	// 	if(this.robot.angle < PI - rot_step)
-	// 	{
-	// 		this.robot.goToAngle(PI);
-	// 		return;
-	// 	}
-
-	// 	if(this.windsock_wait == -1)
-	// 		this.windsock_wait = millis();
-
-	// 	if((millis() - this.windsock_wait) < 2000)
-	// 	{
-	// 		fill(0, 255, 0);
-	// 		pushMatrix();
-	// 		float dist_bord = ARENA_WIDTH - this.robot.position.y - float(ROBOT_HEIGHT)/2;
-	// 		float coeff = float(millis() - this.windsock_wait)/2000.0;
-	// 		float act_height = coeff * dist_bord;
-	// 		act_height = (act_height > 36) ? 36 : act_height;
-	// 		translate(this.robot.position.x, this.robot.position.y + ROBOT_WIDTH/2 + act_height/2);//50
-	// 		rect(0, 0, 10, act_height);
-	// 		popMatrix();
-	// 		this.robot.deployed = true;
-	// 		return;
-	// 	}
-
-	// 	this.robot.checkpoint_windsock.y = robot.position.y;
-	// 	tab_tasks[TASK_WINDSOCK].in_progress();
-	// 	this.robot.next_destination = this.robot.checkpoint_windsock;
-	// 	this.robot.goTo(true);
-
-	// 	if(this.robot.position.is_around(this.robot.checkpoint_windsock, 5) && this.robot.deployed)
-	// 	{
-	// 		if(this.windsock_wait_2 == -1)
-	// 			this.windsock_wait_2 = millis();
-
-	// 		if((millis() - this.windsock_wait_2) < 2000)
-	// 		{
-	// 			fill(0, 255, 0);
-	// 			pushMatrix();
-	// 			float dist_bord = float(ARENA_WIDTH) - this.robot.position.y - float(ROBOT_HEIGHT)/2;
-	// 			float coeff = float(millis() - this.windsock_wait_2)/2000.0;
-	// 			float act_height = (1 - coeff) * dist_bord;
-	// 			act_height = (act_height > 36) ? 36 : act_height;
-	// 			translate(this.robot.position.x, this.robot.position.y + ROBOT_WIDTH/2 + act_height/2);//50
-	// 			rect(0, 0, 10, act_height);
-	// 			popMatrix();
-	// 		}
-	// 		else
-	// 			this.robot.deployed = false;
-	// 		return;
-	// 	}
-	// 	else if(this.robot.position.is_around(this.robot.checkpoint_windsock, 5))
-	// 	{
-	// 		tab_tasks[TASK_WINDSOCK].over();
-	// 		this.score += tab_tasks[TASK_WINDSOCK].points;
-	// 		return;
-	// 	}
-
-	// 	fill(0, 255, 0);
-	// 	pushMatrix();
-	// 	translate(this.robot.position.x, this.robot.position.y + ROBOT_WIDTH/2 + 18);//50
-	// 	rect(0, 0, 10, 36);
-	// 	popMatrix();
-
-	// }
-
-	void windsock_1()
+	boolean raise_windsock()
 	{
-		tab_tasks[TASK_WINDSOCK_1].in_progress();
-		if(this.robot.angle < PI/2 - rot_step || this.robot.angle > PI/2 + rot_step)
+		if(id_current_task == TASK_WINDSOCK_1)
 		{
-			this.robot.goToAngle(PI/2);
-			return;
+			if(windsock_wait == -1)
+				windsock_wait = millis();
+			
+			return (millis() - windsock_wait > 4000);
 		}
-		// this.robot.checkpoint_windsock_1.x = robot.position.x;
-		// this.robot.next_destination = this.robot.checkpoint_windsock_1;
-		// if(!this.robot.position.is_around(this.robot.next_destination, 5))
-		// {
-		// 	this.robot.goTo(true);
-		// 	return;
-		// }
-
-		tab_tasks[TASK_WINDSOCK_1].over();
-		this.score += tab_tasks[TASK_WINDSOCK_1].points;
-		if (tab_tasks[TASK_WINDSOCK_2].done == DONE)
-			this.score += tab_tasks[TASK_WINDSOCK_1].points;
+		else
+		{
+			if(windsock_wait_2 == -1)
+				windsock_wait_2 = millis();
+			
+			return (millis() - windsock_wait_2 > 4000);
+		}
 	}
 
-	void windsock_2()
-	{
-		tab_tasks[TASK_WINDSOCK_2].in_progress();
-		if(this.robot.angle < PI/2 - rot_step || this.robot.angle > PI/2 + rot_step)
+	void windsock(int id)
+	{		
+		tab_tasks[this.id_current_task].in_progress();
+		
+	
+			this.robot.checkpoint_windsock.x = this.robot.position.x;
+			this.robot.next_destination = this.robot.checkpoint_windsock;
+
+		if(!this.robot.position.is_around(this.robot.next_destination, 5))
 		{
-			this.robot.goToAngle(PI/2);
+			this.robot.goTo(true);
 			return;
 		}
-		// this.robot.checkpoint_windsock_2.x = robot.position.x;
-		// this.robot.next_destination = this.robot.checkpoint_windsock_2;
-		// if(!this.robot.position.is_around(this.robot.next_destination, 5))
-		// {
-		// 	this.robot.goTo(true);
-		// 	return;
-		// }
 
-		tab_tasks[TASK_WINDSOCK_2].over();
-		this.score += tab_tasks[TASK_WINDSOCK_2].points;
-		if (tab_tasks[TASK_WINDSOCK_1].done == DONE)
-			this.score += tab_tasks[TASK_WINDSOCK_2].points;
+		if(!raise_windsock())
+			return;
+
+
+		tab_tasks[this.id_current_task].over();
+		this.score += tab_tasks[this.id_current_task].points;
+		if (tab_tasks[this.id_current_task].done == DONE)
+			this.score += tab_tasks[this.id_current_task].points;
 	}
 
 
