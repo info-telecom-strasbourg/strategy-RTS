@@ -9,8 +9,7 @@ class Robot
 	int speed_regime;
 	Pos next_destination;
 	int detected_color;
-	Pos checkpoint_windsock_1;
-	Pos checkpoint_windsock_2;
+	Pos checkpoint_windsock;
 	Pos checkpoint_lighthouse;
 	Pos checkpoint_weathercock;
 	boolean flag;

@@ -102,8 +102,6 @@ void init_robots(Dir dir)
 		POS_LIGHTHOUSE_OP = new Pos(1250, 125);
 		POS_FLAG = new Pos(100, -50);
 		POS_WEATHERCOCK = new Pos(450, 125);
-		robot.checkpoint_windsock_1 = new Pos(500,-1);
-		robot.checkpoint_windsock_2 = new Pos(700,-1);
 		robot.side = true;
 	}
 	else
@@ -116,11 +114,10 @@ void init_robots(Dir dir)
 		POS_LIGHTHOUSE_OP = new Pos(250,125);
 		POS_FLAG = new Pos(1400, -50);
 		POS_WEATHERCOCK = new Pos(1050, 125);
-		robot.checkpoint_windsock_1 = new Pos(1000,-1);
-		robot.checkpoint_windsock_1 = new Pos(1200,-1);
 		robot.side = false;
 	}
 	
+	robot.checkpoint_windsock = new Pos(-1,945);
 	robot.checkpoint_lighthouse = new Pos(-1,50);
 	robot.checkpoint_weathercock = new Pos(ARENA_HEIGHT/2, -1);
 }
