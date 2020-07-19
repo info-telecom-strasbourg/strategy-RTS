@@ -352,7 +352,7 @@ class Strat
 
 		tab_tasks[this.id_current_task].over();
 		this.score += tab_tasks[this.id_current_task].points;
-		if (tab_tasks[this.id_current_task].done == DONE)
+		if (tab_tasks[id].done == DONE)
 			this.score += tab_tasks[this.id_current_task].points;
 	}
 
@@ -431,7 +431,7 @@ class Strat
 		if(tab_tasks[TASK_FLAG].done != IN_PROGRESS)
 		{
 			Pos weth_1 = new Pos(POS_FLAG.x, 200), weth_2 = new Pos(POS_FLAG.x, 800);
-			if (this.robot.position.is_around(weth_1, 5) || this.robot.position.is_around(weth_2, 2))
+			if (this.robot.position.is_around(weth_1, 5) || this.robot.position.is_around(weth_2, 5))
 				if (tab_tasks[TASK_WEATHERCOCK].done == DONE)
 					this.score += 10;
 				else
