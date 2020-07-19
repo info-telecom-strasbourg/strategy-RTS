@@ -14,8 +14,10 @@ class Strat
 
 	//SIMULATION
 	int lighthouse_wait = -1;
-	int windsock_wait = -1;
-	int windsock_wait_2 = -1;
+	int windsock_1_wait = -1;
+	int windsock_1_wait_2 = -1;
+	int windsock_2_wait = -1;
+	int windsock_2_wait_2 = -1;
 	int weathercock_wait = -1;
 
 	/**
@@ -65,8 +67,15 @@ class Strat
 			{
 				this.robot.next_destination = this.path.get(0);
 
-				this.robot.goTo(true); 
+				this.robot.getCorners();
+
+				if (!this.robot.haveToBack())
+					this.robot.goTo(true); 
+
 			}
+
+			if (this.robot.haveToBack())
+					this.robot.goTo(false); 
 		}
 	}
 
@@ -164,7 +173,7 @@ class Strat
 	 */
 	void select_mooring_area()
 	{
-		Pos[] points_for_closer = new Pos [] {new Pos(POS_FLAG.x, 150), new Pos(POS_FLAG.x, 850)};
+		Pos[] points_for_closer = new Pos [] {new Pos(POS_FLAG.x, 200), new Pos(POS_FLAG.x, 800)};
 		tab_tasks[TASK_FLAG].position = this.robot.position.closer(points_for_closer);
 	}
 
@@ -186,8 +195,11 @@ class Strat
 		if(tab_tasks[TASK_LIGHTHOUSE].done != DONE)
 			return TASK_LIGHTHOUSE;
 
-		if(tab_tasks[TASK_WINDSOCK].done != DONE)
-			return TASK_WINDSOCK;
+		if(tab_tasks[TASK_WINDSOCK_1].done != DONE)
+			return TASK_WINDSOCK_1;
+		
+		if(tab_tasks[TASK_WINDSOCK_2].done != DONE)
+			return TASK_WINDSOCK_2;
 
 		if(tab_tasks[TASK_WEATHERCOCK].done != DONE)
 			return TASK_WEATHERCOCK;
@@ -212,8 +224,8 @@ class Strat
 	 */
 	boolean final_move_without_color(long time_left)
 	{
-		return (is_final_move(new Pos(POS_FLAG.x, 150), time_left) 
-			&& is_final_move(new Pos(POS_FLAG.x, 850), time_left) 
+		return (is_final_move(new Pos(POS_FLAG.x, 200), time_left) 
+			&& is_final_move(new Pos(POS_FLAG.x, 800), time_left) 
 			&& tab_tasks[TASK_FLAG].done != DONE);
 	}
 	
@@ -237,8 +249,11 @@ class Strat
 			case TASK_WEATHERCOCK:
 				weathercock();
 				break;
-			case TASK_WINDSOCK:
-				windsock();
+			case TASK_WINDSOCK_1:
+				windsock_1();
+				break;
+			case TASK_WINDSOCK_2:
+				windsock_2();
 				break;
 			case TASK_LIGHTHOUSE:
 				lighthouse();
@@ -259,10 +274,10 @@ class Strat
 		switch (this.robot.detected_color = weathercock.color_w)
 		{
 			case BLACK:
-				POS_FLAG.y = 150;
+				POS_FLAG.y = 200;
 				break;
 			case WHITE:
-				POS_FLAG.y = 850;
+				POS_FLAG.y = 800;
 				break;
 			default:
 				println("No color found");
@@ -303,72 +318,117 @@ class Strat
 	 * Dress the windsocks
 	 * THIS METHOD WILL BE MODIFIED SOON
 	 */
-	void windsock()
+	// void windsock()
+	// {
+	// 	if(this.robot.angle < PI - rot_step)
+	// 	{
+	// 		this.robot.goToAngle(PI);
+	// 		return;
+	// 	}
+
+	// 	if(this.windsock_wait == -1)
+	// 		this.windsock_wait = millis();
+
+	// 	if((millis() - this.windsock_wait) < 2000)
+	// 	{
+	// 		fill(0, 255, 0);
+	// 		pushMatrix();
+	// 		float dist_bord = ARENA_WIDTH - this.robot.position.y - float(ROBOT_HEIGHT)/2;
+	// 		float coeff = float(millis() - this.windsock_wait)/2000.0;
+	// 		float act_height = coeff * dist_bord;
+	// 		act_height = (act_height > 36) ? 36 : act_height;
+	// 		translate(this.robot.position.x, this.robot.position.y + ROBOT_WIDTH/2 + act_height/2);//50
+	// 		rect(0, 0, 10, act_height);
+	// 		popMatrix();
+	// 		this.robot.deployed = true;
+	// 		return;
+	// 	}
+
+	// 	this.robot.checkpoint_windsock.y = robot.position.y;
+	// 	tab_tasks[TASK_WINDSOCK].in_progress();
+	// 	this.robot.next_destination = this.robot.checkpoint_windsock;
+	// 	this.robot.goTo(true);
+
+	// 	if(this.robot.position.is_around(this.robot.checkpoint_windsock, 5) && this.robot.deployed)
+	// 	{
+	// 		if(this.windsock_wait_2 == -1)
+	// 			this.windsock_wait_2 = millis();
+
+	// 		if((millis() - this.windsock_wait_2) < 2000)
+	// 		{
+	// 			fill(0, 255, 0);
+	// 			pushMatrix();
+	// 			float dist_bord = float(ARENA_WIDTH) - this.robot.position.y - float(ROBOT_HEIGHT)/2;
+	// 			float coeff = float(millis() - this.windsock_wait_2)/2000.0;
+	// 			float act_height = (1 - coeff) * dist_bord;
+	// 			act_height = (act_height > 36) ? 36 : act_height;
+	// 			translate(this.robot.position.x, this.robot.position.y + ROBOT_WIDTH/2 + act_height/2);//50
+	// 			rect(0, 0, 10, act_height);
+	// 			popMatrix();
+	// 		}
+	// 		else
+	// 			this.robot.deployed = false;
+	// 		return;
+	// 	}
+	// 	else if(this.robot.position.is_around(this.robot.checkpoint_windsock, 5))
+	// 	{
+	// 		tab_tasks[TASK_WINDSOCK].over();
+	// 		this.score += tab_tasks[TASK_WINDSOCK].points;
+	// 		return;
+	// 	}
+
+	// 	fill(0, 255, 0);
+	// 	pushMatrix();
+	// 	translate(this.robot.position.x, this.robot.position.y + ROBOT_WIDTH/2 + 18);//50
+	// 	rect(0, 0, 10, 36);
+	// 	popMatrix();
+
+	// }
+
+	void windsock_1()
 	{
-		if(this.robot.angle < PI - rot_step)
+		tab_tasks[TASK_WINDSOCK_1].in_progress();
+		if(this.robot.angle < PI/2 - rot_step || this.robot.angle > PI/2 + rot_step)
 		{
-			this.robot.goToAngle(PI);
+			this.robot.goToAngle(PI/2);
 			return;
 		}
+		// this.robot.checkpoint_windsock_1.x = robot.position.x;
+		// this.robot.next_destination = this.robot.checkpoint_windsock_1;
+		// if(!this.robot.position.is_around(this.robot.next_destination, 5))
+		// {
+		// 	this.robot.goTo(true);
+		// 	return;
+		// }
 
-		if(this.windsock_wait == -1)
-			this.windsock_wait = millis();
-
-		if((millis() - this.windsock_wait) < 2000)
-		{
-			fill(0, 255, 0);
-			pushMatrix();
-			float dist_bord = ARENA_WIDTH - this.robot.position.y - float(ROBOT_HEIGHT)/2;
-			float coeff = float(millis() - this.windsock_wait)/2000.0;
-			float act_height = coeff * dist_bord;
-			act_height = (act_height > 36) ? 36 : act_height;
-			translate(this.robot.position.x, this.robot.position.y + ROBOT_WIDTH/2 + act_height/2);//50
-			rect(0, 0, 10, act_height);
-			popMatrix();
-			this.robot.deployed = true;
-			return;
-		}
-
-		this.robot.checkpoint_windsock.y = robot.position.y;
-		tab_tasks[TASK_WINDSOCK].in_progress();
-		this.robot.next_destination = this.robot.checkpoint_windsock;
-		this.robot.goTo(true);
-
-		if(this.robot.position.is_around(this.robot.checkpoint_windsock, 5) && this.robot.deployed)
-		{
-			if(this.windsock_wait_2 == -1)
-				this.windsock_wait_2 = millis();
-
-			if((millis() - this.windsock_wait_2) < 2000)
-			{
-				fill(0, 255, 0);
-				pushMatrix();
-				float dist_bord = float(ARENA_WIDTH) - this.robot.position.y - float(ROBOT_HEIGHT)/2;
-				float coeff = float(millis() - this.windsock_wait_2)/2000.0;
-				float act_height = (1 - coeff) * dist_bord;
-				act_height = (act_height > 36) ? 36 : act_height;
-				translate(this.robot.position.x, this.robot.position.y + ROBOT_WIDTH/2 + act_height/2);//50
-				rect(0, 0, 10, act_height);
-				popMatrix();
-			}
-			else
-				this.robot.deployed = false;
-			return;
-		}
-		else if(this.robot.position.is_around(this.robot.checkpoint_windsock, 5))
-		{
-			tab_tasks[TASK_WINDSOCK].over();
-			this.score += tab_tasks[TASK_WINDSOCK].points;
-			return;
-		}
-
-		fill(0, 255, 0);
-		pushMatrix();
-		translate(this.robot.position.x, this.robot.position.y + ROBOT_WIDTH/2 + 18);//50
-		rect(0, 0, 10, 36);
-		popMatrix();
-
+		tab_tasks[TASK_WINDSOCK_1].over();
+		this.score += tab_tasks[TASK_WINDSOCK_1].points;
+		if (tab_tasks[TASK_WINDSOCK_2].done == DONE)
+			this.score += tab_tasks[TASK_WINDSOCK_1].points;
 	}
+
+	void windsock_2()
+	{
+		tab_tasks[TASK_WINDSOCK_2].in_progress();
+		if(this.robot.angle < PI/2 - rot_step || this.robot.angle > PI/2 + rot_step)
+		{
+			this.robot.goToAngle(PI/2);
+			return;
+		}
+		// this.robot.checkpoint_windsock_2.x = robot.position.x;
+		// this.robot.next_destination = this.robot.checkpoint_windsock_2;
+		// if(!this.robot.position.is_around(this.robot.next_destination, 5))
+		// {
+		// 	this.robot.goTo(true);
+		// 	return;
+		// }
+
+		tab_tasks[TASK_WINDSOCK_2].over();
+		this.score += tab_tasks[TASK_WINDSOCK_2].points;
+		if (tab_tasks[TASK_WINDSOCK_1].done == DONE)
+			this.score += tab_tasks[TASK_WINDSOCK_2].points;
+	}
+
 
 	/**
 	 * Deploy the actuator to push the lighthouse button (simulation only)
@@ -443,7 +503,7 @@ class Strat
 
 		if(tab_tasks[TASK_FLAG].done != IN_PROGRESS)
 		{
-			Pos weth_1 = new Pos(POS_FLAG.x, 150), weth_2 = new Pos(POS_FLAG.x, 850);
+			Pos weth_1 = new Pos(POS_FLAG.x, 200), weth_2 = new Pos(POS_FLAG.x, 800);
 			if (this.robot.position.is_around(weth_1, 5) || this.robot.position.is_around(weth_2, 2))
 				if (tab_tasks[TASK_WEATHERCOCK].done == DONE)
 					this.score += 10;
@@ -541,7 +601,7 @@ class Strat
 		float step = 10;
 		Pos checkpoint = new Pos(this.robot.position);
 
-		while (checkpoint.onArena())
+		while (checkpoint.on_arena(100))
 		{
 			checkpoint.x += step*cos(angle);
 			checkpoint.y += step*sin(angle);

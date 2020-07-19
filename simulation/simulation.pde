@@ -21,9 +21,10 @@ final int FAST = 10;
 
 //Macro for tasks
 final int TASK_WEATHERCOCK = 0;
-final int TASK_WINDSOCK = 1;
-final int TASK_LIGHTHOUSE = 2;
-final int TASK_FLAG = 3;
+final int TASK_WINDSOCK_1 = 1;
+final int TASK_WINDSOCK_2 = 2;
+final int TASK_LIGHTHOUSE = 3;
+final int TASK_FLAG = 4;
 
 //Macro for colors (weathercock)
 final int NO_COLOR = 0;
@@ -39,7 +40,8 @@ final int DONE = 2;
 Pos POS_LIGHTHOUSE = null;
 Pos POS_LIGHTHOUSE_OP = null;
 Pos POS_WEATHERCOCK = null;
-Pos POS_WINDSOCK = null;
+Pos POS_WINDSOCK_1 = null;
+Pos POS_WINDSOCK_2 = null;
 Pos POS_FLAG = null;
 
 enum Dir {left , right };
@@ -94,28 +96,32 @@ void init_robots(Dir dir)
 	{
 		robot = new Robot(new Pos(100, 410), 0);
 		robot_op = new Robot(new Pos(1400, 410), PI);
-		POS_WINDSOCK = new Pos(100,800);
+		POS_WINDSOCK_1 = new Pos(100,800);
+		POS_WINDSOCK_2 = new Pos(300,800);
 		POS_LIGHTHOUSE = new Pos(250,125);
 		POS_LIGHTHOUSE_OP = new Pos(1250, 125);
-		POS_FLAG = new Pos(50, -50);
+		POS_FLAG = new Pos(100, -50);
 		POS_WEATHERCOCK = new Pos(450, 125);
-		robot.checkpoint_windsock = new Pos(500,-1);
+		robot.checkpoint_windsock_1 = new Pos(500,-1);
+		robot.checkpoint_windsock_2 = new Pos(700,-1);
 		robot.side = true;
 	}
 	else
 	{
 		robot = new Robot(new Pos(1400, 410), PI);
 		robot_op = new Robot(new Pos(100, 410), 0);
-		POS_WINDSOCK = new Pos(1400, 800);
+		POS_WINDSOCK_1 = new Pos(1400,800);
+		POS_WINDSOCK_2 = new Pos(1200,800);
 		POS_LIGHTHOUSE = new Pos(1250, 125);
 		POS_LIGHTHOUSE_OP = new Pos(250,125);
-		POS_FLAG = new Pos(1450, -50);
+		POS_FLAG = new Pos(1400, -50);
 		POS_WEATHERCOCK = new Pos(1050, 125);
-		robot.checkpoint_windsock = new Pos(1000,-1);
+		robot.checkpoint_windsock_1 = new Pos(1000,-1);
+		robot.checkpoint_windsock_1 = new Pos(1200,-1);
 		robot.side = false;
 	}
 	
-	robot.checkpoint_lighthouse = new Pos(-1,100);
+	robot.checkpoint_lighthouse = new Pos(-1,50);
 	robot.checkpoint_weathercock = new Pos(ARENA_HEIGHT/2, -1);
 }
 
@@ -125,10 +131,11 @@ void init_robots(Dir dir)
 void init_tab_tasks()
 {
 	Task task_weathercock = new Task(10, POS_WEATHERCOCK, 25000);
-	Task task_windsock = new Task(15, POS_WINDSOCK, 20000);
+	Task task_windsock_1 = new Task(5, POS_WINDSOCK_1, 20000);
+	Task task_windsock_2 = new Task(5, POS_WINDSOCK_2, 20000);
 	Task task_lighthouse = new Task(13, POS_LIGHTHOUSE, 5000);
 	Task task_flag = new Task(10, POS_FLAG, 7000);
-	Task[] tab_temp = {task_weathercock, task_windsock, task_lighthouse, task_flag};
+	Task[] tab_temp = {task_weathercock, task_windsock_1, task_windsock_2, task_lighthouse, task_flag};
 	tab_tasks = tab_temp;
 }
 

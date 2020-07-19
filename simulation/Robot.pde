@@ -9,7 +9,8 @@ class Robot
 	int speed_regime;
 	Pos next_destination;
 	int detected_color;
-	Pos checkpoint_windsock;
+	Pos checkpoint_windsock_1;
+	Pos checkpoint_windsock_2;
 	Pos checkpoint_lighthouse;
 	Pos checkpoint_weathercock;
 	boolean flag;
@@ -18,10 +19,10 @@ class Robot
 	
 	//SIMULATION
 	Pos new_position = new Pos(0,0);
-	// 0: bottom - left
-	// 1: top - left
-	// 2: top - right
-	// 3: bottom - right
+	// 0: bottom - left (conv left)
+	// 1: top - left (conv left)
+	// 2: top - right (conv left)
+	// 3: bottom - right (conv left)
 	Pos[] corners = new Pos[4];
 
 	/**
@@ -154,18 +155,31 @@ class Robot
 		if (this.position.is_around(this.next_destination, 5))
 			return;
 
-		float dist = this.position.dist(this.next_destination);
-		float theta = this.position.angle(this.next_destination);
-
-		if (mod2Pi(theta + turn - this.angle) > rot_step && !this.position.is_around(this.next_destination, 5))
+		if (forward)
 		{
-			goToAngle(theta + turn);
-			return;
+			float dist = this.position.dist(this.next_destination);
+			float theta = this.position.angle(this.next_destination);
+
+			if (mod2Pi(theta + turn - this.angle) > rot_step && !this.position.is_around(this.next_destination, 5))
+			{
+				goToAngle(theta + turn);
+				return;
+			}
 		}
 		
 		this.position.x += this.speed_regime * cos(this.angle + turn);
 		this.position.y += this.speed_regime * sin(this.angle + turn);
 		
+	}
+
+	boolean haveToBack()
+	{
+		this.getCorners();
+
+		if(!this.corners[0].on_arena(10) || !this.corners[3].on_arena(10))
+			return true;
+
+		return false;
 	}
 
 	/**

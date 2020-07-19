@@ -88,9 +88,9 @@ class Pos
 	 * Check if the position is in the arena
 	 * @return a boolean that indicate if the point in the arena
 	 */
-	boolean onArena()
+	boolean on_arena(int gap)
 	{
-		return ((this.x > 0) && (this.x < ARENA_HEIGHT - 100) && (this.y > 0) && (this.y < ARENA_WIDTH - 100));
+		return ((this.x > gap) && (this.x < ARENA_HEIGHT - gap) && (this.y > gap) && (this.y < ARENA_WIDTH - gap));
 	}
 	/**
 	* Find the point in the middle of 2 points
