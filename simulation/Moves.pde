@@ -84,7 +84,6 @@ class Moves
 
 		if (this.click)
 			this.display_dest();
-			
 		this.robot_op.display(false);
 	}
 }

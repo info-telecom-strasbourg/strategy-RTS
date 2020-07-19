@@ -21,6 +21,7 @@ class Strat
 	int lighthouse_wait = -1;
 	int windsock_wait = -1;
 	int windsock_wait_2 = -1;
+
 	int weathercock_wait = -1;
 
 	/**
@@ -37,6 +38,7 @@ class Strat
 		this.calibrate_checkpoint = null;
 		this.x_calibration = false;
 		this.y_calibrated = false;
+
 	}
 
 	/**
@@ -55,11 +57,11 @@ class Strat
 			do_task();
 			if (!this.path.isEmpty())
 				this.path = new ArrayList();
-			
 		}
 		else
 		{
 			path();
+
 
 			if (!this.path.isEmpty() && this.robot.position.is_around(this.path.get(0), 5))
 				this.path.remove(0);
@@ -87,7 +89,7 @@ class Strat
 		else
 			check_path(); 
 	}
-	
+
 	/**
 	 * Identify the opponents position with the mobile lidar
 	 * @param: opponent: the opponent's robot (for simulation)
@@ -183,6 +185,7 @@ class Strat
 	void select_mooring_area()
 	{
 		Pos[] points_for_closer = new Pos [] {new Pos(POS_FLAG.x, 200), new Pos(POS_FLAG.x, 650)};
+
 		tab_tasks[TASK_FLAG].position = this.robot.position.closer(points_for_closer);
 	}
 
@@ -193,7 +196,6 @@ class Strat
 	int find_best_task()
 	{
 		tab_tasks[GAME_OVER].position = this.robot.position;
-
 		if (this.id_current_task == TASK_FLAG && this.robot.detected_color == NO_COLOR)
 			select_mooring_area();
 
@@ -208,6 +210,7 @@ class Strat
 			this.changeTaskOrder(tasks_order.size() - 1, 0);
 
 		return this.tasks_order.get(0);
+
 	}
 
 	/**
@@ -382,6 +385,7 @@ class Strat
 		}		
 	}
 
+
 	/**
 	 * Deploy the actuator to push the lighthouse button (simulation only)
 	 */
@@ -462,6 +466,7 @@ class Strat
 		tasks_order.remove(0);
 	}
 
+
 	/**
 	 * Simulate the task linked to the flag
 	 */
@@ -486,6 +491,7 @@ class Strat
 			this.robot.flag = true;
 			tab_tasks[TASK_FLAG].over();
 			tasks_order.remove(0);
+
 			this.score += tab_tasks[TASK_FLAG].points;
 		}
 	}
@@ -555,6 +561,7 @@ class Strat
 		this.robot.speed_regime = STOP;
 		println("GAME OVER");
 	}
+
 	/**
 	 * Calculate the best path to move to the next task (we use a checkpoint in the
 	 * case we have to avoid the opponent), but if no path is found, we stop the robot
@@ -640,7 +647,7 @@ class Strat
 		{
 			checkpoint.x += step*cos(angle);
 			checkpoint.y += step*sin(angle);
-			
+
 			if(access(this.robot.position, checkpoint, 280) == null 
 				&& access(checkpoint, tab_tasks[this.id_current_task].position, 280) == null)
 					return checkpoint;

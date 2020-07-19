@@ -29,6 +29,7 @@ final int TASK_FLAG = 5;
 final int TASK_CALIBRATION = 6;
 final int GAME_OVER = 7;
 
+
 //Macro for colors (weathercock)
 final int NO_COLOR = 0;
 final int BLACK = 1;
@@ -50,6 +51,7 @@ Pos POS_FLAG = null;
 
 enum Dir {left , right };
 Dir dir = null;
+
 
 Task[] tab_tasks = null;
 
@@ -97,6 +99,7 @@ ArrayList<Pos> random_positions(int nb)
  * @param dir: the start position (left or right)
  */
 void init_robots()
+
 {
 	if (dir == Dir.left)
 	{
@@ -153,7 +156,6 @@ void init_tab_tasks()
 void init_robots_strat()
 {
 	strat = new Strat(robot);
-
 	strat.tasks_order.add(TASK_LIGHTHOUSE);
 	strat.tasks_order.add(TASK_WINDSOCK_1);
 	strat.tasks_order.add(TASK_WINDSOCK_2);
@@ -168,6 +170,7 @@ void init_robots_strat()
 	robot_moves = new Moves(robot_op);
 
 }
+
 /**
  * Initialization of the simulation
  */
@@ -233,6 +236,5 @@ void draw()
 	println("-------------");
 	for (int i = 0; i < strat.tasks_order.size(); i++)
 		println("TASK ", strat.tasks_order.get(i));
-	
-	
+
 }
