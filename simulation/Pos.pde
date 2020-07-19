@@ -90,7 +90,12 @@ class Pos
 	 */
 	boolean on_arena(int gap)
 	{
-		return ((this.x > gap) && (this.x < ARENA_HEIGHT - gap) && (this.y > gap) && (this.y < ARENA_WIDTH - gap));
+		int gap_port = 100;
+		int port_x = (dir == Dir.left) ? ARENA_HEIGHT - 200 : 200;
+		boolean on_port = (dir == Dir.left) ? this.x > port_x - gap : this.x < port_x - gap;
+
+		return ((this.x > gap) && (this.x < ARENA_HEIGHT - gap) && (this.y > gap) && (this.y < ARENA_WIDTH - gap)
+		& !(on_port && this.y > 250 - gap && this.y < 550 + gap));
 	}
 	/**
 	* Find the point in the middle of 2 points
