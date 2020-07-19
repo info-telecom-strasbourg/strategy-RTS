@@ -181,7 +181,7 @@ class Strat
 	 */
 	void select_mooring_area()
 	{
-		Pos[] points_for_closer = new Pos [] {new Pos(POS_FLAG.x, 200), new Pos(POS_FLAG.x, 800)};
+		Pos[] points_for_closer = new Pos [] {new Pos(POS_FLAG.x, 200), new Pos(POS_FLAG.x, 650)};
 		tab_tasks[TASK_FLAG].position = this.robot.position.closer(points_for_closer);
 	}
 
@@ -239,7 +239,7 @@ class Strat
 	boolean final_move_without_color(long time_left)
 	{
 		return (is_final_move(new Pos(POS_FLAG.x, 200), time_left) 
-			&& is_final_move(new Pos(POS_FLAG.x, 800), time_left) 
+			&& is_final_move(new Pos(POS_FLAG.x, 650), time_left) 
 			&& tab_tasks[TASK_FLAG].done != DONE);
 	}
 	
@@ -297,7 +297,7 @@ class Strat
 				POS_FLAG.y = 200;
 				break;
 			case WHITE:
-				POS_FLAG.y = 800;
+				POS_FLAG.y = 650;
 				break;
 			default:
 				println("No color found");
@@ -379,7 +379,11 @@ class Strat
 		}
 		else
 		{
-			tab_tasks[TASK_LIGHTHOUSE].interrupted();
+			if (this.id_current_task == TASK_WINDSOCK_1)
+				windsock_wait = -1;
+			else
+				windsock_wait_2 = -1;
+			tab_tasks[this.id_current_task].interrupted();
 			tab_tasks[TASK_CALIBRATION].in_progress();
 		}		
 	}
@@ -435,7 +439,7 @@ class Strat
 				else
 				{
 					lighthouse_wait = -1;
-					tab_tasks[TASK_LIGHTHOUSE].interrupted();
+					tab_tasks[this.id_current_task].interrupted();
 					tab_tasks[TASK_CALIBRATION].in_progress();
 				}
 			}
@@ -472,7 +476,7 @@ class Strat
 
 		if(tab_tasks[TASK_FLAG].done != IN_PROGRESS)
 		{
-			Pos weth_1 = new Pos(POS_FLAG.x, 200), weth_2 = new Pos(POS_FLAG.x, 800);
+			Pos weth_1 = new Pos(POS_FLAG.x, 200), weth_2 = new Pos(POS_FLAG.x, 650);
 			if (this.robot.position.is_around(weth_1, 5) || this.robot.position.is_around(weth_2, 5))
 				if (tab_tasks[TASK_WEATHERCOCK].done == DONE)
 					this.score += 10;

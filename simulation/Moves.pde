@@ -82,8 +82,9 @@ class Moves
 			
 		this.robot_op.next_destination = list_moves.get(0);
 
-
-		this.display_dest();
+		if (this.click)
+			this.display_dest();
+			
 		this.robot_op.display(false);
 	}
 }
