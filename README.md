@@ -5,16 +5,16 @@ Creation of the robot strategy for RTS
 
 Here is the list of commands to install and start the simulation:
 
-`
+```
 git clone git@github.com:info-telecom-strasbourg/strategy-RTS.git
-`
+```
 
-At this point, the last update is on the branch `struct`. 
+At this point, the last update is on the branch `dev`. 
 To access it, just enter:
 
 ```
-git checkout struct
-git pull origin struct
+git checkout dev
+git pull origin dev
 ```
 
 You can now start the simulation with your processing IDE.
@@ -54,6 +54,10 @@ The robot will follow this strategy :
 - Avoidance of the opposing robot
 - Make some tests
 - Adapt the code in C++
+
+## Informations
+For angles, we chose to have them in [0, 2*Pi].
+And 1 pixel in the simulation correspond to 2mm in reality.
 
 ## Rules of the competition
 You can find the rules of the competition [by clicking here](https://www.coupederobotique.fr/wp-content/uploads/Eurobot2020_Rules_Cup_OFFICIAL_FR.pdf).
