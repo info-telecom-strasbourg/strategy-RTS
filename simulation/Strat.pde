@@ -14,6 +14,7 @@ class Strat
 	Pos calibrate_checkpoint;
 	boolean x_calibration;
 	boolean y_calibrated;
+	ArrayList <Integer> tasks_order = new ArrayList();
 
 
 	//SIMULATION
@@ -191,34 +192,22 @@ class Strat
 	 */
 	int find_best_task()
 	{
+		tab_tasks[GAME_OVER].position = this.robot.position;
+
 		if (this.id_current_task == TASK_FLAG && this.robot.detected_color == NO_COLOR)
 			select_mooring_area();
 
 
 		long time_left = 100000 - millis() - time;
 
-		if (final_move_with_color(time_left) || final_move_without_color(time_left))		
-			return TASK_FLAG;
 
-		if(tab_tasks[TASK_CALIBRATION].done != DONE)
-			return TASK_CALIBRATION;
+		if (final_move_with_color(time_left) || final_move_without_color(time_left))	
+			this.changeTaskOrder(tasks_order.size() - 2, 0);
 
-		if(tab_tasks[TASK_LIGHTHOUSE].done != DONE)
-			return TASK_LIGHTHOUSE;
+		if (time_left < 0.5)
+			this.changeTaskOrder(tasks_order.size() - 1, 0);
 
-		if(tab_tasks[TASK_WINDSOCK_1].done != DONE)
-			return TASK_WINDSOCK_1;
-		
-		if(tab_tasks[TASK_WINDSOCK_2].done != DONE)
-			return TASK_WINDSOCK_2;
-
-		if(tab_tasks[TASK_WEATHERCOCK].done != DONE)
-			return TASK_WEATHERCOCK;
-
-		if(tab_tasks[TASK_CUPS].done != DONE)
-			return TASK_CUPS;
-
-		return TASK_FLAG;
+		return this.tasks_order.get(0);
 	}
 
 	/**
@@ -281,6 +270,9 @@ class Strat
 			case TASK_CALIBRATION:
 				calibration();
 				break;
+			case GAME_OVER:
+				game_over();
+				break;
 			default:
 				println("No task found");
 		}
@@ -326,6 +318,7 @@ class Strat
 				{
 					detect_weathercock_col();
 					tab_tasks[TASK_WEATHERCOCK].over();
+					tasks_order.remove(0);
 				}
 			}
 			else
@@ -373,6 +366,7 @@ class Strat
 		if(object_is_located(true))
 		{
 			tab_tasks[this.id_current_task].over();
+			tasks_order.remove(0);
 			this.score += tab_tasks[this.id_current_task].points;
 			if (tab_tasks[id].done == DONE)
 				this.score += tab_tasks[this.id_current_task].points;
@@ -434,6 +428,7 @@ class Strat
 				if(object_is_located(true))
 				{
 					tab_tasks[TASK_LIGHTHOUSE].over();
+					tasks_order.remove(0);
 					this.score += tab_tasks[TASK_LIGHTHOUSE].points;
 				}
 				else
@@ -464,6 +459,7 @@ class Strat
 	void cups()
 	{
 		tab_tasks[TASK_CUPS].over();
+		tasks_order.remove(0);
 	}
 
 	/**
@@ -489,6 +485,7 @@ class Strat
 		{
 			this.robot.flag = true;
 			tab_tasks[TASK_FLAG].over();
+			tasks_order.remove(0);
 			this.score += tab_tasks[TASK_FLAG].points;
 		}
 	}
@@ -539,6 +536,7 @@ class Strat
 				if(!this.robot.corners[0].on_arena(1) && !this.robot.corners[3].on_arena(1))
 				{
 					tab_tasks[TASK_CALIBRATION].over();
+					tasks_order.remove(0);
 					y_calibrated = false;
 					x_calibration = false;
 					tab_tasks[TASK_CALIBRATION].position = new Pos(-50, -50);
@@ -551,6 +549,12 @@ class Strat
 		
 	}
 
+	void game_over()
+	{
+		tab_tasks[GAME_OVER].in_progress();
+		this.robot.speed_regime = STOP;
+		println("GAME OVER");
+	}
 	/**
 	 * Calculate the best path to move to the next task (we use a checkpoint in the
 	 * case we have to avoid the opponent), but if no path is found, we stop the robot
@@ -655,5 +659,35 @@ class Strat
 				this.path = new ArrayList();
 				find_path();
 			}
+	}
+
+	void changeTaskOrder(int index_start, int index_end)
+	{
+		if (index_start == index_end || index_start >= this.tasks_order.size() || index_end >= this.tasks_order.size()
+		|| index_start < 0 || index_end < 0)
+			return;
+
+		ArrayList <Integer> tasks_order_temp = new ArrayList();
+
+		if (index_start > index_end)
+		{
+			for(int i = 0; i < index_end; i++)
+				tasks_order_temp.add(this.tasks_order.get(i));
+			tasks_order_temp.add(this.tasks_order.get(index_start));
+			for(int i = index_end; i < this.tasks_order.size(); i++)
+				if(i != index_start)
+					tasks_order_temp.add(this.tasks_order.get(i));
+		}
+		else
+		{
+			for(int i = 0; i <= index_end; i++)
+				if(i != index_start)
+					tasks_order_temp.add(this.tasks_order.get(i));
+			tasks_order_temp.add(this.tasks_order.get(index_start));
+			for(int i = index_end + 1; i < this.tasks_order.size(); i++)
+				tasks_order_temp.add(this.tasks_order.get(i));
+		}
+
+		this.tasks_order = tasks_order_temp;
 	}
 }

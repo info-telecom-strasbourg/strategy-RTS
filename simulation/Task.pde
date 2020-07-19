@@ -3,6 +3,7 @@
  */
 class Task
 {
+	int id;
 	int points;
 	Pos position;
 	int done;
@@ -15,8 +16,9 @@ class Task
 	 * @param position: the position of the task
 	 * @param max_time: the maximum time this task should last
 	 */
-	Task(int points, Pos position, long max_time)
+	Task(int id, int points, Pos position, long max_time)
 	{
+		this.id = id;
 		this.points = points;
 		this.position = position;
 		this.done = NOT_DONE;
@@ -43,21 +45,24 @@ class Task
 	 */
 	void display()
 	{
-		switch (done)
+		if (this.id != TASK_CALIBRATION && this.id != GAME_OVER)
 		{
-			case NOT_DONE:
-				fill(255,0,0);
-				break;
-			case IN_PROGRESS:
-				fill(255,165,0);
-				break;
-			case DONE:
-				fill(0,255,0);
-				break;
-			default :
-				fill(0,0,0);
-		}
+			switch (done)
+			{
+				case NOT_DONE:
+					fill(255,0,0);
+					break;
+				case IN_PROGRESS:
+					fill(255,165,0);
+					break;
+				case DONE:
+					fill(0,255,0);
+					break;
+				default :
+					fill(0,0,0);
+			}
 
-		triangle(position.x, position.y + 30, position.x - 30, position.y - 30, position.x + 30, position.y - 30);
+			triangle(position.x, position.y + 30, position.x - 30, position.y - 30, position.x + 30, position.y - 30);
+		}
 	}
 }
