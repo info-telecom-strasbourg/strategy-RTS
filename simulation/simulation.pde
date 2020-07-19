@@ -24,7 +24,11 @@ final int TASK_WEATHERCOCK = 0;
 final int TASK_WINDSOCK_1 = 1;
 final int TASK_WINDSOCK_2 = 2;
 final int TASK_LIGHTHOUSE = 3;
-final int TASK_FLAG = 4;
+final int TASK_CUPS = 4;
+final int TASK_FLAG = 5;
+final int TASK_CALIBRATION = 6;
+final int GAME_OVER = 7;
+
 
 //Macro for colors (weathercock)
 final int NO_COLOR = 0;
@@ -42,9 +46,13 @@ Pos POS_LIGHTHOUSE_OP = null;
 Pos POS_WEATHERCOCK = null;
 Pos POS_WINDSOCK_1 = null;
 Pos POS_WINDSOCK_2 = null;
+Pos POS_CUPS = null;
 Pos POS_FLAG = null;
 
 enum Dir {left , right };
+Dir dir = null;
+
+
 Task[] tab_tasks = null;
 
 
@@ -90,7 +98,8 @@ ArrayList<Pos> random_positions(int nb)
  * Initialize robot parameters and tasks position according to the start position
  * @param dir: the start position (left or right)
  */
-void init_robots(Dir dir)
+void init_robots()
+
 {
 	if (dir == Dir.left)
 	{
@@ -102,8 +111,6 @@ void init_robots(Dir dir)
 		POS_LIGHTHOUSE_OP = new Pos(1250, 125);
 		POS_FLAG = new Pos(100, -50);
 		POS_WEATHERCOCK = new Pos(450, 125);
-		robot.checkpoint_windsock_1 = new Pos(500,-1);
-		robot.checkpoint_windsock_2 = new Pos(700,-1);
 		robot.side = true;
 	}
 	else
@@ -116,11 +123,11 @@ void init_robots(Dir dir)
 		POS_LIGHTHOUSE_OP = new Pos(250,125);
 		POS_FLAG = new Pos(1400, -50);
 		POS_WEATHERCOCK = new Pos(1050, 125);
-		robot.checkpoint_windsock_1 = new Pos(1000,-1);
-		robot.checkpoint_windsock_1 = new Pos(1200,-1);
 		robot.side = false;
 	}
 	
+	POS_CUPS = new Pos(ARENA_HEIGHT/2, ARENA_WIDTH/2);
+	robot.checkpoint_windsock = new Pos(-1,945);
 	robot.checkpoint_lighthouse = new Pos(-1,50);
 	robot.checkpoint_weathercock = new Pos(ARENA_HEIGHT/2, -1);
 }
@@ -130,12 +137,16 @@ void init_robots(Dir dir)
  */
 void init_tab_tasks()
 {
-	Task task_weathercock = new Task(10, POS_WEATHERCOCK, 25000);
-	Task task_windsock_1 = new Task(5, POS_WINDSOCK_1, 20000);
-	Task task_windsock_2 = new Task(5, POS_WINDSOCK_2, 20000);
-	Task task_lighthouse = new Task(13, POS_LIGHTHOUSE, 5000);
-	Task task_flag = new Task(10, POS_FLAG, 7000);
-	Task[] tab_temp = {task_weathercock, task_windsock_1, task_windsock_2, task_lighthouse, task_flag};
+	Task task_weathercock = new Task(TASK_WEATHERCOCK, 10, POS_WEATHERCOCK, 25000);
+	Task task_windsock_1 = new Task(TASK_WINDSOCK_1, 5, POS_WINDSOCK_1, 20000);
+	Task task_windsock_2 = new Task(TASK_WINDSOCK_2, 5, POS_WINDSOCK_2, 20000);
+	Task task_lighthouse = new Task(TASK_WEATHERCOCK, 13, POS_LIGHTHOUSE, 5000);
+	Task task_cups = new Task(TASK_CUPS, 0, POS_CUPS, 10000);
+	Task task_flag = new Task(TASK_FLAG, 10, POS_FLAG, 7000);
+	Task task_calibration = new Task(TASK_CALIBRATION, 0, new Pos(-50, -50), 15000);
+	task_calibration.done = DONE;
+	Task game_over = new Task(GAME_OVER, 0, new Pos(-50, -50), 1000000);
+	Task[] tab_temp = {task_weathercock, task_windsock_1, task_windsock_2, task_lighthouse, task_cups, task_flag, task_calibration, game_over};
 	tab_tasks = tab_temp;
 }
 
@@ -145,8 +156,19 @@ void init_tab_tasks()
 void init_robots_strat()
 {
 	strat = new Strat(robot);
-	ArrayList <Pos> path_op = random_positions(53);
-	robot_moves = new Moves(robot_op, path_op);
+	strat.tasks_order.add(TASK_LIGHTHOUSE);
+	strat.tasks_order.add(TASK_WINDSOCK_1);
+	strat.tasks_order.add(TASK_WINDSOCK_2);
+	strat.tasks_order.add(TASK_WEATHERCOCK);
+	strat.tasks_order.add(TASK_CUPS);
+	strat.tasks_order.add(TASK_FLAG);
+	strat.tasks_order.add(GAME_OVER);
+
+  
+	// ArrayList <Pos> path_op = random_positions(53);
+	// robot_moves = new Moves(robot_op, path_op);
+	robot_moves = new Moves(robot_op);
+
 }
 
 /**
@@ -158,10 +180,12 @@ void setup()
 	size(1500,1000);
 	background(img);
 	frameRate(fps);
-	init_robots(Dir.right);
+	dir = Dir.left;
+	init_robots();
 	init_tab_tasks();
 	init_robots_strat();
 	weathercock = new Weathercock();
+	smooth();
 }
 
 /**
@@ -208,4 +232,9 @@ void draw()
 	display_tasks();
 
 	display_infos();
+
+	println("-------------");
+	for (int i = 0; i < strat.tasks_order.size(); i++)
+		println("TASK ", strat.tasks_order.get(i));
+
 }

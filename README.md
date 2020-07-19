@@ -5,16 +5,16 @@ Creation of the robot strategy for RTS
 
 Here is the list of commands to install and start the simulation:
 
-`
+```
 git clone git@github.com:info-telecom-strasbourg/strategy-RTS.git
-`
+```
 
-At this point, the last update is on the branch `struct`. 
+At this point, the last update is on the branch `dev`. 
 To access it, just enter:
 
 ```
-git checkout struct
-git pull origin struct
+git checkout dev
+git pull origin dev
 ```
 
 You can now start the simulation with your processing IDE.
@@ -33,7 +33,13 @@ The tasks location depend on the initial position and adapt themselves with the 
   
 The weathercock should take a random color after 25 seconds (black or white). When it's done a new task appear. In the futur, we plan to add this task only when our robot detect the color of the weathercock.
 
-We have simulated the behavior of the robot when it collapses with a border of the arena. 
+We have simulated the behavior of the robot when it collapses with a border of the arena.
+
+Concerning opponent, you can control it with your mouse:
+- left click to add a destination
+- right click on a point to delete it.
+
+The destination should appear with a number when you create it.
 
 
 ## Adopted strategy
@@ -48,6 +54,10 @@ The robot will follow this strategy :
 - Avoidance of the opposing robot
 - Make some tests
 - Adapt the code in C++
+
+## Informations
+For angles, we chose to have them in [0, 2*Pi].
+And 1 pixel in the simulation correspond to 2mm in reality.
 
 ## Rules of the competition
 You can find the rules of the competition [by clicking here](https://www.coupederobotique.fr/wp-content/uploads/Eurobot2020_Rules_Cup_OFFICIAL_FR.pdf).
