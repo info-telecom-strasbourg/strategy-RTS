@@ -615,7 +615,7 @@ class Strat
 				Pos check_1 = find_checkpoint(angle_to_check);
 				if(check_1 != null)
 					return check_1;
-				Pos check_2 = find_checkpoint(mod2Pi(-angle_to_check));
+				Pos check_2 = find_checkpoint(mod2Pi(2*angle_dep - angle_to_check));
 				if(check_2 != null)
 					return check_2;
 			}
@@ -636,8 +636,7 @@ class Strat
 		{
 			checkpoint.x += step*cos(angle);
 			checkpoint.y += step*sin(angle);
-
-
+			
 			if(access(this.robot.position, checkpoint, 280) == null 
 				&& access(checkpoint, tab_tasks[this.id_current_task].position, 280) == null)
 					return checkpoint;
