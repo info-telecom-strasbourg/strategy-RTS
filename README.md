@@ -33,7 +33,13 @@ The tasks location depend on the initial position and adapt themselves with the 
   
 The weathercock should take a random color after 25 seconds (black or white). When it's done a new task appear. In the futur, we plan to add this task only when our robot detect the color of the weathercock.
 
-We have simulated the behavior of the robot when it collapses with a border of the arena. 
+We have simulated the behavior of the robot when it collapses with a border of the arena.
+
+Concerning opponent, you can control it with your mouse:
+- left click to add a destination
+- right click on a point to delete it.
+
+The destination should appear with a number when you create it.
 
 
 ## Adopted strategy
