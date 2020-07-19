@@ -149,9 +149,9 @@ void init_tab_tasks()
 void init_robots_strat()
 {
 	strat = new Strat(robot);
-	ArrayList <Pos> path_op = random_positions(53);
-	robot_moves = new Moves(robot_op, path_op);
-	// robot_moves = new Moves(robot_op);
+	// ArrayList <Pos> path_op = random_positions(53);
+	// robot_moves = new Moves(robot_op, path_op);
+	robot_moves = new Moves(robot_op);
 }
 
 /**
