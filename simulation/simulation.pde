@@ -24,7 +24,9 @@ final int TASK_WEATHERCOCK = 0;
 final int TASK_WINDSOCK_1 = 1;
 final int TASK_WINDSOCK_2 = 2;
 final int TASK_LIGHTHOUSE = 3;
-final int TASK_FLAG = 4;
+final int TASK_CUPS = 4;
+final int TASK_FLAG = 5;
+final int TASK_CALIBRATION = 6;
 
 //Macro for colors (weathercock)
 final int NO_COLOR = 0;
@@ -42,6 +44,7 @@ Pos POS_LIGHTHOUSE_OP = null;
 Pos POS_WEATHERCOCK = null;
 Pos POS_WINDSOCK_1 = null;
 Pos POS_WINDSOCK_2 = null;
+Pos POS_CUPS = null;
 Pos POS_FLAG = null;
 
 enum Dir {left , right };
@@ -117,6 +120,7 @@ void init_robots(Dir dir)
 		robot.side = false;
 	}
 	
+	POS_CUPS = new Pos(ARENA_HEIGHT/2, ARENA_WIDTH/2);
 	robot.checkpoint_windsock = new Pos(-1,945);
 	robot.checkpoint_lighthouse = new Pos(-1,50);
 	robot.checkpoint_weathercock = new Pos(ARENA_HEIGHT/2, -1);
@@ -131,8 +135,11 @@ void init_tab_tasks()
 	Task task_windsock_1 = new Task(5, POS_WINDSOCK_1, 20000);
 	Task task_windsock_2 = new Task(5, POS_WINDSOCK_2, 20000);
 	Task task_lighthouse = new Task(13, POS_LIGHTHOUSE, 5000);
+	Task task_cups = new Task(0, POS_CUPS, 10000);
 	Task task_flag = new Task(10, POS_FLAG, 7000);
-	Task[] tab_temp = {task_weathercock, task_windsock_1, task_windsock_2, task_lighthouse, task_flag};
+	Task task_calibration = new Task(0, new Pos(-50, -50), 15000);
+	task_calibration.done = DONE;
+	Task[] tab_temp = {task_weathercock, task_windsock_1, task_windsock_2, task_lighthouse, task_cups, task_flag, task_calibration};
 	tab_tasks = tab_temp;
 }
 
@@ -156,7 +163,7 @@ void setup()
 	size(1500,1000);
 	background(img);
 	frameRate(fps);
-	init_robots(Dir.right);
+	init_robots(Dir.left);
 	init_tab_tasks();
 	init_robots_strat();
 	weathercock = new Weathercock();
