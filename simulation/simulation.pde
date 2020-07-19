@@ -49,6 +49,8 @@ Pos POS_CUPS = null;
 Pos POS_FLAG = null;
 
 enum Dir {left , right };
+Dir dir = null;
+
 Task[] tab_tasks = null;
 
 
@@ -94,7 +96,7 @@ ArrayList<Pos> random_positions(int nb)
  * Initialize robot parameters and tasks position according to the start position
  * @param dir: the start position (left or right)
  */
-void init_robots(Dir dir)
+void init_robots()
 {
 	if (dir == Dir.left)
 	{
@@ -151,6 +153,7 @@ void init_tab_tasks()
 void init_robots_strat()
 {
 	strat = new Strat(robot);
+
 	strat.tasks_order.add(TASK_LIGHTHOUSE);
 	strat.tasks_order.add(TASK_WINDSOCK_1);
 	strat.tasks_order.add(TASK_WINDSOCK_2);
@@ -158,10 +161,11 @@ void init_robots_strat()
 	strat.tasks_order.add(TASK_CUPS);
 	strat.tasks_order.add(TASK_FLAG);
 	strat.tasks_order.add(GAME_OVER);
+  
+	// ArrayList <Pos> path_op = random_positions(53);
+	// robot_moves = new Moves(robot_op, path_op);
+	robot_moves = new Moves(robot_op);
 
-	ArrayList <Pos> path_op = random_positions(53);
-	robot_moves = new Moves(robot_op, path_op);
-	// robot_moves = new Moves(robot_op);
 }
 
 /**
@@ -173,7 +177,8 @@ void setup()
 	size(1500,1000);
 	background(img);
 	frameRate(fps);
-	init_robots(Dir.left);
+	dir = Dir.left;
+	init_robots();
 	init_tab_tasks();
 	init_robots_strat();
 	weathercock = new Weathercock();
