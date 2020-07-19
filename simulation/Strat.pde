@@ -49,13 +49,8 @@ class Strat
 		}
 		else
 		{
-			if (this.path.isEmpty())
-				find_path();
-			else
-			{
-				check_path(); 
-			}
-			
+			path();
+
 			if (!this.path.isEmpty() && this.robot.position.is_around(this.path.get(0), 5))
 				this.path.remove(0);
 
@@ -75,6 +70,14 @@ class Strat
 		}
 	}
 
+	void path()
+	{
+		if (this.path.isEmpty())
+			find_path();
+		else
+			check_path(); 
+	}
+	
 	/**
 	 * Identify the opponents position with the mobile lidar
 	 * @param: opponent: the opponent's robot (for simulation)
@@ -288,7 +291,7 @@ class Strat
 
 		if (this.robot.position.is_around(this.robot.checkpoint_weathercock, 5))
 		{
-			this.robot.checkpoint_weathercock.y = 100;
+			this.robot.checkpoint_weathercock.y = 50;
 			this.robot.next_destination = this.robot.checkpoint_weathercock;
 		}
 
@@ -306,7 +309,7 @@ class Strat
 			}
 			else
 				this.robot.goToAngle(3*PI/2);
-
+		path();
 		this.robot.goTo(true);
 	}
 
@@ -338,6 +341,7 @@ class Strat
 
 		if(!this.robot.position.is_around(this.robot.next_destination, 5))
 		{
+			path();
 			this.robot.goTo(true);
 			return;
 		}
@@ -351,7 +355,6 @@ class Strat
 		if (tab_tasks[this.id_current_task].done == DONE)
 			this.score += tab_tasks[this.id_current_task].points;
 	}
-
 
 	/**
 	 * Deploy the actuator to push the lighthouse button (simulation only)
@@ -410,6 +413,7 @@ class Strat
 		this.robot.checkpoint_lighthouse.x = robot.position.x;
 		tab_tasks[TASK_LIGHTHOUSE].in_progress();
 		this.robot.next_destination = this.robot.checkpoint_lighthouse;
+		path();
 		this.robot.goTo(true);
 		if (this.robot.position.is_around(this.robot.checkpoint_lighthouse, 5))
 			push_button();
