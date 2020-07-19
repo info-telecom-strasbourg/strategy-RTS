@@ -10,6 +10,11 @@ class Strat
 	int time;
 	ArrayList <Pos> path = new ArrayList();
 	int score;
+	//Calibration
+	Pos calibrate_checkpoint;
+	boolean x_calibration;
+	boolean y_calibrated;
+
 
 	//SIMULATION
 	int lighthouse_wait = -1;
@@ -28,6 +33,9 @@ class Strat
 		this.opponent_positions = null;
 		this.time = millis();
 		this.score = 7;
+		this.calibrate_checkpoint = null;
+		this.x_calibration = false;
+		this.y_calibrated = false;
 	}
 
 	/**
@@ -46,6 +54,7 @@ class Strat
 			do_task();
 			if (!this.path.isEmpty())
 				this.path = new ArrayList();
+			
 		}
 		else
 		{
@@ -191,6 +200,9 @@ class Strat
 		if (final_move_with_color(time_left) || final_move_without_color(time_left))		
 			return TASK_FLAG;
 
+		if(tab_tasks[TASK_CALIBRATION].done != DONE)
+			return TASK_CALIBRATION;
+
 		if(tab_tasks[TASK_LIGHTHOUSE].done != DONE)
 			return TASK_LIGHTHOUSE;
 
@@ -202,6 +214,9 @@ class Strat
 
 		if(tab_tasks[TASK_WEATHERCOCK].done != DONE)
 			return TASK_WEATHERCOCK;
+
+		if(tab_tasks[TASK_CUPS].done != DONE)
+			return TASK_CUPS;
 
 		return TASK_FLAG;
 	}
@@ -257,8 +272,14 @@ class Strat
 			case TASK_LIGHTHOUSE:
 				lighthouse();
 				break;
+			case TASK_CUPS:
+				cups();
+				break;
 			case TASK_FLAG:
 				flag();
+				break;
+			case TASK_CALIBRATION:
+				calibration();
 				break;
 			default:
 				println("No task found");
@@ -335,9 +356,9 @@ class Strat
 	{		
 		tab_tasks[this.id_current_task].in_progress();
 		
-	
-			this.robot.checkpoint_windsock.x = this.robot.position.x;
-			this.robot.next_destination = this.robot.checkpoint_windsock;
+		
+		this.robot.checkpoint_windsock.x = this.robot.position.x;
+		this.robot.next_destination = this.robot.checkpoint_windsock;
 
 		if(!this.robot.position.is_around(this.robot.next_destination, 5))
 		{
@@ -348,12 +369,19 @@ class Strat
 
 		if(!raise_windsock())
 			return;
-
-
-		tab_tasks[this.id_current_task].over();
-		this.score += tab_tasks[this.id_current_task].points;
-		if (tab_tasks[id].done == DONE)
+		
+		if(object_is_located(true))
+		{
+			tab_tasks[this.id_current_task].over();
 			this.score += tab_tasks[this.id_current_task].points;
+			if (tab_tasks[id].done == DONE)
+				this.score += tab_tasks[this.id_current_task].points;
+		}
+		else
+		{
+			tab_tasks[TASK_LIGHTHOUSE].interrupted();
+			tab_tasks[TASK_CALIBRATION].in_progress();
+		}		
 	}
 
 	/**
@@ -399,8 +427,17 @@ class Strat
 				deploy_actuator_lighthouse();
 			else
 			{
-				tab_tasks[TASK_LIGHTHOUSE].over();
-				this.score += tab_tasks[TASK_LIGHTHOUSE].points;
+				if(object_is_located(true))
+				{
+					tab_tasks[TASK_LIGHTHOUSE].over();
+					this.score += tab_tasks[TASK_LIGHTHOUSE].points;
+				}
+				else
+				{
+					lighthouse_wait = -1;
+					tab_tasks[TASK_LIGHTHOUSE].interrupted();
+					tab_tasks[TASK_CALIBRATION].in_progress();
+				}
 			}
 		}
 	}
@@ -418,6 +455,11 @@ class Strat
 		if (this.robot.position.is_around(this.robot.checkpoint_lighthouse, 5))
 			push_button();
 		
+	}
+
+	void cups()
+	{
+		tab_tasks[TASK_CUPS].over();
 	}
 
 	/**
@@ -445,6 +487,64 @@ class Strat
 			tab_tasks[TASK_FLAG].over();
 			this.score += tab_tasks[TASK_FLAG].points;
 		}
+	}
+
+	boolean object_is_located(boolean located)
+	{
+		return located;
+	}
+
+	void calibration()
+	{
+		float calib_x = (this.robot.position.x < ARENA_HEIGHT/2) ? 0 : ARENA_HEIGHT;
+		float calib_y = (this.robot.position.y < ARENA_WIDTH/2) ? 0 : ARENA_WIDTH;
+		float calib_secu_y = (this.robot.position.y < ARENA_WIDTH/2) ? 100 : ARENA_WIDTH - 100;
+
+		if(!y_calibrated)
+		{
+			calibrate_checkpoint = new Pos(this.robot.position.x, calib_y);
+			this.robot.next_destination = calibrate_checkpoint;	
+
+			this.robot.getCorners();
+			if(!this.robot.corners[0].on_arena(1) && !this.robot.corners[3].on_arena(1))
+			{
+				y_calibrated = true;
+				calibrate_checkpoint = new Pos(this.robot.position.x, calib_secu_y);
+				this.robot.next_destination = calibrate_checkpoint;	
+			}
+			path();
+			this.robot.goTo(true);	
+		}
+		else
+		{
+			if(!x_calibration)
+			{
+				if(this.robot.position.is_around(calibrate_checkpoint, 5))
+				{
+					x_calibration = true;
+					calibrate_checkpoint = new Pos(calib_x, calib_secu_y);
+					this.robot.next_destination = calibrate_checkpoint;	
+				}
+				if (this.robot.haveToBack())
+					this.robot.goTo(false); 
+				else
+					this.robot.goTo(true); 
+			}
+			else
+			{
+				if(!this.robot.corners[0].on_arena(1) && !this.robot.corners[3].on_arena(1))
+				{
+					tab_tasks[TASK_CALIBRATION].over();
+					y_calibrated = false;
+					x_calibration = false;
+					tab_tasks[TASK_CALIBRATION].position = new Pos(-50, -50);
+				}
+				path();
+				this.robot.goTo(true);
+			}
+			
+		}
+		
 	}
 
 	/**
