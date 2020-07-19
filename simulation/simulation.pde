@@ -48,6 +48,8 @@ Pos POS_CUPS = null;
 Pos POS_FLAG = null;
 
 enum Dir {left , right };
+Dir dir = null;
+
 Task[] tab_tasks = null;
 
 
@@ -93,7 +95,7 @@ ArrayList<Pos> random_positions(int nb)
  * Initialize robot parameters and tasks position according to the start position
  * @param dir: the start position (left or right)
  */
-void init_robots(Dir dir)
+void init_robots()
 {
 	if (dir == Dir.left)
 	{
@@ -163,7 +165,8 @@ void setup()
 	size(1500,1000);
 	background(img);
 	frameRate(fps);
-	init_robots(Dir.left);
+	dir = Dir.left;
+	init_robots();
 	init_tab_tasks();
 	init_robots_strat();
 	weathercock = new Weathercock();
