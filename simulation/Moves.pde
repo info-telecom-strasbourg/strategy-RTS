@@ -41,9 +41,12 @@ class Moves
 		if(mouseButton == RIGHT && (millis() - last_click) > 750)
 		{
 			Pos point_click = new Pos(mouseX, mouseY);
-			for(int i = 1; i < this.list_moves.size(); i++)
+			for(int i = 0; i < this.list_moves.size(); i++)
 				if(this.list_moves.get(i).is_around(point_click, 10))
 					this.list_moves.remove(this.list_moves.get(i));
+					
+			if(this.list_moves.isEmpty())
+				this.list_moves.add(this.robot_op.position);
 
 			last_click = millis();
 		}
@@ -75,10 +78,11 @@ class Moves
 			detect_click();
 
 		if(this.list_moves.size() > 1 && this.robot_op.position.is_around(this.list_moves.get(0), 5))
-		{
 			list_moves.remove(0);
-			this.robot_op.next_destination = list_moves.get(0);
-		}
+			
+		this.robot_op.next_destination = list_moves.get(0);
+
+
 		this.display_dest();
 		this.robot_op.display(false);
 	}
