@@ -1,3 +1,6 @@
+/**
+ * This class simulate the mobile lidar behaviour
+ */
 class MobileLidar extends Sensor
 {
     /**

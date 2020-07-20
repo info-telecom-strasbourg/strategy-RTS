@@ -84,6 +84,7 @@ class Robot
 				return;
 			}
 		}
+
 		if(this.speed_regime != STOP)
 			if(this.sensors != null)
 				this.speed_regime = ((BottomLidar)this.sensors.get(BOTTOM_LIDAR)).manage_speed();

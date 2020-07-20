@@ -1,3 +1,6 @@
+/**
+ * A class that allow you to control a robot with your mouse
+ */
 class MouseController
 {
     /* Indicate the click side of the robot */

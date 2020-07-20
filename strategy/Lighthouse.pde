@@ -52,7 +52,7 @@ class Lighthouse extends Task
 				deploy_actuator_lighthouse();
 			else
 			{
-        boolean done = true;
+        		boolean done = false;
 				if(done)
 				{
 					this.over();
@@ -64,6 +64,8 @@ class Lighthouse extends Task
 					this.lighthouse_wait = -1;
 					this.interrupted();
 					strat.tab_tasks.get(TASK_CALIBRATION).in_progress();
+					strat.tasks_order.add(TASK_CALIBRATION);
+					strat.changeTaskOrder(strat.tasks_order.size() - 1, 0);
 				}
 			}
 		}

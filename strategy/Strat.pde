@@ -20,6 +20,7 @@ class Strat extends ManageOpponent
 	 */
 	void apply()
 	{
+		this.robot.speed_regime = ((BottomLidar)this.robot.sensors.get(BOTTOM_LIDAR)).manage_speed();
 		find_the_opponent(); //identify the opponent
 		this.id_current_task = find_best_task(); //choose the task we have to do now
 		
@@ -46,7 +47,6 @@ class Strat extends ManageOpponent
 
 				if (!this.robot.haveToBack())
 					this.robot.goTo(true); 
-
 			}
 
 			if (this.robot.haveToBack())

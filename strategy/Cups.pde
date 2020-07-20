@@ -1,3 +1,6 @@
+/**
+ * This 
+ */
 class Cups extends Task
 {
     Cups(int id, int points, Pos position, long max_time)
