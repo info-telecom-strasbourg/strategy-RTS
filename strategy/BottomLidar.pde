@@ -1,5 +1,10 @@
-class BottomLidar implements Sensor
+class BottomLidar extends Sensor
 {
+	/**
+	 * Constructor of BottomLidar
+	 */
+    BottomLidar(){super();}
+
     /**
 	 * Draw a cone to visualise what the lidar in the front of the robot detect
 	 * The angle is PI/2 => 90°
@@ -11,28 +16,62 @@ class BottomLidar implements Sensor
 		arc(ROBOT_HEIGHT/2, 0, 500, 500, - PI/4,  PI/4);
     }
 
+	/**
+	 * Return what the sensor detect
+	 * @param detectables: an array of obstacles containing only the opponent position
+	 * @return an array of obstacles detected by the sensor
+	 */
     @Override
-    ArrayList<Pos> detection(OpponentRob opponent)
+    ArrayList<Pos> detection(ArrayList<Pos> detectables)
     {
+        Pos opponent_pos = detectables.get(0);
+
         ArrayList<Pos> obstacles = new ArrayList<Pos>();
-        
-    
+
+        if(capture(opponent_pos))
+            obstacles.add(opponent_pos);
+
+        for(int i = 0; i < ARENA_HEIGHT; i+=10)
+        {
+            Pos left_border = new Pos(i,0);
+            Pos right_border = new Pos(i,1500);
+
+            if(capture(left_border))
+                obstacles.add(left_border);
+            if(capture(right_border))
+                obstacles.add(right_border);
+        }
+
+        for(int i = 0; i < ARENA_WIDTH; i+=10)
+        {
+            Pos up_border = new Pos(0,i);
+            Pos down_border = new Pos(1000,i);
+
+            if(capture(up_border))
+                obstacles.add(up_border);
+            if(capture(down_border))
+                obstacles.add(down_border);
+        }
+
+        return obstacles;
     }
 
     /**
 	 * Detect if the "pos" is detected by the fixed lidars
+     * The variable robot_RTS is the global variable for our robot
 	 * @param: pos: the position to detect
 	 * @return if "pos" is detected by the fixed lidars
 	 */
+	@Override
 	boolean capture(Pos pos)
 	{
-		Pos sensor = new Pos(this.robot.position.x + cos(this.robot.angle) * ROBOT_WIDTH/2,
-							this.robot.position.y + sin(this.robot.angle) * ROBOT_WIDTH/2);
+		Pos sensor = new Pos(robot_RTS.position.x + cos(robot_RTS.angle) * ROBOT_WIDTH/2,
+							robot_RTS.position.y + sin(robot_RTS.angle) * ROBOT_WIDTH/2);
 
 		if(sensor.dist(pos) > 250)
 			return false;
 
-		float delt_ang = mod2Pi(sensor.angle(pos) - this.robot.angle);
+		float delt_ang = mod2Pi(sensor.angle(pos) - robot_RTS.angle);
 		delt_ang = (delt_ang < PI) ? delt_ang : 2*PI - delt_ang;
 
 		return (delt_ang < PI/4);

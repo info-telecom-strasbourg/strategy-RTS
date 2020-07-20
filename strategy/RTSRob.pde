@@ -5,6 +5,13 @@ class RTSRob extends Robot
     
     boolean flag_deployed;
 
+    RTSRob(Pos position, float angle, ArrayList<Sensor> sensors)
+    {
+        super(position, angle);
+        this.sensors = sensors;
+        this.detected_color = NO_COLOR;
+    }
+
     @Override
     void draw_robot()
     {
@@ -17,6 +24,8 @@ class RTSRob extends Robot
 		rect(0, 0, ROBOT_WIDTH, ROBOT_HEIGHT);
         fill(255, 255, 255);
 		triangle(ROBOT_HEIGHT/2, 0, 0, -ROBOT_WIDTH/2, 0, ROBOT_WIDTH/2);
+        for(int i = 0; i < this.sensors.size(); i++)
+            this.sensors.get(i).draw();
 
         popMatrix();
     }

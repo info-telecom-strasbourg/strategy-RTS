@@ -7,13 +7,16 @@
  */
 class Pos
 {
+	/* The position of the point following the axe x */
 	float x;
+
+	/* The position of the point following the axe y */
 	float y;
 
 	/**
 	 * Constructor of Pos
-	 * @param x: the position of the point following the axe x
-	 * @param y: the position of the point following the axe y
+	 * @param x: the position of the point following the axis x
+	 * @param y: the position of the point following the axis y
 	 */
 	Pos(float x, float y)
 	{

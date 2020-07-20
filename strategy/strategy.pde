@@ -46,14 +46,21 @@ Pos POS_WINDSOCK_2 = null;
 Pos POS_CUPS = null;
 Pos POS_FLAG = null;
 
+//Macro for tasks positions
+int BOTTOM_LIDAR = 0;
+int TOP_LIDAR = 1;
+int MOBILE_LIDAR = 2;
+
+
 enum Dir {left , right };
 Dir dir = null;
 
 //Global variables
 PImage img;
-Robot robot;
+Robot robot_RTS;
 OpponentRob rob_op;
 OpponentRob rob_op_2;
+ArrayList<Pos> dectable_lidar_mobile = new ArrayList();
 
 
 /**
@@ -72,6 +79,19 @@ float mod2Pi(float angle)
 	return angle;
 }
 
+ArrayList<Sensor> init_sensors()
+{
+    BottomLidar bottomLidar = new BottomLidar();
+    TopLidar topLidar = new TopLidar();
+    MobileLidar mobileLidar = new MobileLidar();
+
+    ArrayList<Sensor> sensors = new ArrayList();
+    sensors.add(bottomLidar);
+    sensors.add(topLidar);
+    sensors.add(mobileLidar);
+
+    return sensors;
+}
 
 /**
  * Initialization of the simulation
@@ -83,13 +103,23 @@ void setup()
 	background(img);
 	frameRate(fps);
 
-    robot = new Robot(new Pos(100, 410), 0);
-    robot.speed_regime = FAST;
-    robot.next_destination = new Pos(750, 500);
+    
+
+    robot_RTS = new RTSRob(new Pos(100, 410), 0, init_sensors());
+    robot_RTS.speed_regime = FAST;
+    robot_RTS.next_destination = new Pos(750, 500);
+
     rob_op = new OpponentRob(new Pos(1400, 410), PI, true);
     rob_op.speed_regime = FAST;
     rob_op_2 = new OpponentRob(new Pos(1400, 700), PI, false);
     rob_op_2.speed_regime = FAST;
+
+    dectable_lidar_mobile.add(POS_LIGHTHOUSE);
+    dectable_lidar_mobile.add(POS_LIGHTHOUSE_OP);
+    dectable_lidar_mobile.add(POS_WEATHERCOCK);
+    dectable_lidar_mobile.add(rob_op.position);
+    dectable_lidar_mobile.add(rob_op_2.position);
+
 	smooth();
 }
 
@@ -99,8 +129,8 @@ void setup()
 void draw()
 {
     background(img);
-    robot.goTo(true);
-    robot.draw_robot();
+    robot_RTS.goTo(true);
+    robot_RTS.draw_robot();
 
     rob_op.update_destinations();
     rob_op.goTo(true);
