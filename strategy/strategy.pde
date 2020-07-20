@@ -57,7 +57,7 @@ Dir dir = null;
 
 //Global variables
 PImage img;
-Robot robot_RTS;
+RTSRob robot_RTS;
 OpponentRob rob_op;
 OpponentRob rob_op_2;
 WeathercockColour weathercock;
@@ -106,6 +106,80 @@ void manage_robot_op()
 }
 
 /**
+ * Initialize robot parameters and tasks position according to the start position
+ * @param dir: the start position (left or right)
+ */
+void init_robots()
+{
+    // rob_op_2 = new OpponentRob(new Pos(1400, 700), PI, false);
+    // rob_op_2.speed_regime = FAST;
+    // rob_opponents.add(rob_op_2);
+	if (dir == Dir.left)
+	{
+        robot_RTS = new RTSRob(new Pos(100, 410), 0, init_sensors());
+		rob_op = new OpponentRob(new Pos(1400, 410), PI, true);
+
+		POS_WINDSOCK_1 = new Pos(100,800);
+		POS_WINDSOCK_2 = new Pos(300,800);
+		POS_LIGHTHOUSE = new Pos(250,125);
+		POS_LIGHTHOUSE_OP = new Pos(1250, 125);
+		POS_FLAG = new Pos(100, -50);
+		POS_WEATHERCOCK = new Pos(450, 125);
+	}
+	else
+	{
+        robot_RTS = new RTSRob(new Pos(1400, 410), PI, init_sensors());
+		rob_op = new OpponentRob(new Pos(100, 410), 0, true);
+    
+		POS_WINDSOCK_1 = new Pos(1400,800);
+		POS_WINDSOCK_2 = new Pos(1200,800);
+		POS_LIGHTHOUSE = new Pos(1250, 125);
+		POS_LIGHTHOUSE_OP = new Pos(250,125);
+		POS_FLAG = new Pos(1400, -50);
+		POS_WEATHERCOCK = new Pos(1050, 125);
+	}
+	
+    rob_opponents.add(rob_op);
+	POS_CUPS = new Pos(ARENA_HEIGHT/2, ARENA_WIDTH/2);
+}
+
+void init_tasks()
+{
+    strat.tasks_order.add(TASK_LIGHTHOUSE);
+	strat.tasks_order.add(TASK_WINDSOCK_1);
+	strat.tasks_order.add(TASK_WINDSOCK_2);
+	strat.tasks_order.add(TASK_WEATHERCOCK);
+	strat.tasks_order.add(TASK_CUPS);
+	strat.tasks_order.add(TASK_FLAG);
+	strat.tasks_order.add(GAME_OVER);
+
+    ArrayList<Pos> checkpoint_windsock = new ArrayList<Pos>();
+    checkpoint_windsock.add(new Pos(-1,945));
+    ArrayList<Pos> checkpoint_lighthouse = new ArrayList<Pos>();
+    checkpoint_lighthouse.add(new Pos(-1,50));
+    ArrayList<Pos> checkpoint_weathercock = new ArrayList<Pos>();
+    checkpoint_weathercock.add(new Pos(ARENA_HEIGHT/2, -1));
+    
+    Weathercock task_weathercock = new Weathercock(TASK_WEATHERCOCK, 10, POS_WEATHERCOCK, 25000, checkpoint_weathercock);
+	Windsock task_windsock_1 = new Windsock(TASK_WINDSOCK_1, 5, POS_WINDSOCK_1, 20000, checkpoint_windsock);
+	Windsock task_windsock_2 = new Windsock(TASK_WINDSOCK_2, 5, POS_WINDSOCK_2, 20000, checkpoint_windsock);
+	Lighthouse task_lighthouse = new Lighthouse(TASK_WEATHERCOCK, 13, POS_LIGHTHOUSE, 5000, checkpoint_lighthouse);
+	Cups task_cups = new Cups(TASK_CUPS, 0, POS_CUPS, 10000);
+	Flag task_flag = new Flag(TASK_FLAG, 10, POS_FLAG, 7000);
+	Calibration task_calibration = new Calibration(TASK_CALIBRATION, 0, new Pos(-50, -50), 15000);
+	GameOver game_over = new GameOver(GAME_OVER, 0, new Pos(-50, -50), 1000000);
+
+    strat.tab_tasks.add(task_weathercock);
+    strat.tab_tasks.add(task_windsock_1);
+    strat.tab_tasks.add(task_windsock_2);
+    strat.tab_tasks.add(task_lighthouse);
+    strat.tab_tasks.add(task_cups);
+    strat.tab_tasks.add(task_flag);
+    strat.tab_tasks.add(task_calibration);
+    strat.tab_tasks.add(game_over);
+}
+
+/**
  * Initialization of the simulation
  */
 void setup()
@@ -113,19 +187,11 @@ void setup()
 	img = loadImage("map.png");
 	size(1500,1000);
 	background(img);
-	frameRate(fps);    
+	frameRate(fps);  
 
-    robot_RTS = new RTSRob(new Pos(100, 410), 0, init_sensors());
-    robot_RTS.speed_regime = FAST;
-    robot_RTS.next_destination = new Pos(750, 500);
+    init_robots();  
 
-    rob_op = new OpponentRob(new Pos(1400, 410), PI, true);
-    rob_op.speed_regime = FAST;
-    rob_opponents.add(rob_op);
-
-    // rob_op_2 = new OpponentRob(new Pos(1400, 700), PI, false);
-    // rob_op_2.speed_regime = FAST;
-    // rob_opponents.add(rob_op_2);
+    
 
     dectable_lidar_mobile.add(POS_LIGHTHOUSE);
     dectable_lidar_mobile.add(POS_LIGHTHOUSE_OP);
@@ -135,6 +201,10 @@ void setup()
 
     weathercock = new WeathercockColour();
 
+    strat = new Strat(robot_RTS);
+    
+    init_tasks();
+
 	smooth();
 }
 
@@ -143,8 +213,8 @@ void setup()
  */
 void display_tasks()
 {
-	for(int i = 0; i < strat.tab_tasks.length; i++)
-		strat.tab_tasks[i].display(true);
+	for(int i = 0; i < strat.tab_tasks.size(); i++)
+		strat.tab_tasks.get(i).display(true);
 }
 
 /**
@@ -172,12 +242,8 @@ void draw()
 {
     background(img);
     
-
-    background(img);
-
-	strat.apply(robot_op);
+	strat.apply();
 	
-
 	display_robot();
 
 	weathercock.display();
@@ -190,5 +256,5 @@ void draw()
 	for (int i = 0; i < strat.tasks_order.size(); i++)
 		println("TASK ", strat.tasks_order.get(i));
 
-    manage_robot_op()
+    manage_robot_op();
 }

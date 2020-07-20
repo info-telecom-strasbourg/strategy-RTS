@@ -52,7 +52,8 @@ class Lighthouse extends Task
 				deploy_actuator_lighthouse();
 			else
 			{
-				if(true)
+        boolean done = true;
+				if(done)
 				{
 					this.over();
 					strat.tasks_order.remove(0);
@@ -62,7 +63,7 @@ class Lighthouse extends Task
 				{
 					this.lighthouse_wait = -1;
 					this.interrupted();
-					tab_tasks[TASK_CALIBRATION].in_progress();
+					strat.tab_tasks.get(TASK_CALIBRATION).in_progress();
 				}
 			}
 		}
@@ -76,7 +77,7 @@ class Lighthouse extends Task
 		this.checkpoints.get(0).x = robot_RTS.position.x;
 		this.in_progress();
 		robot_RTS.next_destination = this.checkpoints.get(0);
-		strat.path();
+		strat.path(robot_RTS.next_destination);
 		robot_RTS.goTo(true);
 		if (robot_RTS.position.is_around(this.checkpoints.get(0), 5))
 			push_button();

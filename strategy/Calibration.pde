@@ -22,6 +22,7 @@ class Calibration extends Task
         this.calibrate_checkpoint = null;
         this.x_calibration = false;
         this.y_calibrated = false;
+        this.done = DONE;
     }
 
     /**
@@ -34,9 +35,9 @@ class Calibration extends Task
         float calib_secu_y = (robot_RTS.position.y < ARENA_WIDTH/2) ? 100 : ARENA_WIDTH - 100;
 
         if(!y_calibrated)
-            y_calibration(calib_y, calib_secu_y)
+            y_calibration(calib_y, calib_secu_y);
         else
-            x_calibration(calib_x, calib_secu_y)
+            x_calibration(calib_x, calib_secu_y);
     }
 
     /**
@@ -48,13 +49,13 @@ class Calibration extends Task
         robot_RTS.next_destination = this.calibrate_checkpoint;	
 
         robot_RTS.getCorners();
-        if(!robot.corners[0].on_arena(1) && !robot_RTS.corners[3].on_arena(1))
+        if(!robot_RTS.corners[0].on_arena(1) && !robot_RTS.corners[3].on_arena(1))
         {
             this.y_calibrated = true;
             this.calibrate_checkpoint = new Pos(robot_RTS.position.x, calib_secu_y);
             robot_RTS.next_destination = this.calibrate_checkpoint;	
         }
-        path();
+        strat.path(robot_RTS.next_destination);
         robot_RTS.goTo(true);
     }
 
@@ -80,13 +81,13 @@ class Calibration extends Task
         {
             if(!robot_RTS.corners[0].on_arena(1) && !robot_RTS.corners[3].on_arena(1))
             {
-                strat.tab_tasks[TASK_CALIBRATION].over();
-                tasks_order.remove(0);
+                strat.tab_tasks.get(TASK_CALIBRATION).over();
+                strat.tasks_order.remove(0);
                 y_calibrated = false;
                 x_calibration = false;
-                strat.tab_tasks[TASK_CALIBRATION].position = new Pos(-50, -50);
+                strat.tab_tasks.get(TASK_CALIBRATION).position = new Pos(-50, -50);
             }
-            path();
+            strat.path(robot_RTS.next_destination);
             robot_RTS.goTo(true);
         }   
     }

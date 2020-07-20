@@ -8,7 +8,7 @@ abstract class Task
 	Pos position;
 	int done;
 	long max_time;
-    ArrayList<Pos> checkpoints;
+    ArrayList<Pos> checkpoints = new ArrayList<Pos>();
 
 	/**
 	 * Constructor of Task
@@ -63,7 +63,7 @@ abstract class Task
 			}
 
 			triangle(position.x, position.y + 30, position.x - 30, position.y - 30, position.x + 30, position.y - 30);
-			if(display_checkpoints)
+			if(disp_checkpoints)
             	display_checkpoints();
 		}
 	}
@@ -85,5 +85,5 @@ abstract class Task
         text(this.id, checkpoint.x - 9, checkpoint.y + 11);
     }
 
-    abstract do_task();
+    abstract void do_task();
 }

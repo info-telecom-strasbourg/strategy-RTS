@@ -1,6 +1,6 @@
 class GameOver extends Task
 {
-    Gameover(int id, int points, Pos position, long max_time)
+    GameOver(int id, int points, Pos position, long max_time)
     {
         super(id, points, position, max_time);
     }
@@ -8,8 +8,8 @@ class GameOver extends Task
     @Override
     void do_task()
     {
-        strat.tab_tasks[this.id].in_progress();
-		this.robot.speed_regime = STOP;
-		println("GAME OVER");
+        this.in_progress();
+    		robot_RTS.speed_regime = STOP;
+    		println("GAME OVER");
     }
 }

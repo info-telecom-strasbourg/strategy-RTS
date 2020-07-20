@@ -1,12 +1,12 @@
 class Weathercock extends Task
 {
-    int weathercock_checkpoints;
+    int weathercock_wait;
 
     Weathercock(int id, int points, Pos position, long max_time, ArrayList<Pos> weathercock_checkpoints)
     {
         super(id, points, position, max_time);
         this.checkpoints = weathercock_checkpoints;
-        this.weathercock_checkpoints = -1;
+        this.weathercock_wait = -1;
     }
 
     /**
@@ -14,13 +14,13 @@ class Weathercock extends Task
 	 */
 	void detect_weathercock_col()
 	{
-		switch (this.robot.detected_color = weathercock.color_w)
+		switch (robot_RTS.detected_color = weathercock.color_w)
 		{
 			case BLACK:
-				strat.tab_tasks[TASK_FLAG].position.y = 200;
+				strat.tab_tasks.get(TASK_FLAG).position.y = 200;
 				break;
 			case WHITE:
-				strat.tab_tasks[TASK_FLAG].position.y = 650;
+				strat.tab_tasks.get(TASK_FLAG).position.y = 650;
 				break;
 			default:
 				println("No color found");
@@ -55,7 +55,7 @@ class Weathercock extends Task
 			}
 			else
 				robot_RTS.goToAngle(3*PI/2);
-		strat.path();
+		strat.path(robot_RTS.next_destination);
 		robot_RTS.goTo(true);
 	}
 }

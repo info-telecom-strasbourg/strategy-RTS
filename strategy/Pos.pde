@@ -120,4 +120,3 @@ class Pos
 		return new Pos((this.x + pos.x)/2, (this.y + pos.y)/2);
 	}
 }
-

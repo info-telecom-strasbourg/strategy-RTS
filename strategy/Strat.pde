@@ -3,8 +3,8 @@ class Strat extends ManageOpponent
     int id_current_task;
     long time;
     int score;
-    ArrayList<Integer> tasks_order = new ArrayList();
-    ArrayList<Integer> tab_tasks = new ArrayList();
+    ArrayList<Integer> tasks_order = new ArrayList<Integer>();
+    ArrayList<Task> tab_tasks = new ArrayList<Task>();
 
     Strat(RTSRob robot)
     {
@@ -12,31 +12,29 @@ class Strat extends ManageOpponent
         this.id_current_task = -1;
         this.time = millis();
         this.score = 7;
-        this.tasks_order = null;
-        this.tab_tasks = null;
     }
 
     /**
 	 * Apply the strategy
 	 * @param: opponent: the opponent's robot (for simulation)
 	 */
-	void apply(Robot opponent)
+	void apply()
 	{
-		this.robot.speed_regime = this.robot.sensors.get(BOTTOM_LIDAR).manage_speed(); //adaptation of the speed according to the environment
-		this.find_the_opponent(opponent); //identify the opponent
+		this.robot.speed_regime = ((BottomLidar)this.robot.sensors.get(BOTTOM_LIDAR)).manage_speed(); //adaptation of the speed according to the environment
+		find_the_opponent(); //identify the opponent
 		this.id_current_task = find_best_task(); //choose the task we have to do now
 		
-		if(this.robot.position.is_around(this.tab_tasks[this.id_current_task].position, 5) 
-		   || tab_tasks[this.id_current_task].done == IN_PROGRESS)
+		if(this.robot.position.is_around(this.tab_tasks.get(this.id_current_task).position, 5) 
+		   || this.tab_tasks.get(this.id_current_task).done == IN_PROGRESS)
 		{
-			do_task();
+			this.tab_tasks.get(this.id_current_task).do_task();
 			if (!this.path.isEmpty())
 				this.path = new ArrayList();
 			
 		}
 		else
 		{
-			path();
+			path(this.robot.next_destination);
 
 			if (!this.path.isEmpty() && this.robot.position.is_around(this.path.get(0), 5))
 				this.path.remove(0);
@@ -64,7 +62,7 @@ class Strat extends ManageOpponent
 	void select_mooring_area()
 	{
 		Pos[] points_for_closer = new Pos [] {new Pos(POS_FLAG.x, 200), new Pos(POS_FLAG.x, 650)};
-		tab_tasks[TASK_FLAG].position = this.robot.position.closer(points_for_closer);
+		tab_tasks.get(TASK_FLAG).position = this.robot.position.closer(points_for_closer);
 	}
 
     /**
@@ -73,7 +71,7 @@ class Strat extends ManageOpponent
 	 */
 	int find_best_task()
 	{
-		tab_tasks[GAME_OVER].position = this.robot.position;
+		tab_tasks.get(GAME_OVER).position = this.robot.position;
 
 		if (this.id_current_task == TASK_FLAG && this.robot.detected_color == NO_COLOR)
 			select_mooring_area();
@@ -88,6 +86,7 @@ class Strat extends ManageOpponent
 		if (time_left < 0.5)
 			this.changeTaskOrder(this.tasks_order.size() - 1, 0);
 
+		this.robot.next_destination = this.tab_tasks.get(this.tasks_order.get(0)).position;
 		return this.tasks_order.get(0);
 	}
     
@@ -98,7 +97,7 @@ class Strat extends ManageOpponent
 	 */
 	boolean final_move_with_color(long time_left)
 	{
-		return (tab_tasks[TASK_WEATHERCOCK].done == DONE && is_final_move(tab_tasks[TASK_FLAG].position, time_left));
+		return (tab_tasks.get(TASK_WEATHERCOCK).done == DONE && is_final_move(tab_tasks.get(TASK_FLAG).position, time_left));
 	}
 
 	/**
@@ -110,7 +109,7 @@ class Strat extends ManageOpponent
 	{
 		return (is_final_move(new Pos(POS_FLAG.x, 200), time_left) 
 			&& is_final_move(new Pos(POS_FLAG.x, 650), time_left) 
-			&& tab_tasks[TASK_FLAG].done != DONE);
+			&& tab_tasks.get(TASK_FLAG).done != DONE);
 	}
 	
 	/**
@@ -121,7 +120,7 @@ class Strat extends ManageOpponent
 	 */
 	boolean is_final_move (Pos pos, long time_left)
 	{
-		return time_left < (tab_tasks[TASK_FLAG].max_time + pos.dist(robot.position)/SLOW);
+		return time_left < (tab_tasks.get(TASK_FLAG).max_time + pos.dist(robot.position)/SLOW);
 	}
 
     void changeTaskOrder(int index_start, int index_end)

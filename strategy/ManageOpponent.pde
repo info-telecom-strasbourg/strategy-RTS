@@ -1,34 +1,31 @@
 class ManageOpponent
 {
-    RTSRobot robot;
-    ArrayList<Pos> opponent_positions;
-    ArrayList<Pos> path;
+    RTSRob robot;
+    ArrayList<Pos> opponent_positions = new ArrayList<Pos>();
+    ArrayList<Pos> path  = new ArrayList<Pos>();
     Pos objective_position;
 
     ManageOpponent(RTSRob robot)
     {
         this.robot = robot;
-        opponent_positions = null;
-        path = null;
-        objective_position = null;
+        this.objective_position = null;
     }
 
     /**
 	 * Identify the opponents position with the mobile lidar
 	 * @param: opponent: the opponent's robot (for simulation)
 	 */
-	void find_the_opponent(Robot opponent)
+	void find_the_opponent()
 	{
-		this.opponent_positions = new ArrayList();
+		this.opponent_positions = new ArrayList<Pos>();
 		ArrayList<Pos> obstacles;
         ArrayList<Pos> mob_lid_detectable = new ArrayList<Pos>();
-        mob_lid_detectable.add(robot_op.position);
+        for(int i =0; i < rob_opponents.size(); i++)
+            mob_lid_detectable.add(rob_opponents.get(i).position);
+            
         mob_lid_detectable.add(POS_LIGHTHOUSE);
         mob_lid_detectable.add(POS_LIGHTHOUSE_OP);
         mob_lid_detectable.add(POS_WEATHERCOCK);
-
-        if(robot_op_2 != null)
-            mob_lid_detectable.add(robot_op_2.position);
 
 		obstacles = this.robot.sensors.get(MOBILE_LIDAR).detection(mob_lid_detectable);
 		
@@ -46,9 +43,8 @@ class ManageOpponent
 	 * Calculate the best path to move to the next task (we use a checkpoint in the
 	 * case we have to avoid the opponent), but if no path is found, we stop the robot
 	 */
-	void find_path(Pos objective_pos)
+	void find_path()
 	{
-        this.objective_position = objective_pos;
         this.path = new ArrayList<Pos>();
         
 		Pos intersection = access(this.robot.position, objective_position, 280);
@@ -151,8 +147,9 @@ class ManageOpponent
 			}
 	}
     
-    void path()
+    void path(Pos objectiv_pos)
 	{
+    	this.objective_position = objectiv_pos;
 		if (this.path.isEmpty())
 			find_path();
 		else

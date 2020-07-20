@@ -79,6 +79,10 @@ class BottomLidar extends Sensor
 
     int manage_speed()
     {
-        return (detection(rob_opponents).isEmpty()) ? FAST : SLOW;
+        ArrayList<Pos> oppon_pos = new ArrayList<Pos>();
+        for(int i = 0; i < rob_opponents.size(); i++)
+            oppon_pos.add(rob_opponents.get(i).position);
+
+        return (detection(oppon_pos).isEmpty()) ? FAST : SLOW;
     }
 }

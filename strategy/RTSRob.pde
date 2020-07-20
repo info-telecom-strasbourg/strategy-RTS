@@ -9,6 +9,7 @@ class RTSRob extends Robot
         super(position, angle);
         this.sensors = sensors;
         this.detected_color = NO_COLOR;
+        this.flag_deployed = false;
     }
 
     @Override

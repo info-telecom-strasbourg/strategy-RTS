@@ -2,7 +2,7 @@
 /**
  * Simulate the behavior of the weathercock
  */
-class WeathercockColor
+class WeathercockColour
 {
 	int color_w;
 	boolean activate;

@@ -16,6 +16,7 @@ class OpponentRob extends Robot
         super(init_pos, angle);
         this.list_moves = random_positions(53);
         this.mouse = null;
+        this.speed_regime = FAST;
     }
 
     /**
@@ -29,6 +30,7 @@ class OpponentRob extends Robot
         super(init_pos, angle);
         this.mouse = new MouseController(control_left_click);
         this.list_moves = new ArrayList<Pos>();
+        this.speed_regime = FAST;
     }
 
     /**

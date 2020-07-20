@@ -5,7 +5,7 @@ class Windsock extends Task
     Windsock(int id, int points, Pos position, long max_time, ArrayList<Pos> windsock_checkpoints)
     {
         super(id, points, position, max_time);
-        this.checkpoints = weathercock_checkpoints;
+        this.checkpoints = windsock_checkpoints;
         this.windsock_wait = -1;
     }
 
@@ -17,9 +17,9 @@ class Windsock extends Task
         return (millis() - windsock_wait > 4000);
 	}
 
-	void do_task(int id)
+	void do_task()
 	{		
-		strat.tab_tasks[this.id].in_progress();
+		this.in_progress();
 		
 		
 		this.checkpoints.get(0).x = robot_RTS.position.x;
@@ -27,15 +27,15 @@ class Windsock extends Task
 
 		if(!robot_RTS.position.is_around(robot_RTS.next_destination, 5))
 		{
-			start.path();
+			strat.path(robot_RTS.next_destination);
 			robot_RTS.goTo(true);
 			return;
 		}
 
 		if(!raise_windsock())
 			return;
-		
-		if(object_is_located(true))
+		boolean done = true;
+		if(done)
 		{
 			this.over();
 			strat.tasks_order.remove(0);
