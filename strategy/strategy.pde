@@ -252,9 +252,9 @@ void draw()
 
 	display_infos();
 
-	// println("-------------");
-	// for (int i = 0; i < strat.tasks_order.size(); i++)
-	// 	println("TASK ", strat.tasks_order.get(i));
+	println("-------------");
+	for (int i = 0; i < strat.tasks_order.size(); i++)
+		println("TASK ", strat.tasks_order.get(i));
 
     manage_robot_op();
 }

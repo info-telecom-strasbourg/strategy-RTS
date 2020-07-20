@@ -63,8 +63,8 @@ abstract class Task
 			}
 
 			triangle(position.x, position.y + 30, position.x - 30, position.y - 30, position.x + 30, position.y - 30);
-			if(disp_checkpoints)
-            	display_checkpoints();
+			// if(disp_checkpoints)
+            // 	display_checkpoints();
 		}
 	}
 

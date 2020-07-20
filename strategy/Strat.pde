@@ -84,8 +84,10 @@ class Strat extends ManageOpponent
 
 		if (time_left < 0.5)
 			this.changeTaskOrder(this.tasks_order.size() - 1, 0);
+		
+		if (this.tab_tasks.get(this.tasks_order.get(0)).done == NOT_DONE)
+			this.robot.next_destination = this.tab_tasks.get(this.tasks_order.get(0)).position;
 
-		this.robot.next_destination = this.tab_tasks.get(this.tasks_order.get(0)).position;
 		return this.tasks_order.get(0);
 	}
     
