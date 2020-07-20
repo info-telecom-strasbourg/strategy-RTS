@@ -1,10 +1,16 @@
 class OpponentRob extends Robot
 {
-    /* The list of position to go */
+    /* The list of positions to go */
     ArrayList<Pos> list_moves;
 
+    /* The mouse */
     MouseController mouse;
 
+    /**
+	 * Constructor of the OpponentRob (random version)
+	 * @param init_pos: initial position of the opponent
+     * @param angle: angle of the opponent
+	 */
     OpponentRob(Pos init_pos, float angle)
     {
         super(init_pos, angle);
@@ -12,6 +18,12 @@ class OpponentRob extends Robot
         this.mouse = null;
     }
 
+    /**
+	 * Constructor of the OpponentRob (clickable version)
+	 * @param init_pos: initial position of the opponent
+     * @param init_pos: angle of the opponent
+     * @param control_left_click : the click side of the robot
+	 */
     OpponentRob(Pos init_pos, float angle, boolean control_left_click)
     {
         super(init_pos, angle);
@@ -19,7 +31,11 @@ class OpponentRob extends Robot
         this.list_moves = new ArrayList<Pos>();
     }
 
-
+    /**
+	 * Generate a random trajectory for the opponent
+	 * @param nb: number of checkpoints in the opponent path
+	 * @return the opponent path
+	 */
     ArrayList<Pos> random_positions(int nb)
     {
         ArrayList <Pos> path_op = new ArrayList<Pos>();
@@ -33,6 +49,9 @@ class OpponentRob extends Robot
         return path_op;
     }
 
+    /**
+	 * Manage the opponent path in the clickable version
+	 */
     void update_destinations()
     {
         if(this.mouse != null)
@@ -45,6 +64,9 @@ class OpponentRob extends Robot
                 this.list_moves.remove(0);
     }
 
+    /**
+	 * Display the checkpoint of the opponent path
+	 */
     void display_dest()
 	{
 		for(int i = 0; i < this.list_moves.size(); i++)
@@ -62,6 +84,9 @@ class OpponentRob extends Robot
 		}
 	}
 
+    /**
+	 * Draw the skin of the opponent robot
+	 */
     @Override
     void draw_robot()
     {
