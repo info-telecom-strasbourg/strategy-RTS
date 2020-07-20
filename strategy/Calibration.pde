@@ -70,12 +70,14 @@ class Calibration extends Task
     {
         if(!this.x_calibration)
         {
-            if(robot_RTS.position.is_around(calibrate_checkpoint, 5))
+            if(robot_RTS.position.is_around(this.calibrate_checkpoint, 5))
             {
                 x_calibration = true;
-                calibrate_checkpoint = new Pos(calib_x, calib_secu_y);
-                robot_RTS.next_destination = calibrate_checkpoint;	
+                this.calibrate_checkpoint = new Pos(calib_x, calib_secu_y);
+                robot_RTS.next_destination = this.calibrate_checkpoint;	
             }
+
+            strat.path(robot_RTS.next_destination);
             if (robot_RTS.haveToBack())
                 robot_RTS.goTo(false); 
             else
