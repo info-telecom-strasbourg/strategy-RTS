@@ -60,6 +60,7 @@ PImage img;
 Robot robot_RTS;
 OpponentRob rob_op;
 OpponentRob rob_op_2;
+ArrayList<OpponentRob> rob_opponents = new ArrayList();
 ArrayList<Pos> dectable_lidar_mobile = new ArrayList();
 
 
@@ -101,9 +102,7 @@ void setup()
 	img = loadImage("map.png");
 	size(1500,1000);
 	background(img);
-	frameRate(fps);
-
-    
+	frameRate(fps);    
 
     robot_RTS = new RTSRob(new Pos(100, 410), 0, init_sensors());
     robot_RTS.speed_regime = FAST;
@@ -111,8 +110,11 @@ void setup()
 
     rob_op = new OpponentRob(new Pos(1400, 410), PI, true);
     rob_op.speed_regime = FAST;
+    rob_opponents.add(rob_op);
+
     rob_op_2 = new OpponentRob(new Pos(1400, 700), PI, false);
     rob_op_2.speed_regime = FAST;
+    rob_opponents.add(rob_op_2);
 
     dectable_lidar_mobile.add(POS_LIGHTHOUSE);
     dectable_lidar_mobile.add(POS_LIGHTHOUSE_OP);

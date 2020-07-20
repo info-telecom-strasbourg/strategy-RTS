@@ -2,7 +2,6 @@ class RTSRob extends Robot
 {
     int detected_color;
     ArrayList<Sensor> sensors = new ArrayList<Sensor>();
-    
     boolean flag_deployed;
 
     RTSRob(Pos position, float angle, ArrayList<Sensor> sensors)
