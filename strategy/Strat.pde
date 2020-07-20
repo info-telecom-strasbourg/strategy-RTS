@@ -1,7 +1,7 @@
 class Strat extends ManageOpponent
 {
     int id_current_task;
-    long time;
+    int time;
     int score;
     ArrayList<Integer> tasks_order = new ArrayList<Integer>();
     ArrayList<Task> tab_tasks = new ArrayList<Task>();
@@ -20,7 +20,6 @@ class Strat extends ManageOpponent
 	 */
 	void apply()
 	{
-		this.robot.speed_regime = ((BottomLidar)this.robot.sensors.get(BOTTOM_LIDAR)).manage_speed(); //adaptation of the speed according to the environment
 		find_the_opponent(); //identify the opponent
 		this.id_current_task = find_best_task(); //choose the task we have to do now
 		

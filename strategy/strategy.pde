@@ -53,7 +53,7 @@ int MOBILE_LIDAR = 2;
 
 
 enum Dir {left , right };
-Dir dir = null;
+Dir dir = Dir.right;
 
 //Global variables
 PImage img;

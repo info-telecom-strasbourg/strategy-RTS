@@ -9,11 +9,16 @@ class Robot
     /* The next destination */
     Pos next_destination;
 
-    /* The corners of the robot */
+    /* The corners of the robot
+	0 & 3 : the front corners
+	1 & 2 : the back corners */
 	Pos[] corners = new Pos[4];
 
     /* The robot speed regime */
     int speed_regime;
+
+	ArrayList<Sensor> sensors = new ArrayList<Sensor>();
+
 
     /**
 	 * Constructor of Robot
@@ -26,6 +31,25 @@ class Robot
 		this.angle = angle;
 		this.speed_regime = STOP;
 		this.next_destination = null;
+		this.sensors = null;
+
+		for (int i = 0; i < 4; ++i)
+		{
+			float angle_corner = this.angle + PI/4 + i*PI/2;
+			this.corners[i] = new Pos(
+									  pos.x + HALF_DIAG * cos(angle_corner), 
+									  pos.y + HALF_DIAG * sin(angle_corner)
+									 );
+		}
+	}
+	
+	Robot(Pos pos, float angle, ArrayList<Sensor> sensors_list)
+	{
+		this.position = pos;
+		this.angle = angle;
+		this.speed_regime = STOP;
+		this.next_destination = null;
+		this.sensors = sensors_list;
 
 		for (int i = 0; i < 4; ++i)
 		{
@@ -60,6 +84,11 @@ class Robot
 				return;
 			}
 		}
+		if(this.speed_regime != STOP)
+			if(this.sensors != null)
+				this.speed_regime = ((BottomLidar)this.sensors.get(BOTTOM_LIDAR)).manage_speed();
+			else
+				this.speed_regime = FAST;
 		
 		this.position.x += this.speed_regime * cos(this.angle + turn);
 		this.position.y += this.speed_regime * sin(this.angle + turn);

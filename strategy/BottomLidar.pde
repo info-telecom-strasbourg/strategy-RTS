@@ -34,7 +34,7 @@ class BottomLidar extends Sensor
         for(int i = 0; i < ARENA_HEIGHT; i+=10)
         {
             Pos left_border = new Pos(i,0);
-            Pos right_border = new Pos(i,1500);
+            Pos right_border = new Pos(i, ARENA_WIDTH);
 
             if(capture(left_border))
                 obstacles.add(left_border);
@@ -45,7 +45,7 @@ class BottomLidar extends Sensor
         for(int i = 0; i < ARENA_WIDTH; i+=10)
         {
             Pos up_border = new Pos(0,i);
-            Pos down_border = new Pos(1000,i);
+            Pos down_border = new Pos(ARENA_HEIGHT,i);
 
             if(capture(up_border))
                 obstacles.add(up_border);

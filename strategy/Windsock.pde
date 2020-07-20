@@ -20,8 +20,7 @@ class Windsock extends Task
 	void do_task()
 	{		
 		this.in_progress();
-		
-		
+				
 		this.checkpoints.get(0).x = robot_RTS.position.x;
 		robot_RTS.next_destination = this.checkpoints.get(0);
 
@@ -34,6 +33,7 @@ class Windsock extends Task
 
 		if(!raise_windsock())
 			return;
+			
 		boolean done = true;
 		if(done)
 		{
