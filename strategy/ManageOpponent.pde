@@ -30,7 +30,7 @@ class ManageOpponent
         if(robot_op_2 != null)
             mob_lid_detectable.add(robot_op_2.position);
 
-		obstacles = robot_RTS.sensors.get(MOBILE_LIDAR).detection(mob_lid_detectable);
+		obstacles = this.robot.sensors.get(MOBILE_LIDAR).detection(mob_lid_detectable);
 		
 		if (obstacles.size() == 0)
 			return;
@@ -51,7 +51,7 @@ class ManageOpponent
         this.objective_position = objective_pos;
         this.path = new ArrayList<Pos>();
         
-		Pos intersection = access(robot_RTS.position, objective_position, 280);
+		Pos intersection = access(this.robot.position, objective_position, 280);
 		if(intersection != null)
 		{
 			Pos checkpoint = this.find_step(intersection);
@@ -61,7 +61,7 @@ class ManageOpponent
 				this.path.add(objective_position);
 			}
 			else
-				robot_RTS.speed_regime = STOP;
+				this.robot.speed_regime = STOP;
 		}
 		else
 			this.path.add(objective_position);
@@ -99,9 +99,9 @@ class ManageOpponent
 	 */
 	Pos find_step(Pos intersection)
 	{
-		float distance = robot_RTS.position.dist(intersection);
+		float distance = this.robot.position.dist(intersection);
 		float angle_step = 3 * distance / 1000;
-		float angle_dep = robot_RTS.position.angle(robot_RTS.next_destination);
+		float angle_dep = this.robot.position.angle(this.robot.next_destination);
 		if(angle_step != 0)
 			for(float i = angle_dep; i < angle_dep + PI/2; i+=angle_step)
 			{
@@ -124,14 +124,14 @@ class ManageOpponent
 	Pos find_checkpoint(float angle)
 	{
 		float step = 10;
-		Pos checkpoint = new Pos(robot_RTS.position);
+		Pos checkpoint = new Pos(this.robot.position);
 
 		while (checkpoint.on_arena(100))
 		{
 			checkpoint.x += step*cos(angle);
 			checkpoint.y += step*sin(angle);
 			
-			if(access(robot_RTS.position, checkpoint, 280) == null 
+			if(access(this.robot.position, checkpoint, 280) == null 
 				&& access(checkpoint, objective_position, 280) == null)
 					return checkpoint;
 		}
@@ -144,7 +144,7 @@ class ManageOpponent
 	void check_path()
 	{
 		if (!objective_position.is_around(this.path.get(path.size() - 1), 5) 
-			|| access(robot_RTS.position, this.path.get(0), 200) != null)
+			|| access(this.robot.position, this.path.get(0), 200) != null)
 			{				
 				this.path = new ArrayList();
 				find_path();

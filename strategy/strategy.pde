@@ -60,8 +60,11 @@ PImage img;
 Robot robot_RTS;
 OpponentRob rob_op;
 OpponentRob rob_op_2;
+WeathercockColour weathercock;
 ArrayList<OpponentRob> rob_opponents = new ArrayList();
 ArrayList<Pos> dectable_lidar_mobile = new ArrayList();
+Strat strat;
+
 
 
 /**
@@ -94,6 +97,14 @@ ArrayList<Sensor> init_sensors()
     return sensors;
 }
 
+void manage_robot_op()
+{
+    rob_op.update_destinations();
+    rob_op.goTo(true);
+    rob_op.draw_robot();
+    rob_op.display_dest();
+}
+
 /**
  * Initialization of the simulation
  */
@@ -112,17 +123,46 @@ void setup()
     rob_op.speed_regime = FAST;
     rob_opponents.add(rob_op);
 
-    rob_op_2 = new OpponentRob(new Pos(1400, 700), PI, false);
-    rob_op_2.speed_regime = FAST;
-    rob_opponents.add(rob_op_2);
+    // rob_op_2 = new OpponentRob(new Pos(1400, 700), PI, false);
+    // rob_op_2.speed_regime = FAST;
+    // rob_opponents.add(rob_op_2);
 
     dectable_lidar_mobile.add(POS_LIGHTHOUSE);
     dectable_lidar_mobile.add(POS_LIGHTHOUSE_OP);
     dectable_lidar_mobile.add(POS_WEATHERCOCK);
     dectable_lidar_mobile.add(rob_op.position);
-    dectable_lidar_mobile.add(rob_op_2.position);
+    // dectable_lidar_mobile.add(rob_op_2.position);
+
+    weathercock = new WeathercockColour();
 
 	smooth();
+}
+
+/**
+ * Display the task when our robot know their position
+ */
+void display_tasks()
+{
+	for(int i = 0; i < strat.tab_tasks.length; i++)
+		strat.tab_tasks[i].display(true);
+}
+
+/**
+ * Display the score and the time
+ */
+void display_infos()
+{
+	textSize(30);
+	textAlign(LEFT);
+	text((millis() - strat.time)/1000, 1, 21);
+	text(strat.score, 1450, 21);
+}
+
+void display_robot()
+{
+	robot_RTS.getCorners();
+	robot_RTS.borderColision();
+	robot_RTS.draw_robot();
 }
 
 /**
@@ -131,16 +171,24 @@ void setup()
 void draw()
 {
     background(img);
-    robot_RTS.goTo(true);
-    robot_RTS.draw_robot();
+    
 
-    rob_op.update_destinations();
-    rob_op.goTo(true);
-    rob_op.draw_robot();
-    rob_op.display_dest();
+    background(img);
 
-    rob_op_2.update_destinations();
-    rob_op_2.goTo(true);
-    rob_op_2.draw_robot();
-    rob_op_2.display_dest();
+	strat.apply(robot_op);
+	
+
+	display_robot();
+
+	weathercock.display();
+
+	display_tasks();
+
+	display_infos();
+
+	println("-------------");
+	for (int i = 0; i < strat.tasks_order.size(); i++)
+		println("TASK ", strat.tasks_order.get(i));
+
+    manage_robot_op()
 }

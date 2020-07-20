@@ -11,7 +11,7 @@ class WeathercockColor
 	/**
 	 * Constructor of Weathercock
 	 */
-	WeathercockColor()
+	WeathercockColour()
 	{
 		color_w = NO_COLOR;
 		begin = millis();

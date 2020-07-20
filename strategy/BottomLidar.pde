@@ -24,12 +24,12 @@ class BottomLidar extends Sensor
     @Override
     ArrayList<Pos> detection(ArrayList<Pos> detectables)
     {
-        Pos opponent_pos = detectables.get(0);
 
         ArrayList<Pos> obstacles = new ArrayList<Pos>();
-
-        if(capture(opponent_pos))
-            obstacles.add(opponent_pos);
+        
+        for (int i = 0; i < detectables.size(); i++)
+            if(capture(detectables.get(i)))
+                obstacles.add(detectables.get(i));
 
         for(int i = 0; i < ARENA_HEIGHT; i+=10)
         {
@@ -76,4 +76,9 @@ class BottomLidar extends Sensor
 
 		return (delt_ang < PI/4);
 	}
+
+    int manage_speed()
+    {
+        return (detection(rob_opponents).isEmpty()) ? FAST : SLOW;
+    }
 }
