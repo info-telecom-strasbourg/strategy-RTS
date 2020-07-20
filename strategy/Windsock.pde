@@ -47,7 +47,7 @@ class Windsock extends Task
 		{
 			this.windsock_wait = -1;
 			this.interrupted();
-			strat.tab_tasks[TASK_CALIBRATION].in_progress();
+			strat.tab_tasks.get(TASK_CALIBRATION).in_progress();
 		}		
 	}
 }
