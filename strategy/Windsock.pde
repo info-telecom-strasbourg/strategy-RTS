@@ -1,5 +1,9 @@
+/**
+ * This class represent the task inked to the windocks
+ */
 class Windsock extends Task
 {
+	/* The beginning of the task */
     long windsock_wait;
 
     Windsock(int id, int points, Pos position, long max_time, ArrayList<Pos> windsock_checkpoints)
@@ -9,6 +13,10 @@ class Windsock extends Task
         this.windsock_wait = -1;
     }
 
+	/**
+	 * A function that windsock to be raised
+	 * @return a boolean that indicate if the windsock is raised
+	 */
     boolean raise_windsock()
 	{
         if(windsock_wait == -1)
@@ -17,6 +25,9 @@ class Windsock extends Task
         return (millis() - windsock_wait > 4000);
 	}
 
+	/**
+	 * Simulate the execution of the windsock task
+	 */
 	void do_task()
 	{		
 		this.in_progress();

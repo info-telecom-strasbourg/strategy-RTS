@@ -1,3 +1,7 @@
+/**
+ * This abstract class represent the sensors
+ * It contains functions that must be implemented if you create a sensor
+ */
 abstract class Sensor
 {
     /**

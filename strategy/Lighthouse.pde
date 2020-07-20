@@ -7,7 +7,7 @@ class Lighthouse extends Task
     int lighthouse_wait;
 
 	/**
-	 * The class' constructor
+	 * The constructor of Lighthouse
 	 * @param id: the identifier of the task
 	 * @param points: the points given by the task
 	 * @param position: the location of this task

@@ -1,8 +1,20 @@
+/**
+ * This class represent our robot
+ */
 class RTSRob extends Robot
 {
+    /* The weathercock's color detected by our robot */
     int detected_color;
+
+    /* A boolean that indicate if the flag is deployed*/
     boolean flag_deployed;
 
+    /**
+	 * Constructor of our robot 
+	 * @param pos: the initial position of the robot
+	 * @param angle: the initial position of the robot
+     * @param sensors: the list of sensors of our robot
+	 */
     RTSRob(Pos position, float angle, ArrayList<Sensor> sensors)
     {
         super(position, angle, sensors);
@@ -10,6 +22,9 @@ class RTSRob extends Robot
         this.flag_deployed = false;
     }
 
+    /**
+	 * Draw our robot, with the sensors if they can be reresented
+	 */
     @Override
     void draw_robot()
     {

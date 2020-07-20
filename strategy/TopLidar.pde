@@ -1,3 +1,6 @@
+/**
+ * The top lidar (to detect the completion of tasks)
+ */
 class TopLidar extends Sensor
 {
     /**

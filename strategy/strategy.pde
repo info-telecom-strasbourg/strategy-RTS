@@ -83,6 +83,10 @@ float mod2Pi(float angle)
 	return angle;
 }
 
+/**
+ * Initialise sensors
+ * @return an ArrayList of sensors
+ */
 ArrayList<Sensor> init_sensors()
 {
     BottomLidar bottomLidar = new BottomLidar();
@@ -97,6 +101,9 @@ ArrayList<Sensor> init_sensors()
     return sensors;
 }
 
+/**
+ * Manage the opponent behavement
+ */
 void manage_robot_op()
 {
     rob_op.update_destinations();
@@ -143,6 +150,9 @@ void init_robots()
 	POS_CUPS = new Pos(ARENA_HEIGHT/2, ARENA_WIDTH/2);
 }
 
+/**
+ * Initialize the tasks
+ */
 void init_tasks()
 {
     strat.tasks_order.add(TASK_LIGHTHOUSE);
@@ -190,7 +200,6 @@ void setup()
 	frameRate(fps);  
 
     init_robots();  
-
     
 
     dectable_lidar_mobile.add(POS_LIGHTHOUSE);
@@ -228,6 +237,9 @@ void display_infos()
 	text(strat.score, 1450, 21);
 }
 
+/**
+ * Manage the robot displayment
+ */
 void display_robot()
 {
 	robot_RTS.getCorners();

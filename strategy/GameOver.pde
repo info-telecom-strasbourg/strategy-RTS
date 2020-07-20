@@ -16,7 +16,7 @@ class GameOver extends Task
     }
 
     /**
-	 * Simulate the thing to do at the end of the timer
+	 * Simulate what to do at the end of the timer
 	 */
     @Override
     void do_task()

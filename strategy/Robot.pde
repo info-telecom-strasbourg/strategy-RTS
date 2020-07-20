@@ -24,7 +24,7 @@ class Robot
 
 
     /**
-	 * Constructor of Robot
+	 * Constructor of Robot (without sensors, probably the opponent)
 	 * @param pos: the initial position of the robot
 	 * @param angle: the initial position of the robot
 	 */
@@ -46,6 +46,12 @@ class Robot
 		}
 	}
 	
+	/**
+	 * Constructor of Robot (with sensors, probably the our robot)
+	 * @param pos: the initial position of the robot
+	 * @param angle: the initial position of the robot
+	 * @param sensors_list: the list of sensors of the robot
+	 */
 	Robot(Pos pos, float angle, ArrayList<Sensor> sensors_list)
 	{
 		this.position = pos;

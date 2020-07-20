@@ -1,5 +1,5 @@
 /**
- * This class simulate the behaviour of a bottom lidar
+ * This class simulate the behaviour of the bottom lidars 
  */
 class BottomLidar extends Sensor
 {

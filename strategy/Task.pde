@@ -3,11 +3,22 @@
  */
 abstract class Task
 {
+	/* The identifier of the a task */
 	int id;
+
+	/* The points earned if we accomplish the task */
 	int points;
+
+	/* The position of the task */
 	Pos position;
+
+	/* Represent the state of the task */
 	int done;
+
+	/* The max time this task should last */
 	long max_time;
+
+	/* An ArrayList of checkpoints we need to reach to acomplish the task */
     ArrayList<Pos> checkpoints = new ArrayList<Pos>();
 
 	/**
@@ -68,22 +79,32 @@ abstract class Task
 		}
 	}
 
+	/**
+	 * Display the checkpoints 
+	 */
     void display_checkpoints()
     {
         for(int i = 0; i < checkpoints.size(); i++)
             display_checkpoint(checkpoints.get(i));
     }
 
+	/**
+	 * Display a specific checkpoint
+	 * @param checkpoint: the position of the checkpoint
+	 */
     void display_checkpoint(Pos checkpoint)
     {
         pushMatrix();
         translate(checkpoint.x, checkpoint.y, 0);
-        fill(0, 0, 0, 125);
+        fill(255, 255, 255, 125);
         rectMode(CENTER);
-        rect(0, 0, 10, 10);
+        rect(0, 0, 20, 20);
         popMatrix();
         text(this.id, checkpoint.x - 9, checkpoint.y + 11);
     }
 
+	/**
+	 * An abstract method that will simulate the completion of the task
+	 */
     abstract void do_task();
 }

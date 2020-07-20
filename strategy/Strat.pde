@@ -1,11 +1,28 @@
+/**
+ * This class is our strategy
+ */
 class Strat extends ManageOpponent
 {
+	/* The identifier of the current task that correspond to its
+	 place in tab_task*/
     int id_current_task;
+
+	/* Beginnig of the match */
     int time;
+
+	/* Our score */
     int score;
+
+	/* The list of tasks to do classified in the order of completion*/
     ArrayList<Integer> tasks_order = new ArrayList<Integer>();
+
+	/* The list of tasks that must be done */
     ArrayList<Task> tab_tasks = new ArrayList<Task>();
 
+	/**
+	 * The constructor of the class
+	 * @param robot: the robot that must fllow the strategy
+	 */
     Strat(RTSRob robot)
     {
         super(robot);
@@ -124,6 +141,12 @@ class Strat extends ManageOpponent
 		return time_left < (tab_tasks.get(TASK_FLAG).max_time + pos.dist(robot.position)/SLOW);
 	}
 
+	/**
+	 * Move in the array "tasks_order" a task from the index "index_start" to
+	 * the index "index_end"
+	 * @param index_start: index of the task to move
+	 * @param index_end: index where the task has to be moved
+	 */
     void changeTaskOrder(int index_start, int index_end)
 	{
 		if (index_start == index_end || index_start >= this.tasks_order.size() || index_end >= this.tasks_order.size()

@@ -1,7 +1,19 @@
+/**
+ * This class represent the task weathercock
+ */
 class Weathercock extends Task
 {
+	/* The begining of the task */
     int weathercock_wait;
 
+	/**
+	 * The constructor of Weathercock
+	 * @param id: the identifier of the task
+	 * @param points: the points given by the task
+	 * @param position: the location of this task
+	 * @param max_time: the estimated necessary time to accomplish the task
+	 * @param weathercock_checkpoints: the checkpoints we need to reach to accomplish the task
+	 */
     Weathercock(int id, int points, Pos position, long max_time, ArrayList<Pos> weathercock_checkpoints)
     {
         super(id, points, position, max_time);
@@ -27,7 +39,9 @@ class Weathercock extends Task
 		}
 	}
 
-
+	/**
+	 * Simulate the execution of the weathercock
+	 */
     void do_task()
 	{
 		this.in_progress();
