@@ -61,4 +61,20 @@ class OpponentRob extends Robot
 			text(i, this.list_moves.get(i).x - 9, this.list_moves.get(i).y + 11);
 		}
 	}
+
+    @Override
+    void draw_robot()
+    {
+        pushMatrix();
+        
+		fill(255, 0, 0);
+		translate(this.position.x, this.position.y);
+		rotate(this.angle);
+		rectMode(CENTER);
+		rect(0, 0, ROBOT_WIDTH, ROBOT_HEIGHT);
+        fill(0, 0, 0);
+		triangle(ROBOT_HEIGHT/2, 0, 0, -ROBOT_WIDTH/2, 0, ROBOT_WIDTH/2);
+
+        popMatrix();
+    }
 }

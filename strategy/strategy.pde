@@ -88,7 +88,7 @@ void setup()
     robot.next_destination = new Pos(750, 500);
     rob_op = new OpponentRob(new Pos(1400, 410), PI, true);
     rob_op.speed_regime = FAST;
-    rob_op_2 = new OpponentRob(new Pos(700, 410), PI, false);
+    rob_op_2 = new OpponentRob(new Pos(1400, 700), PI, false);
     rob_op_2.speed_regime = FAST;
 	smooth();
 }
