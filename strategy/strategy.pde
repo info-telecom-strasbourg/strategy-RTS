@@ -174,7 +174,7 @@ void init_tasks()
 	Windsock task_windsock_1 = new Windsock(TASK_WINDSOCK_1, 5, POS_WINDSOCK_1, 20000, checkpoint_windsock);
 	Windsock task_windsock_2 = new Windsock(TASK_WINDSOCK_2, 5, POS_WINDSOCK_2, 20000, checkpoint_windsock);
 	Lighthouse task_lighthouse = new Lighthouse(TASK_WEATHERCOCK, 13, POS_LIGHTHOUSE, 5000, checkpoint_lighthouse);
-	Cups task_cups = new Cups(TASK_CUPS, 0, POS_CUPS, 10000);
+	Cups task_cups = new Cups(TASK_CUPS, 0, POS_CUPS, 10000, 1);
 	Flag task_flag = new Flag(TASK_FLAG, 10, POS_FLAG, 7000);
 	Calibration task_calibration = new Calibration(TASK_CALIBRATION, 0, new Pos(-50, -50), 15000);
 	GameOver game_over = new GameOver(GAME_OVER, 0, new Pos(-50, -50), 1000000);
