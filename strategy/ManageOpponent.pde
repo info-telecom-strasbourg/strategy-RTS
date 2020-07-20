@@ -1,10 +1,25 @@
+/**
+ * This class allow our robot to avoid the opponent
+ * You can make a class that inherits this class to keep this behaviour
+ */
 class ManageOpponent
 {
+	/* The robot that avoid the opponent */
     RTSRob robot;
+
+	/* The opponent(s) position(s) -> for simulation */
     ArrayList<Pos> opponent_positions = new ArrayList<Pos>();
+
+	/* The path selected by the robot */
     ArrayList<Pos> path  = new ArrayList<Pos>();
+
+	/* The position you want to reach right now */
     Pos objective_position;
 
+	/**
+	 * The constructor of the class
+	 * @param robot: the robot that will avoid the opponent
+	 */
     ManageOpponent(RTSRob robot)
     {
         this.robot = robot;
@@ -147,6 +162,12 @@ class ManageOpponent
 			}
 	}
     
+	/**
+	 * Find the best path in the situation
+	 * If we have a path, we check if it still work
+	 * else we find a new path
+	 * @param objectiv_pos: the destination you want to reach
+	 */
     void path(Pos objectiv_pos)
 	{
     	this.objective_position = objectiv_pos;

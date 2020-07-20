@@ -1,3 +1,6 @@
+/**
+ * This class simulate the opponent behaviour
+ */
 class OpponentRob extends Robot
 {
     /* The list of positions to go */

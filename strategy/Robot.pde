@@ -1,3 +1,6 @@
+/**
+ * This class represent a basic robot
+ */
 class Robot
 {
     /* The robot position */

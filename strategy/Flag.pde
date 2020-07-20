@@ -1,5 +1,15 @@
+/**
+ * This class represent the task linked to the flag
+ */
 class Flag extends Task
 {
+	/**
+	 * The class' constructor
+	 * @param id: the identifier of the task
+	 * @param points: the points given by the task
+	 * @param position: the location of this task
+	 * @param max_time: the estimated necessary time to accomplish the task
+	 */
     Flag(int id, int points, Pos position, long max_time)
     {
         super(id, points, position, max_time);

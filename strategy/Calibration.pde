@@ -1,3 +1,7 @@
+/**
+ * This class represent the task calibration. It allows
+ * the robot to reinitialize its position
+ */
 class Calibration extends Task
 {
     /* A checkpoint to help to robot to calibrate in security */

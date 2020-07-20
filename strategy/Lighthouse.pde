@@ -1,7 +1,19 @@
+/**
+ * This class represent the task
+ */
 class Lighthouse extends Task
 {
+	/* The moment when the task began */
     int lighthouse_wait;
 
+	/**
+	 * The class' constructor
+	 * @param id: the identifier of the task
+	 * @param points: the points given by the task
+	 * @param position: the location of this task
+	 * @param max_time: the estimated necessary time to accomplish the task
+	 * @param light_house_checkpoints: the checkpoints we need to reach to accomplish the task
+	 */
     Lighthouse(int id, int points, Pos position, long max_time, ArrayList<Pos> light_house_checkpoints)
     {
         super(id, points, position, max_time);

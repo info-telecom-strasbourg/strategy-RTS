@@ -1,3 +1,6 @@
+/**
+ * This class simulate the behaviour of a bottom lidar
+ */
 class BottomLidar extends Sensor
 {
 	/**
@@ -77,6 +80,10 @@ class BottomLidar extends Sensor
 		return (delt_ang < PI/4);
 	}
 
+    /**
+     * This function decide wich speed regime will be used by the robot
+     * @return an int that represent a speed regime
+     */
     int manage_speed()
     {
         ArrayList<Pos> oppon_pos = new ArrayList<Pos>();
