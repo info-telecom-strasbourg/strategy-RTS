@@ -20,6 +20,14 @@ class Flag extends Task
 	 */
 	void do_task()
 	{
+		if (millis() - strat.time > 95500)
+		{
+			robot_RTS.flag_deployed = true;
+			this.over();
+			strat.removeTaskOrder(0);
+			strat.score += this.points;
+		}
+		
 		if(this.done == DONE)
 			return;
 
@@ -34,12 +42,5 @@ class Flag extends Task
 		}
 
 		this.in_progress();
-		if (millis() - strat.time > 95500)
-		{
-			robot_RTS.flag_deployed = true;
-			this.over();
-			strat.removeTaskOrder(0);
-			strat.score += this.points;
-		}
 	}
 }

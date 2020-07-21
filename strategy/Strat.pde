@@ -99,8 +99,11 @@ class Strat extends ManageOpponent
 		if (this.id_current_task == TASK_FLAG && this.robot.detected_color == NO_COLOR)
 			select_mooring_area();
 
-
 		long time_left = 100000 - millis() - time;
+		
+		if (time_left < 4500)
+			this.tab_tasks.get(TASK_FLAG).position = this.robot.position;
+
 
 		if (!this.weathercock_insterted && time_left < 75000)
 		{
@@ -119,9 +122,7 @@ class Strat extends ManageOpponent
 					changeTaskOrder(i, 0);
 					break;
 				}
-
 		}
-
 
 		if (final_move_with_color(time_left) || final_move_without_color(time_left) || this.tasks_order.isEmpty())
 		{
