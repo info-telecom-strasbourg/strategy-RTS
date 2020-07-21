@@ -23,6 +23,6 @@ class Cups extends Task
     void do_task()
     {
         this.over();
-		strat.tasks_order.remove(0);
+		strat.removeTaskOrder(0);
     }
 }

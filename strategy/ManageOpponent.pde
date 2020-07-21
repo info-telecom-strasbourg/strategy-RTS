@@ -97,7 +97,7 @@ class ManageOpponent
 		{
 			Pos new_pos = new Pos(point_1.x + i*delta_x/nb_seg, point_1.y + i*delta_y/nb_seg);
 			for (int j = 0; j < this.opponent_positions.size(); j++)
-				if (is_on_security_area(new_pos, this.opponent_positions.get(j)))
+				if (is_on_security_area(new_pos, this.opponent_positions.get(j), dist))
 					return new_pos;
 		}
 		return null;
@@ -109,11 +109,11 @@ class ManageOpponent
 	 * @param: opponent_pos: the opponent position
 	 * @return if the opponent is on the security area
 	 */
-	boolean is_on_security_area(Pos current_pos, Pos opponent_pos) 
+	boolean is_on_security_area(Pos current_pos, Pos opponent_pos, int dist) 
 	{
 		if(current_pos.dist(opponent_pos) < 200)
 			return true;
-		if(current_pos.dist(opponent_pos) > 280)
+		if(current_pos.dist(opponent_pos) > dist)
 			return false;
 
 		return (current_pos.angle(opponent_pos) < PI) ? true : false;

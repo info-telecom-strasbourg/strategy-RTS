@@ -23,6 +23,5 @@ class GameOver extends Task
     {
         this.in_progress();
         robot_RTS.speed_regime = STOP;
-        println("GAME OVER");
     }
 }

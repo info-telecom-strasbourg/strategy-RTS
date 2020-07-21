@@ -10,6 +10,9 @@ class Strat extends ManageOpponent
 	/* Beginnig of the match */
     int time;
 
+	/* Time elapsed since we want to go to the next task */
+    long time_go_task;
+
 	/* Our score */
     int score;
 
@@ -18,6 +21,10 @@ class Strat extends ManageOpponent
 
 	/* The list of tasks that must be done */
     ArrayList<Task> tab_tasks = new ArrayList<Task>();
+
+	/* The task Weathercock has been inserted in tasks_order */
+	boolean weathercock_insterted;
+
 
 	/**
 	 * The constructor of the class
@@ -28,7 +35,9 @@ class Strat extends ManageOpponent
         super(robot);
         this.id_current_task = -1;
         this.time = millis();
+		this.time_go_task = millis();
         this.score = 7;
+		this.weathercock_insterted = false;
     }
 
     /**
@@ -87,20 +96,45 @@ class Strat extends ManageOpponent
 	 */
 	int find_best_task()
 	{
-		tab_tasks.get(GAME_OVER).position = this.robot.position;
-
 		if (this.id_current_task == TASK_FLAG && this.robot.detected_color == NO_COLOR)
 			select_mooring_area();
 
 
 		long time_left = 100000 - millis() - time;
 
+		if (!this.weathercock_insterted && time_left < 75000)
+		{
+			this.tasks_order.add(TASK_WEATHERCOCK);
+			this.weathercock_insterted = true;
+		}
 
-		if (final_move_with_color(time_left) || final_move_without_color(time_left))	
-			this.changeTaskOrder(this.tasks_order.size() - 2, 0);
+		if ((this.tab_tasks.get(this.tasks_order.get(0)).done == NOT_DONE && millis() - this.time_go_task > 10000)
+		|| (this.tab_tasks.get(this.tasks_order.get(0)).done == IN_PROGRESS) && millis() - this.time_go_task > this.tab_tasks.get(this.tasks_order.get(0)).max_time)
+		{
+			this.tab_tasks.get(this.tasks_order.get(0)).done = NOT_DONE;
+			changeTaskOrder(0, this.tasks_order.size() - 1);
+			for (int i = 0; i < this.tasks_order.size(); i++)
+				if(access(this.robot.position, this.tab_tasks.get(this.tasks_order.get(i)).position, 280) == null)
+				{
+					changeTaskOrder(i, 0);
+					break;
+				}
 
-		if (time_left < 0.5)
-			this.changeTaskOrder(this.tasks_order.size() - 1, 0);
+		}
+
+
+		if (final_move_with_color(time_left) || final_move_without_color(time_left) || this.tasks_order.isEmpty())
+		{
+			this.emptyTaskOrder();
+			this.addTaskOrder(TASK_FLAG);
+		}	
+
+		if (time_left < 0.5 || this.tasks_order.isEmpty())
+		{
+			tab_tasks.get(GAME_OVER).position = this.robot.position;
+			this.emptyTaskOrder();
+			this.addTaskOrder(GAME_OVER);
+		}
 		
 		if (this.tab_tasks.get(this.tasks_order.get(0)).done == NOT_DONE)
 			this.robot.next_destination = this.tab_tasks.get(this.tasks_order.get(0)).position;
@@ -149,6 +183,7 @@ class Strat extends ManageOpponent
 	 */
     void changeTaskOrder(int index_start, int index_end)
 	{
+		this.time_go_task = millis();
 		if (index_start == index_end || index_start >= this.tasks_order.size() || index_end >= this.tasks_order.size()
 		|| index_start < 0 || index_end < 0)
 			return;
@@ -175,5 +210,23 @@ class Strat extends ManageOpponent
 		}
 
 		this.tasks_order = tasks_order_temp;
+	}
+
+	void emptyTaskOrder()
+	{
+		this.time_go_task = millis();
+		this.tasks_order = new ArrayList();
+	}
+
+	void addTaskOrder(int id)
+	{
+		this.time_go_task = millis();
+		this.tasks_order.add(id);
+	}
+
+	void removeTaskOrder(int index)
+	{
+		this.time_go_task = millis();
+		this.tasks_order.remove(index);
 	}
 }

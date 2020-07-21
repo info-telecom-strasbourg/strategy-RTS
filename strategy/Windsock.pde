@@ -49,7 +49,7 @@ class Windsock extends Task
 		if(done)
 		{
 			this.over();
-			strat.tasks_order.remove(0);
+			strat.removeTaskOrder(0);
 			strat.score += this.points;
 			if ((this.id == TASK_WINDSOCK_1 && strat.tab_tasks.get(TASK_WINDSOCK_2).done == DONE)
 			|| (this.id == TASK_WINDSOCK_2 && strat.tab_tasks.get(TASK_WINDSOCK_1).done == DONE))

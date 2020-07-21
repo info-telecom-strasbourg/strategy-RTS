@@ -38,7 +38,7 @@ class Flag extends Task
 		{
 			robot_RTS.flag_deployed = true;
 			this.over();
-			strat.tasks_order.remove(0);
+			strat.removeTaskOrder(0);
 			strat.score += this.points;
 		}
 	}

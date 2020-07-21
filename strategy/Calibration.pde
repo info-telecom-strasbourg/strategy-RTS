@@ -88,7 +88,7 @@ class Calibration extends Task
             if(!robot_RTS.corners[0].on_arena(1) && !robot_RTS.corners[3].on_arena(1))
             {
                 strat.tab_tasks.get(TASK_CALIBRATION).over();
-                strat.tasks_order.remove(0);
+                strat.removeTaskOrder(0);
                 y_calibrated = false;
                 x_calibration = false;
                 strat.tab_tasks.get(TASK_CALIBRATION).position = new Pos(-50, -50);

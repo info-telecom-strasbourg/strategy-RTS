@@ -64,7 +64,7 @@ class Weathercock extends Task
 				{
 					this.detect_weathercock_col();
 					this.over();
-					strat.tasks_order.remove(0);
+					strat.removeTaskOrder(0);
 				}
 			}
 			else

@@ -68,7 +68,7 @@ class Lighthouse extends Task
 				if(done)
 				{
 					this.over();
-					strat.tasks_order.remove(0);
+					strat.removeTaskOrder(0);
 					strat.score += this.points;
 				}
 				else

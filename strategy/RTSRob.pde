@@ -39,7 +39,18 @@ class RTSRob extends Robot
 		triangle(ROBOT_HEIGHT/2, 0, 0, -ROBOT_WIDTH/2, 0, ROBOT_WIDTH/2);
         for(int i = 0; i < this.sensors.size(); i++)
             this.sensors.get(i).draw();
+        if (this.flag_deployed)
+			draw_flag();
 
         popMatrix();
     }
+
+    /**
+	 * Draw the flag when it is hoisted
+	 */
+	void draw_flag()
+	{
+		fill(0, 0, 255);
+		ellipse(-25,0, 20, 20);
+	}
 }
