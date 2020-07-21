@@ -64,7 +64,7 @@ class Lighthouse extends Task
 				deploy_actuator_lighthouse();
 			else
 			{
-        		boolean done = false;
+        		boolean done = true;
 				if(done)
 				{
 					this.over();

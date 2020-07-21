@@ -51,7 +51,8 @@ class Windsock extends Task
 			this.over();
 			strat.tasks_order.remove(0);
 			strat.score += this.points;
-			if (this.done == DONE)
+			if ((this.id == TASK_WINDSOCK_1 && strat.tab_tasks.get(TASK_WINDSOCK_2).done == DONE)
+			|| (this.id == TASK_WINDSOCK_2 && strat.tab_tasks.get(TASK_WINDSOCK_1).done == DONE))
 				strat.score += this.points;
 		}
 		else
