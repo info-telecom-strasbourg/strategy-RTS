@@ -106,10 +106,15 @@ ArrayList<Sensor> init_sensors()
  */
 void manage_robot_op()
 {
-    rob_op.update_destinations();
-    rob_op.goTo(true);
-    rob_op.draw_robot();
-    rob_op.display_dest();
+	for (int i = 0; i < rob_opponents.size(); i++)
+	{
+		rob_opponents.get(i).update_destinations();
+		rob_opponents.get(i).goTo(true);
+		rob_opponents.get(i).getCorners();
+		rob_opponents.get(i).borderColision();
+		rob_opponents.get(i).draw_robot();
+		rob_opponents.get(i).display_dest();
+	}
 }
 
 /**
@@ -118,13 +123,11 @@ void manage_robot_op()
  */
 void init_robots()
 {
-    // rob_op_2 = new OpponentRob(new Pos(1400, 700), PI, false);
-    // rob_op_2.speed_regime = FAST;
-    // rob_opponents.add(rob_op_2);
 	if (dir == Dir.left)
 	{
         robot_RTS = new RTSRob(new Pos(100, 410), 0, init_sensors());
 		rob_op = new OpponentRob(new Pos(1400, 410), PI, true);
+		rob_op_2 = new OpponentRob(new Pos(1400, 700), PI, false);
 
 		POS_WINDSOCK_1 = new Pos(100,800);
 		POS_WINDSOCK_2 = new Pos(300,800);
@@ -137,6 +140,8 @@ void init_robots()
 	{
         robot_RTS = new RTSRob(new Pos(1400, 410), PI, init_sensors());
 		rob_op = new OpponentRob(new Pos(100, 410), 0, true);
+		rob_op_2 = new OpponentRob(new Pos(100, 700), 0, false);
+
     
 		POS_WINDSOCK_1 = new Pos(1400,800);
 		POS_WINDSOCK_2 = new Pos(1200,800);
@@ -147,6 +152,7 @@ void init_robots()
 	}
 	
     rob_opponents.add(rob_op);
+	rob_opponents.add(rob_op_2);
 	POS_CUPS = new Pos(ARENA_HEIGHT/2, ARENA_WIDTH/2);
 }
 
