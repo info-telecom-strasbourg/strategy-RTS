@@ -111,6 +111,7 @@ class Strat extends ManageOpponent
 			this.weathercock_insterted = true;
 		}
 
+		if(this.tasks_order.size() != 0)
 		if ((this.tab_tasks.get(this.tasks_order.get(0)).done == NOT_DONE && millis() - this.time_go_task > 10000)
 		|| (this.tab_tasks.get(this.tasks_order.get(0)).done == IN_PROGRESS) && millis() - this.time_go_task > this.tab_tasks.get(this.tasks_order.get(0)).max_time)
 		{
