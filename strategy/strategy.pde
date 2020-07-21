@@ -17,7 +17,7 @@ final int TASK_WEATHERCOCK = 0;
 final int TASK_WINDSOCK_1 = 1;
 final int TASK_WINDSOCK_2 = 2;
 final int TASK_LIGHTHOUSE = 3;
-final int TASK_FLAG = 4;
+final int TASK_MOORING_AREA = 4;
 final int TASK_CALIBRATION = 5;
 final int GAME_OVER = 6;
 
@@ -42,7 +42,7 @@ Pos POS_LIGHTHOUSE_OP = null;
 Pos POS_WEATHERCOCK = null;
 Pos POS_WINDSOCK_1 = null;
 Pos POS_WINDSOCK_2 = null;
-Pos POS_FLAG = null;
+Pos POS_MOORING_AREA = null;
 
 //Macro for tasks positions
 int BOTTOM_LIDAR = 0;
@@ -51,7 +51,7 @@ int MOBILE_LIDAR = 2;
 
 
 enum Dir {left , right };
-Dir dir = Dir.left;
+Dir dir = Dir.right;
 
 //Global variables
 PImage img;
@@ -131,7 +131,7 @@ void init_robots()
 		POS_WINDSOCK_2 = new Pos(300,800);
 		POS_LIGHTHOUSE = new Pos(250,125);
 		POS_LIGHTHOUSE_OP = new Pos(1250, 125);
-		POS_FLAG = new Pos(100, -50);
+		POS_MOORING_AREA = new Pos(100, -50);
 		POS_WEATHERCOCK = new Pos(450, 125);
 	}
 	else
@@ -145,7 +145,7 @@ void init_robots()
 		POS_WINDSOCK_2 = new Pos(1200,800);
 		POS_LIGHTHOUSE = new Pos(1250, 125);
 		POS_LIGHTHOUSE_OP = new Pos(250,125);
-		POS_FLAG = new Pos(1400, -50);
+		POS_MOORING_AREA = new Pos(1400, -50);
 		POS_WEATHERCOCK = new Pos(1050, 125);
 	}
 	
@@ -172,8 +172,8 @@ void init_tasks()
     Weathercock task_weathercock = new Weathercock(TASK_WEATHERCOCK, 10, POS_WEATHERCOCK, 25000, checkpoint_weathercock);
 	Windsock task_windsock_1 = new Windsock(TASK_WINDSOCK_1, 5, POS_WINDSOCK_1, 20000, checkpoint_windsock);
 	Windsock task_windsock_2 = new Windsock(TASK_WINDSOCK_2, 5, POS_WINDSOCK_2, 20000, checkpoint_windsock);
-	Lighthouse task_lighthouse = new Lighthouse(TASK_WEATHERCOCK, 13, POS_LIGHTHOUSE, 5000, checkpoint_lighthouse);
-	Flag task_flag = new Flag(TASK_FLAG, 10, POS_FLAG, 7000);
+	Lighthouse task_lighthouse = new Lighthouse(TASK_LIGHTHOUSE, 13, POS_LIGHTHOUSE, 10000, checkpoint_lighthouse);
+	MooringArea task_mooring_area = new MooringArea(TASK_MOORING_AREA, 10, POS_MOORING_AREA, 100000);
 	Calibration task_calibration = new Calibration(TASK_CALIBRATION, 0, new Pos(-50, -50), 15000);
 	GameOver game_over = new GameOver(GAME_OVER, 0, new Pos(-50, -50), 1000000);
 
@@ -181,7 +181,7 @@ void init_tasks()
     strat.tab_tasks.add(task_windsock_1);
     strat.tab_tasks.add(task_windsock_2);
     strat.tab_tasks.add(task_lighthouse);
-    strat.tab_tasks.add(task_flag);
+    strat.tab_tasks.add(task_mooring_area);
     strat.tab_tasks.add(task_calibration);
     strat.tab_tasks.add(game_over);
 }
@@ -260,15 +260,15 @@ void display_tasks_order(int id)
 		case TASK_LIGHTHOUSE:
 			println("TASK_LIGHTHOUSE");
 			break;
-		case TASK_FLAG:
-			println("TASK_FLAG");
+		case TASK_MOORING_AREA:
+			println("TASK_MOORING_AREA");
 			break;
 		case TASK_CALIBRATION:
 			println("TASK_CALIBRATION");
 			break;
 		case GAME_OVER:
 			println("GAME_OVER");
-			break;		
+			break;					
 	}
 }
 
@@ -292,6 +292,6 @@ void draw()
 	println("-------------");
 	for (int i = 0; i < strat.tasks_order.size(); i++)
 		display_tasks_order(strat.tasks_order.get(i));
-
+		
     manage_robot_op();
 }

@@ -17,12 +17,12 @@ class MobileLidar extends Sensor
 		if (!robot_RTS.haveToBack())
 		{
 			fill(0, 0, 255, 100);
-			arc(0, 0, 500, 500, - PI/2,  PI/2);
+			arc(0, 0, 400, 400, - PI/2,  PI/2);
 		}
 		else 
 		{
 			fill(255, 0, 255, 100);
-			arc(0, 0, 500, 500, PI/2,  3*PI/2);		
+			arc(0, 0, 400, 400, PI/2,  3*PI/2);		
 		}
 		fill (255, 255, 0, 100);
 		ellipse(0, 0, 300, 300);

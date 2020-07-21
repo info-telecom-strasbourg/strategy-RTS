@@ -50,4 +50,9 @@ class TopLidar extends Sensor
 
 		return (delt_ang < PI/12);
 	}
+
+	boolean is_detected(int id)
+	{
+		return (id == TASK_LIGHTHOUSE) ? false : true;
+	}
 }
