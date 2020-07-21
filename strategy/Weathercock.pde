@@ -22,17 +22,17 @@ class Weathercock extends Task
     }
 
     /**
-	 * Detect the weathercock color and update POS_FLAG
+	 * Detect the weathercock color and update POS_MOORING_AREA
 	 */
 	void detect_weathercock_col()
 	{
 		switch (robot_RTS.detected_color = weathercock.color_w)
 		{
 			case BLACK:
-				strat.tab_tasks.get(TASK_FLAG).position.y = 200;
+				strat.tab_tasks.get(TASK_MOORING_AREA).position.y = 200;
 				break;
 			case WHITE:
-				strat.tab_tasks.get(TASK_FLAG).position.y = 650;
+				strat.tab_tasks.get(TASK_MOORING_AREA).position.y = 650;
 				break;
 			default:
 				println("No color found");
@@ -62,9 +62,14 @@ class Weathercock extends Task
 
 				if((millis() - this.weathercock_wait) > 2000)
 				{
-					this.detect_weathercock_col();
-					this.over();
-					strat.tasks_order.remove(0);
+					if(((TopLidar)robot_RTS.sensors.get(TOP_LIDAR)).is_detected(this.id))
+					{
+						this.detect_weathercock_col();
+						this.over();
+						strat.removeTaskOrder(0);
+					}
+					else
+						this.interrupted();
 				}
 			}
 			else

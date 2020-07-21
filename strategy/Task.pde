@@ -1,5 +1,5 @@
 /**
- * A task (weathercock, windsocks, flag and lighthouse)
+ * A task (weathercock, windsocks, mooring area and lighthouse)
  */
 abstract class Task
 {
@@ -39,17 +39,30 @@ abstract class Task
 	/**
 	 * Indicate that the task in done
 	 */
-	void over() {done = DONE;}
+	void over() {this.done = DONE;}
 
 	/**
 	 * Indicate that the task is in progress
 	 */
-	void in_progress() {done = IN_PROGRESS;}
+	void in_progress() 
+	{
+		if(this.done == NOT_DONE)
+			strat.time_start_task = millis();
+
+		this.done = IN_PROGRESS;
+	}
 
 	/**
 	 * Indicate that the task is interrupted
 	 */
-	void interrupted() {done = NOT_DONE;}
+	void interrupted() 
+	{
+		strat.changeTaskOrder(0, strat.tasks_order.size() - 1);
+		strat.tab_tasks.get(TASK_CALIBRATION).in_progress();
+		strat.addTaskOrder(TASK_CALIBRATION);
+		strat.changeTaskOrder(strat.tasks_order.size() - 1, 0);
+		this.done = NOT_DONE;
+	}
 
 	/**
 	 * Display the task (red if not done, orange if in progress and green if done)
@@ -58,7 +71,7 @@ abstract class Task
 	{
 		if (this.id != TASK_CALIBRATION && this.id != GAME_OVER)
 		{
-			switch (done)
+			switch (this.done)
 			{
 				case NOT_DONE:
 					fill(255,0,0);

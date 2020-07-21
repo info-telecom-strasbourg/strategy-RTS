@@ -29,7 +29,7 @@ class Windsock extends Task
 	 * Simulate the execution of the windsock task
 	 */
 	void do_task()
-	{		
+	{	
 		this.in_progress();
 				
 		this.checkpoints.get(0).x = robot_RTS.position.x;
@@ -45,20 +45,19 @@ class Windsock extends Task
 		if(!raise_windsock())
 			return;
 			
-		boolean done = true;
-		if(done)
+		if(((TopLidar)robot_RTS.sensors.get(TOP_LIDAR)).is_detected(this.id))
 		{
 			this.over();
-			strat.tasks_order.remove(0);
+			strat.removeTaskOrder(0);
 			strat.score += this.points;
-			if (this.done == DONE)
+			if ((this.id == TASK_WINDSOCK_1 && strat.tab_tasks.get(TASK_WINDSOCK_2).done == DONE)
+			|| (this.id == TASK_WINDSOCK_2 && strat.tab_tasks.get(TASK_WINDSOCK_1).done == DONE))
 				strat.score += this.points;
 		}
 		else
 		{
 			this.windsock_wait = -1;
 			this.interrupted();
-			strat.tab_tasks.get(TASK_CALIBRATION).in_progress();
 		}		
 	}
 }

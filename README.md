@@ -13,7 +13,7 @@ At this point, the last update is on the branch `dev`.
 To access it, just enter:
 
 ```
-git checkout dev
+git checkout -b strategy origin/strategy
 git pull origin dev
 ```
 

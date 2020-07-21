@@ -77,11 +77,11 @@ class Pos
 	/**
 	 * Check wich pos is closer to yours
 	 * @param tab_pos: the list of position to compare
-	 * @return the closest pos contained in "tab_pos"
+	 * @return the index of the closer position
 	 */
-	Pos closer(Pos[] tab_pos)
+	int closer(Pos[] tab_pos)
 	{
-		Pos closest = tab_pos[0];
+		int closest = 0;
 		float dist = dist(tab_pos[0]);
 
 		for(int i = 1; i < tab_pos.length; i++)
@@ -90,7 +90,7 @@ class Pos
 			if(dist_pos < dist)
 			{
 				dist = dist_pos;
-				closest = tab_pos[i];
+				closest = i;
 			}
 		}
 

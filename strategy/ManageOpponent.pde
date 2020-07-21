@@ -62,7 +62,7 @@ class ManageOpponent
 	{
         this.path = new ArrayList<Pos>();
         
-		Pos intersection = access(this.robot.position, objective_position, 280);
+		Pos intersection = access(this.robot.position, objective_position, 200);
 		if(intersection != null)
 		{
 			Pos checkpoint = this.find_step(intersection);
@@ -97,10 +97,26 @@ class ManageOpponent
 		{
 			Pos new_pos = new Pos(point_1.x + i*delta_x/nb_seg, point_1.y + i*delta_y/nb_seg);
 			for (int j = 0; j < this.opponent_positions.size(); j++)
-				if (new_pos.dist(this.opponent_positions.get(j)) < dist)
+				if (is_on_security_area(new_pos, this.opponent_positions.get(j), dist))
 					return new_pos;
 		}
 		return null;
+	}
+
+    /**
+	 * Indicate if the opponent is on the security area
+	 * @param: current_pos: the current position
+	 * @param: opponent_pos: the opponent position
+	 * @return if the opponent is on the security area
+	 */
+	boolean is_on_security_area(Pos current_pos, Pos opponent_pos, int dist) 
+	{
+		if(current_pos.dist(opponent_pos) < 150)
+			return true;
+		if(current_pos.dist(opponent_pos) > dist)
+			return false;
+
+		return (current_pos.angle(opponent_pos) < PI) ? true : false;
 	}
 
 	/**
@@ -114,7 +130,7 @@ class ManageOpponent
 		float angle_step = 3 * distance / 1000;
 		float angle_dep = this.robot.position.angle(this.robot.next_destination);
 		if(angle_step != 0)
-			for(float i = angle_dep; i < angle_dep + PI/2; i+=angle_step)
+			for(float i = angle_dep; i < angle_dep + PI; i+=angle_step)
 			{
 				float angle_to_check = mod2Pi(i);
 				Pos check_1 = find_checkpoint(angle_to_check);
@@ -142,8 +158,8 @@ class ManageOpponent
 			checkpoint.x += step*cos(angle);
 			checkpoint.y += step*sin(angle);
 			
-			if(access(this.robot.position, checkpoint, 280) == null 
-				&& access(checkpoint, objective_position, 280) == null)
+			if(access(this.robot.position, checkpoint, 200) == null 
+				&& access(checkpoint, objective_position, 200) == null)
 					return checkpoint;
 		}
 		return null;
@@ -155,7 +171,7 @@ class ManageOpponent
 	void check_path()
 	{
 		if (!objective_position.is_around(this.path.get(path.size() - 1), 5) 
-			|| access(this.robot.position, this.path.get(0), 200) != null)
+			|| access(this.robot.position, this.path.get(0), 120) != null)
 			{				
 				this.path = new ArrayList();
 				find_path();

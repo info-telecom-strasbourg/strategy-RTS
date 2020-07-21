@@ -64,20 +64,16 @@ class Lighthouse extends Task
 				deploy_actuator_lighthouse();
 			else
 			{
-        		boolean done = false;
-				if(done)
+				if(((TopLidar)robot_RTS.sensors.get(TOP_LIDAR)).is_detected(this.id))
 				{
 					this.over();
-					strat.tasks_order.remove(0);
+					strat.removeTaskOrder(0);
 					strat.score += this.points;
 				}
 				else
 				{
 					this.lighthouse_wait = -1;
 					this.interrupted();
-					strat.tab_tasks.get(TASK_CALIBRATION).in_progress();
-					strat.tasks_order.add(TASK_CALIBRATION);
-					strat.changeTaskOrder(strat.tasks_order.size() - 1, 0);
 				}
 			}
 		}

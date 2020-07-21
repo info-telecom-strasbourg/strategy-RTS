@@ -12,7 +12,22 @@ class MobileLidar extends Sensor
 	 * Draw nothing
 	 */
     @Override
-    void draw(){}
+    void draw()
+	{
+		if (!robot_RTS.haveToBack())
+		{
+			fill(0, 0, 255, 100);
+			arc(0, 0, 400, 400, - PI/2,  PI/2);
+		}
+		else 
+		{
+			fill(255, 0, 255, 100);
+			arc(0, 0, 400, 400, PI/2,  3*PI/2);		
+		}
+		fill (255, 255, 0, 100);
+		ellipse(0, 0, 300, 300);
+	}
+
 
     /**
 	 * Return what the sensor detect
@@ -20,9 +35,9 @@ class MobileLidar extends Sensor
 	 * @return an array of obstacles detected by the sensor
 	 */
     @Override
-    ArrayList<Pos> detection(ArrayList<Pos> detectable)
+    ArrayList<Pos> detection(ArrayList<Pos> detectables)
     {
-	    return detectable;
+		return detectables;
     }
 
     /**
