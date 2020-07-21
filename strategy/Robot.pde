@@ -28,9 +28,9 @@ class Robot
 	 * @param pos: the initial position of the robot
 	 * @param angle: the initial position of the robot
 	 */
-	Robot(Pos pos, float angle)
+	Robot(Pos pos_ini, float angle)
 	{
-		this.position = pos;
+		this.position = pos_ini;
 		this.angle = angle;
 		this.speed_regime = STOP;
 		this.next_destination = null;

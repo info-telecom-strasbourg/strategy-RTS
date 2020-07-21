@@ -15,9 +15,9 @@ class RTSRob extends Robot
 	 * @param angle: the initial position of the robot
      * @param sensors: the list of sensors of our robot
 	 */
-    RTSRob(Pos position, float angle, ArrayList<Sensor> sensors)
+    RTSRob(Pos init_position, float angle, ArrayList<Sensor> sensors)
     {
-        super(position, angle, sensors);
+        super(init_position, angle, sensors);
         this.detected_color = NO_COLOR;
         this.flag_deployed = false;
     }
