@@ -1,7 +1,8 @@
+
 /**
  * Simulate the behavior of the weathercock
  */
-class Weathercock
+class WeathercockColour
 {
 	int color_w;
 	boolean activate;
@@ -10,7 +11,7 @@ class Weathercock
 	/**
 	 * Constructor of Weathercock
 	 */
-	Weathercock()
+	WeathercockColour()
 	{
 		color_w = NO_COLOR;
 		begin = millis();
@@ -23,7 +24,7 @@ class Weathercock
 	void decide_zone()
 	{
 		if((millis() - begin) > 25000 && color_w == NO_COLOR)
-			color_w = int(random(50))%2 + 1;
+			this.color_w = int(random(50))%2 + 1;
 	}
 
 	/**
@@ -33,7 +34,7 @@ class Weathercock
 	void display()
 	{
 		decide_zone();
-		switch (color_w)
+		switch (this.color_w)
 		{
 			case BLACK:
 				fill(0,0,0);

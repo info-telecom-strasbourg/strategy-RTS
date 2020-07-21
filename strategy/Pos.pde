@@ -7,13 +7,16 @@
  */
 class Pos
 {
+	/* The position of the point following the axe x */
 	float x;
+
+	/* The position of the point following the axe y */
 	float y;
 
 	/**
 	 * Constructor of Pos
-	 * @param x: the position of the point following the axe x
-	 * @param y: the position of the point following the axe y
+	 * @param x: the position of the point following the axis x
+	 * @param y: the position of the point following the axis y
 	 */
 	Pos(float x, float y)
 	{
@@ -32,13 +35,23 @@ class Pos
 
 	/**
 	 * Check if a point is near of another one
-	 * @param pos: the position you want to compare yours with
+	 * @param pos: the position you want to compare
 	 * @param distance: the approximation you want to make
-	 * @return a boolean that indicate if the point is arround "pos"
+	 * @return a boolean that indicates if the point is arround "pos"
 	 */
 	boolean is_around(Pos pos, int distance)
 	{
 		return abs(this.x - pos.x) < distance && abs(this.y - pos.y) < distance;
+	}
+
+	/**
+	 * Check if a point is at the same position of another one
+	 * @param pos: the position you want to compare
+	 * @return a boolean that indicates if the point is at the same position of "pos"
+	 */
+	boolean is(Pos pos)
+	{
+		return this.x == pos.x && this.y == pos.y;
 	}
 
 	/**
@@ -64,11 +77,11 @@ class Pos
 	/**
 	 * Check wich pos is closer to yours
 	 * @param tab_pos: the list of position to compare
-	 * @return the closest pos contained in "tab_pos"
+	 * @return the index of the closer position
 	 */
-	Pos closer(Pos[] tab_pos)
+	int closer(Pos[] tab_pos)
 	{
-		Pos closest = tab_pos[0];
+		int closest = 0;
 		float dist = dist(tab_pos[0]);
 
 		for(int i = 1; i < tab_pos.length; i++)
@@ -77,7 +90,7 @@ class Pos
 			if(dist_pos < dist)
 			{
 				dist = dist_pos;
-				closest = tab_pos[i];
+				closest = i;
 			}
 		}
 
@@ -107,4 +120,3 @@ class Pos
 		return new Pos((this.x + pos.x)/2, (this.y + pos.y)/2);
 	}
 }
-
