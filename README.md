@@ -30,7 +30,7 @@ We also have simulated the behavior of the robot when it collapses with a border
 
 ### Opponent control
 
-Concerning opponent, you can control it with your mouse. You can choose wich click control the robot (2 robots, 2 clicks). You can also deleting a point by pressing the key <span style="color:green">'d'</span>.
+Concerning opponent, you can control it with your mouse. You can choose wich click control the robot (2 robots, 2 clicks). The destination should appear with a number when you create it. You can also deleting a point by pressing the key <span style="color:green">'d'</span>.
 
 ### Tasks
 
@@ -46,7 +46,9 @@ The triangles are the tasks locations:
 
 The weathercock should take a **random color** after 25 seconds (black or white). The mooring area appear when our robot detect the color of the weathercock.
 
-The destination should appear with a number when you create it.
+## Little demo
+
+![Demo](images/Demo.gif)
 
 
 ## Adopted strategy
