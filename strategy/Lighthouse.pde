@@ -14,10 +14,10 @@ class Lighthouse extends Task
 	 * @param max_time: the estimated necessary time to accomplish the task
 	 * @param light_house_checkpoints: the checkpoints we need to reach to accomplish the task
 	 */
-    Lighthouse(int id, int points, Pos position, long max_time, ArrayList<Pos> light_house_checkpoints)
+    Lighthouse(int id, int points, Pos position, long max_time, ArrayList<Pos> lighthouse_checkpoints)
     {
         super(id, points, position, max_time);
-        this.checkpoints = light_house_checkpoints;
+        this.checkpoints = lighthouse_checkpoints;
         this.lighthouse_wait = -1;
     }
 

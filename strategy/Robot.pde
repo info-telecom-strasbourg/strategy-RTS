@@ -28,9 +28,9 @@ class Robot
 	 * @param pos: the initial position of the robot
 	 * @param angle: the initial position of the robot
 	 */
-	Robot(Pos pos, float angle)
+	Robot(Pos pos_ini, float angle)
 	{
-		this.position = pos;
+		this.position = pos_ini;
 		this.angle = angle;
 		this.speed_regime = STOP;
 		this.next_destination = null;
@@ -40,8 +40,8 @@ class Robot
 		{
 			float angle_corner = this.angle + PI/4 + i*PI/2;
 			this.corners[i] = new Pos(
-									  pos.x + HALF_DIAG * cos(angle_corner), 
-									  pos.y + HALF_DIAG * sin(angle_corner)
+									  pos_ini.x + HALF_DIAG * cos(angle_corner), 
+									  pos_ini.y + HALF_DIAG * sin(angle_corner)
 									 );
 		}
 	}

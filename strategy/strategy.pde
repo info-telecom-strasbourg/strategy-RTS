@@ -174,6 +174,7 @@ void init_tasks()
 	Windsock task_windsock_2 = new Windsock(TASK_WINDSOCK_2, 5, POS_WINDSOCK_2, 20000, checkpoint_windsock);
 	Lighthouse task_lighthouse = new Lighthouse(TASK_LIGHTHOUSE, 13, POS_LIGHTHOUSE, 10000, checkpoint_lighthouse);
 	MooringArea task_mooring_area = new MooringArea(TASK_MOORING_AREA, 10, POS_MOORING_AREA, 100000);
+
 	Calibration task_calibration = new Calibration(TASK_CALIBRATION, 0, new Pos(-50, -50), 15000);
 	GameOver game_over = new GameOver(GAME_OVER, 0, new Pos(-50, -50), 1000000);
 
