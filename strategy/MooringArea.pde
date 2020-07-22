@@ -43,9 +43,9 @@ class MooringArea extends Task
 					strat.score += 5;
 
 				this.over();
+				return;
 			}
 		}
-		
 		this.in_progress();
 	}
 }
