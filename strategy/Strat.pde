@@ -57,7 +57,6 @@ class Strat extends ManageOpponent
 		   || this.tab_tasks.get(this.id_current_task).done == IN_PROGRESS)
 		{
 			this.tab_tasks.get(this.id_current_task).do_task();
-
 			
 			if (!this.path.isEmpty())
 				this.path = new ArrayList();
@@ -166,6 +165,9 @@ class Strat extends ManageOpponent
 		if ((final_move_with_color(time_left) || final_move_without_color(time_left) || (this.tasks_order.isEmpty())) && this.tab_tasks.get(TASK_MOORING_AREA).done != DONE)
 		{
 			this.emptyTaskOrder();
+			if(!access(this.robot.position, this.tab_tasks.get(TASK_MOORING_AREA).position, 280))
+				select_mooring_area();
+				
 			this.addTaskOrder(TASK_MOORING_AREA);
 			return true;
 		}	
