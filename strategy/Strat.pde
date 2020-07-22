@@ -110,7 +110,7 @@ class Strat extends ManageOpponent
 
 		long time_left = 100000 - millis() - time;
 		
-		if (time_left < 4500 && tab_tasks.get(TASK_MOORING_AREA).done != DONE)
+		if (time_left < 4500 && !this.robot.flag_deployed)
 		{
 			if (!this.robot.flag_deployed)
 				this.score += 10;

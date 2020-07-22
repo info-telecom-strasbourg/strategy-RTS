@@ -112,7 +112,7 @@ void manage_robot_op()
 		rob_opponents.get(i).getCorners();
 		rob_opponents.get(i).borderColision();
 		rob_opponents.get(i).draw_robot();
-		rob_opponents.get(i).display_dest();
+		// rob_opponents.get(i).display_dest();
 	}
 }
 
@@ -125,8 +125,8 @@ void init_robots()
 	if (dir == Dir.left)
 	{
         robot_RTS = new RTSRob(new Pos(100, 410), 0, init_sensors());
-		rob_op = new OpponentRob(new Pos(1400, 410), PI, true);
-		rob_op_2 = new OpponentRob(new Pos(1400, 700), PI, false);
+		rob_op = new OpponentRob(new Pos(1400, 410), PI);
+		rob_op_2 = new OpponentRob(new Pos(1400, 700), PI);
 
 		POS_WINDSOCK_1 = new Pos(100,800);
 		POS_WINDSOCK_2 = new Pos(300,800);
@@ -138,8 +138,8 @@ void init_robots()
 	else
 	{
         robot_RTS = new RTSRob(new Pos(1400, 410), PI, init_sensors());
-		rob_op = new OpponentRob(new Pos(100, 410), 0, true);
-		rob_op_2 = new OpponentRob(new Pos(100, 700), 0, false);
+		rob_op = new OpponentRob(new Pos(100, 410), 0);
+		rob_op_2 = new OpponentRob(new Pos(100, 700), 0);
 
     
 		POS_WINDSOCK_1 = new Pos(1400,800);
@@ -205,7 +205,7 @@ void setup()
     dectable_lidar_mobile.add(POS_LIGHTHOUSE_OP);
     dectable_lidar_mobile.add(POS_WEATHERCOCK);
     dectable_lidar_mobile.add(rob_op.position);
-    // dectable_lidar_mobile.add(rob_op_2.position);
+    dectable_lidar_mobile.add(rob_op_2.position);
 
     weathercock = new WeathercockColour();
 
