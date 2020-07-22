@@ -41,7 +41,6 @@ class MooringArea extends Task
 					strat.score += 10;
 				else
 					strat.score += 5;
-
 				this.over();
 				return;
 			}
