@@ -167,16 +167,6 @@ class ManageOpponent
 		float step = 10;
 		Pos checkpoint = new Pos(this.robot.position);
 
-		while(checkpoint.on_arena(1) && !checkpoint.on_arena(100))
-		{
-			checkpoint.x += step*cos(angle);
-			checkpoint.y += step*sin(angle);
-
-			if(access(this.robot.position, checkpoint, secu_dist) == null 
-				&& access(checkpoint, objective_position, secu_dist) == null)
-					return checkpoint;
-		}
-
 		while (checkpoint.on_arena(100))
 		{
 			checkpoint.x += step*cos(angle);

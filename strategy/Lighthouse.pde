@@ -57,7 +57,7 @@ class Lighthouse extends Task
 		robot_RTS.goToAngle((3*PI)/2);
 		if (mod2Pi(robot_RTS.angle - (3*PI)/2) < rot_step)
 		{
-			if(this.lighthouse_wait == -1)
+			if(this.lighthouse_wait == -1 || ((millis() - this.lighthouse_wait)*3) > (this.max_time * 2))
 				this.lighthouse_wait = millis();
 				
 			if (((millis() - this.lighthouse_wait)*3) < (this.max_time * 2))
