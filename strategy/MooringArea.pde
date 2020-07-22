@@ -36,12 +36,15 @@ class MooringArea extends Task
 		{
 			Pos weth_1 = new Pos(POS_MOORING_AREA.x, 200), weth_2 = new Pos(POS_MOORING_AREA.x, 650);
 			if (robot_RTS.position.is_around(weth_1, 5) || robot_RTS.position.is_around(weth_2, 5))
+			{
 				if (strat.tab_tasks.get(TASK_WEATHERCOCK).done == DONE)
 					strat.score += 10;
 				else
 					strat.score += 5;
+				this.over();
+				return;
+			}
 		}
-		
 		this.in_progress();
 	}
 }

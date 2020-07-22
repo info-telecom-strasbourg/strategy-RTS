@@ -57,7 +57,6 @@ class Strat extends ManageOpponent
 		   || this.tab_tasks.get(this.id_current_task).done == IN_PROGRESS)
 		{
 			this.tab_tasks.get(this.id_current_task).do_task();
-
 			
 			if (!this.path.isEmpty())
 				this.path = new ArrayList();
@@ -95,8 +94,8 @@ class Strat extends ManageOpponent
 		int index_closer = this.robot.position.closer(points_for_closer);
 		tab_tasks.get(TASK_MOORING_AREA).position = points_for_closer[index_closer];
 
-		if(access(this.robot.position, tab_tasks.get(TASK_MOORING_AREA).position, 280) == null
-		&& access(this.robot.position, points_for_closer[(index_closer+1)%2], 280) != null)
+		if(access(this.robot.position, tab_tasks.get(TASK_MOORING_AREA).position, 280) != null
+		&& access(this.robot.position, points_for_closer[(index_closer+1)%2], 280) == null)
 			tab_tasks.get(TASK_MOORING_AREA).position = points_for_closer[(index_closer+1)%2];
 	}
 
@@ -111,7 +110,7 @@ class Strat extends ManageOpponent
 
 		long time_left = 100000 - millis() - time;
 		
-		if (time_left < 4500 && tab_tasks.get(TASK_MOORING_AREA).done != DONE)
+		if (time_left < 4500 && !this.robot.flag_deployed)
 		{
 			if (!this.robot.flag_deployed)
 				this.score += 10;
@@ -166,6 +165,12 @@ class Strat extends ManageOpponent
 		if ((final_move_with_color(time_left) || final_move_without_color(time_left) || (this.tasks_order.isEmpty())) && this.tab_tasks.get(TASK_MOORING_AREA).done != DONE)
 		{
 			this.emptyTaskOrder();
+			Pos pos_mooring_1 = new Pos(POS_MOORING_AREA.x, 200);
+			Pos pos_mooring_2 = new Pos(POS_MOORING_AREA.x, 650);
+			if(access(this.robot.position, this.tab_tasks.get(TASK_MOORING_AREA).position, 280) != null 
+			&& (time_left - 10000 < this.robot.position.dist(pos_mooring_1)/SLOW || time_left - 10000 < this.robot.position.dist(pos_mooring_2)/SLOW))
+				select_mooring_area();
+
 			this.addTaskOrder(TASK_MOORING_AREA);
 			return true;
 		}	
