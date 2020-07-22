@@ -20,10 +20,8 @@ class MooringArea extends Task
 	 */
 	void do_task()
 	{
-		if (millis() - strat.time > 95500)
+		if (millis() - strat.time > 99500)
 		{
-			if(done != DONE)
-				strat.score += this.points;
 			this.over();
 			strat.tab_tasks.get(GAME_OVER).position = robot_RTS.position;
 			strat.tab_tasks.get(GAME_OVER).in_progress();
@@ -43,7 +41,7 @@ class MooringArea extends Task
 				else
 					strat.score += 5;
 		}
-
+		
 		this.in_progress();
 	}
 }

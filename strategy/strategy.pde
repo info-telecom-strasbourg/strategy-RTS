@@ -20,6 +20,7 @@ final int TASK_LIGHTHOUSE = 3;
 final int TASK_MOORING_AREA = 4;
 final int TASK_CALIBRATION = 5;
 final int GAME_OVER = 6;
+final int NO_TASK = 7;
 
 //Macro for speed regimes
 final int STOP = 0;

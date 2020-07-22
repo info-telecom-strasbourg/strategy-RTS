@@ -53,6 +53,6 @@ class TopLidar extends Sensor
 
 	boolean is_detected(int id)
 	{
-		return (id == TASK_LIGHTHOUSE) ? false : true;
+		return ((random(99) + 1) > 90) ? false : true;
 	}
 }
