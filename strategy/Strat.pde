@@ -112,7 +112,11 @@ class Strat extends ManageOpponent
 		long time_left = 100000 - millis() - time;
 		
 		if (time_left < 4500 && tab_tasks.get(TASK_MOORING_AREA).done != DONE)
+		{
+			if (!this.robot.flag_deployed)
+				this.score += 10;
 			this.robot.flag_deployed = true;
+		}
 
 
 		if (!this.weathercock_insterted && time_left < 75000)
@@ -121,24 +125,28 @@ class Strat extends ManageOpponent
 			this.weathercock_insterted = true;
 		}
 
-		
-		if (((this.tab_tasks.get(this.tasks_order.get(0)).done == NOT_DONE && (millis() - this.time_start_task) > 10000)
-		|| (this.tab_tasks.get(this.tasks_order.get(0)).done == IN_PROGRESS) && (millis() - this.time_start_task) > this.tab_tasks.get(this.tasks_order.get(0)).max_time))
+		if((!this.tasks_order.isEmpty()))
 		{
-			this.tab_tasks.get(this.tasks_order.get(0)).done = NOT_DONE;
-			changeTaskOrder(0, this.tasks_order.size() - 1);
-			for (int i = 0; i < this.tasks_order.size(); i++)
-				if(access(this.robot.position, this.tab_tasks.get(this.tasks_order.get(i)).position, 280) == null)
-				{
-					changeTaskOrder(i, 0);
-					break;
-				}
+			if (((this.tab_tasks.get(this.tasks_order.get(0)).done == NOT_DONE && (millis() - this.time_start_task) > 10000)
+			|| (this.tab_tasks.get(this.tasks_order.get(0)).done == IN_PROGRESS) && (millis() - this.time_start_task) > this.tab_tasks.get(this.tasks_order.get(0)).max_time))
+			{
+				this.tab_tasks.get(this.tasks_order.get(0)).done = NOT_DONE;
+				changeTaskOrder(0, this.tasks_order.size() - 1);
+				for (int i = 0; i < this.tasks_order.size(); i++)
+					if(access(this.robot.position, this.tab_tasks.get(this.tasks_order.get(i)).position, 280) == null)
+					{
+						changeTaskOrder(i, 0);
+						break;
+					}
+			}
+
+			if (this.tab_tasks.get(this.tasks_order.get(0)).done == NOT_DONE)
+				this.robot.next_destination = this.tab_tasks.get(this.tasks_order.get(0)).position;
+
+			return this.tasks_order.get(0);
 		}
-
-		if (this.tab_tasks.get(this.tasks_order.get(0)).done == NOT_DONE)
-			this.robot.next_destination = this.tab_tasks.get(this.tasks_order.get(0)).position;
-
-		return this.tasks_order.get(0);
+		else
+			return NO_TASK;
 	}
 
 	/**
@@ -148,7 +156,7 @@ class Strat extends ManageOpponent
 	boolean manage_last_tasks()
 	{
 		long time_left = 100000 - millis() - time;
-		if (time_left < 500 || this.tasks_order.isEmpty())
+		if ((this.robot.flag_deployed) && (time_left < 500 || this.tasks_order.isEmpty()))
 		{
 			tab_tasks.get(GAME_OVER).position = this.robot.position;
 			this.emptyTaskOrder();
