@@ -128,19 +128,30 @@ class ManageOpponent
 	 */
 	Pos find_step(Pos intersection, float secu_dist)
 	{
-		float distance = this.robot.position.dist(intersection);
-		float angle_step = 3 * distance / 1000;
+		float angle_step = PI/12;
 		float angle_dep = this.robot.position.angle(this.robot.next_destination);
 		if(angle_step != 0)
-			for(float i = angle_dep; i < angle_dep + PI; i += angle_step)
+			for(float i = angle_dep; i < angle_dep + PI/2; i += angle_step)
 			{
 				float angle_to_check = mod2Pi(i);
-				Pos check_1 = find_checkpoint(angle_to_check, secu_dist);
-				if(check_1 != null)
-					return check_1;
-				Pos check_2 = find_checkpoint(mod2Pi(2*angle_dep - angle_to_check), secu_dist);
-				if(check_2 != null)
-					return check_2;
+
+				Pos checkpoint = find_checkpoint(angle_to_check, secu_dist);
+				if(checkpoint != null)
+					return checkpoint;
+
+				checkpoint = find_checkpoint(mod2Pi(2*angle_dep - angle_to_check), secu_dist);
+				if(checkpoint != null)
+					return checkpoint;
+
+				angle_to_check = mod2Pi(i + PI);
+
+				checkpoint = find_checkpoint(angle_to_check, secu_dist);
+				if(checkpoint != null)
+					return checkpoint;
+
+				checkpoint = find_checkpoint(mod2Pi(2*angle_dep - angle_to_check), secu_dist);
+				if(checkpoint != null)
+					return checkpoint;
 			}
 		return null;
 	}
@@ -202,7 +213,7 @@ class ManageOpponent
 	{
     	this.objective_position = objectiv_pos;
 		if (this.path.isEmpty())
-			find_path(280);
+			find_path(300);
 		else
 			check_path(200); 
 	}
