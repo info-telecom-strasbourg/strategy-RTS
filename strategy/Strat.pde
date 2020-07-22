@@ -165,9 +165,9 @@ class Strat extends ManageOpponent
 		if ((final_move_with_color(time_left) || final_move_without_color(time_left) || (this.tasks_order.isEmpty())) && this.tab_tasks.get(TASK_MOORING_AREA).done != DONE)
 		{
 			this.emptyTaskOrder();
-			if(!access(this.robot.position, this.tab_tasks.get(TASK_MOORING_AREA).position, 280))
+			if(access(this.robot.position, this.tab_tasks.get(TASK_MOORING_AREA).position, 280) != null)
 				select_mooring_area();
-				
+
 			this.addTaskOrder(TASK_MOORING_AREA);
 			return true;
 		}	
