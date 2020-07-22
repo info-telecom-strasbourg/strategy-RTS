@@ -95,8 +95,8 @@ class Strat extends ManageOpponent
 		int index_closer = this.robot.position.closer(points_for_closer);
 		tab_tasks.get(TASK_MOORING_AREA).position = points_for_closer[index_closer];
 
-		if(access(this.robot.position, tab_tasks.get(TASK_MOORING_AREA).position, 280) == null
-		&& access(this.robot.position, points_for_closer[(index_closer+1)%2], 280) != null)
+		if(access(this.robot.position, tab_tasks.get(TASK_MOORING_AREA).position, 280) != null
+		&& access(this.robot.position, points_for_closer[(index_closer+1)%2], 280) == null)
 			tab_tasks.get(TASK_MOORING_AREA).position = points_for_closer[(index_closer+1)%2];
 	}
 
