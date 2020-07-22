@@ -19,7 +19,7 @@ class OpponentRob extends Robot
         super(init_pos, angle);
         this.list_moves = random_positions(53);
         this.mouse = null;
-        this.speed_regime = STOP;
+        this.speed_regime = FAST;
     }
 
     /**
