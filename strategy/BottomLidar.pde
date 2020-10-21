@@ -1,5 +1,5 @@
 /**
- * This class simulate the behaviour of the bottom lidars 
+ * This class simulate the behaviour of the bottom lidars
  */
 class BottomLidar extends Sensor
 {
@@ -29,7 +29,7 @@ class BottomLidar extends Sensor
     {
 
         ArrayList<Pos> obstacles = new ArrayList<Pos>();
-        
+
         for (int i = 0; i < detectables.size(); i++)
             if(capture(detectables.get(i)))
                 obstacles.add(detectables.get(i));
