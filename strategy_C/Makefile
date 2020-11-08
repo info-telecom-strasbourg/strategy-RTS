@@ -30,7 +30,7 @@ clean:
 	rm -f $(OBJDIR)/*.gcda
 	rm -f $(OBJDIR)/*.gcno
 	rm -f $(BINDIR)/$(TARGET)
-	rm -f $(INCLUDE_PATH)/*.h.gch
+	rm -f $(INCLUDE_PATH)/../include/*.h.gch
 	rm -r $(OBJDIR)
 
 all: $(BINDIR)/$(TARGET)
