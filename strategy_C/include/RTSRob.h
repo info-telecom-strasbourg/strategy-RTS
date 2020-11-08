@@ -21,8 +21,8 @@ public:
 	 * @param angle: the initial position of the robot
      * @param sensors: the list of sensors of our robot
 	 */
-    RTSRob(Pos init_position, float angle, std::vector<Sensor> sensors)
-    : Robot(init_position, angle, sensors)
+    RTSRob(Pos* init_position, float angle, std::vector<Sensor> sensors)
+    : Robot(*init_position, angle, sensors)
     {
         this->detected_color = NO_COLOR;
         this->flag_deployed = false;

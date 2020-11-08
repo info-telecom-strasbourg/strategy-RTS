@@ -6,6 +6,18 @@
 #include <math.h>
 #include <vector>
 #include "../include/BottomLidar.h"
+#include "../include/TopLidar.h"
+#include "../include/MobileLidar.h"
+#include "../include/Weathercock.h"
+#include "../include/RTSRob.h"
+#include "../include/Strat.h"
+
+extern Pos POS_LIGHTHOUSE;
+extern Pos POS_LIGHTHOUSE_OP;
+extern Pos POS_WEATHERCOCK;
+extern Pos POS_WINDSOCK_1;
+extern Pos POS_WINDSOCK_2;
+extern Pos POS_MOORING_AREA;
 
 /**
 * Launcher of the simulation
@@ -16,28 +28,30 @@
 
 //Global variables
 
-RTSRob robot_RTS;
-OpponentRob rob_op;
-OpponentRob rob_op_2;
+std::vector<Sensor> sensors_null;
+Pos pos_null(0,0);
+RTSRob robot_RTS(&pos_null, 0, sensors_null);
+OpponentRob rob_op(&pos_null, 0);
+OpponentRob rob_op_2(&pos_null, 0);
 WeathercockColour weathercock;
-std::vector<OpponentRob> rob_opponents = new std::vector<OpponentRob>;
-std::vector<Pos> dectable_lidar_mobile = new std::vector<Pos>;
-Strat strat;
+std::vector<OpponentRob> rob_opponents;
+std::vector<Pos> dectable_lidar_mobile;
+Strat strat(robot_RTS);
 
 
 
 
 /**
  * Initialise sensors
- * @return an ArrayList of sensors
+ * @return an std::vector of sensors
  */
 std::vector<Sensor> init_sensors()
 {
-    BottomLidar bottomLidar = new BottomLidar();
-    TopLidar topLidar = new TopLidar();
-    MobileLidar mobileLidar = new MobileLidar();
+    BottomLidar bottomLidar;
+    TopLidar topLidar;
+    MobileLidar mobileLidar;
 
-    std::vector<Sensor> sensors = new std::vector<Sensor>;
+    std::vector<Sensor> sensors;
     sensors.push_back(bottomLidar);
     sensors.push_back(topLidar);
     sensors.push_back(mobileLidar);
@@ -46,57 +60,34 @@ std::vector<Sensor> init_sensors()
 }
 
 /**
- * Manage the opponent behavement
- */
-void manage_robot_op()
-{
-	for (int i = 0; i < rob_opponents.size(); i++)
-	{
-		rob_opponents.get(i).update_destinations();
-		rob_opponents.get(i).goTo(true);
-		rob_opponents.get(i).getCorners();
-		rob_opponents.get(i).borderColision();
-		rob_opponents.get(i).draw_robot();
-		// rob_opponents.get(i).display_dest();
-	}
-}
-
-/**
  * Initialize robot parameters and tasks position according to the start position
  * @param dir: the start position (left or right)
  */
 void init_robots()
 {
-	if (dir == Dir.left)
+	if (dir == left)
 	{
-        robot_RTS = new RTSRob(new Pos(100, 410), 0, init_sensors());
-		rob_op = new OpponentRob(new Pos(1400, 410), M_PI);
-		rob_op_2 = new OpponentRob(new Pos(1400, 700), M_PI);
+    RTSRob robot_RTS(new Pos(100, 410), 0, init_sensors());
 
-		POS_WINDSOCK_1 = new Pos(100,800);
-		POS_WINDSOCK_2 = new Pos(300,800);
-		POS_LIGHTHOUSE = new Pos(250,125);
-		POS_LIGHTHOUSE_OP = new Pos(1250, 125);
-		POS_MOORING_AREA = new Pos(100, -50);
-		POS_WEATHERCOCK = new Pos(450, 125);
+		POS_WINDSOCK_1 = Pos(100,800);
+		POS_WINDSOCK_2 = Pos(300,800);
+		POS_LIGHTHOUSE = Pos(250,125);
+		POS_LIGHTHOUSE_OP = Pos(1250, 125);
+		POS_MOORING_AREA = Pos(100, -50);
+		POS_WEATHERCOCK = Pos(450, 125);
 	}
 	else
 	{
-        robot_RTS = new RTSRob(new Pos(1400, 410), M_PI, init_sensors());
-		rob_op = new OpponentRob(new Pos(100, 410), 0);
-		rob_op_2 = new OpponentRob(new Pos(100, 700), 0);
+    RTSRob robot_RTS(new Pos(1400, 410), M_PI, init_sensors());
 
 
-		POS_WINDSOCK_1 = new Pos(1400,800);
-		POS_WINDSOCK_2 = new Pos(1200,800);
-		POS_LIGHTHOUSE = new Pos(1250, 125);
-		POS_LIGHTHOUSE_OP = new Pos(250,125);
-		POS_MOORING_AREA = new Pos(1400, -50);
-		POS_WEATHERCOCK = new Pos(1050, 125);
+		POS_WINDSOCK_1 = Pos(1400,800);
+		POS_WINDSOCK_2 = Pos(1200,800);
+		POS_LIGHTHOUSE = Pos(1250, 125);
+		POS_LIGHTHOUSE_OP = Pos(250,125);
+		POS_MOORING_AREA = Pos(1400, -50);
+		POS_WEATHERCOCK = Pos(1050, 125);
 	}
-
-    rob_opponents.add(rob_op);
-	rob_opponents.add(rob_op_2);
 }
 
 /**
@@ -104,15 +95,15 @@ void init_robots()
  */
 void init_tasks()
 {
-    strat.tasks_order.add(TASK_LIGHTHOUSE);
+  strat.tasks_order.add(TASK_LIGHTHOUSE);
 	strat.tasks_order.add(TASK_WINDSOCK_1);
 	strat.tasks_order.add(TASK_WINDSOCK_2);
 
-    ArrayList<Pos> checkpoint_windsock = new ArrayList<Pos>();
+    std::vector<Pos> checkpoint_windsock;
     checkpoint_windsock.add(new Pos(-1,945));
-    ArrayList<Pos> checkpoint_lighthouse = new ArrayList<Pos>();
+    std::vector<Pos> checkpoint_lighthouse;
     checkpoint_lighthouse.add(new Pos(-1,50));
-    ArrayList<Pos> checkpoint_weathercock = new ArrayList<Pos>();
+    std::vector<Pos> checkpoint_weathercock;
     checkpoint_weathercock.add(new Pos(ARENA_HEIGHT/2, -1));
 
     Weathercock task_weathercock = new Weathercock(TASK_WEATHERCOCK, 10, POS_WEATHERCOCK, 25000, checkpoint_weathercock);
@@ -141,7 +132,7 @@ void init_tasks()
 void display_tasks()
 {
 	for(int i = 0; i < strat.tab_tasks.size(); i++)
-		strat.tab_tasks.get(i).display(true);
+		strat.tab_tasks[i].display(true);
 }
 
 /**
@@ -227,7 +218,7 @@ void loop() {
 	display_infos();
 
 	for (int i = 0; i < strat.tasks_order.size(); i++)
-		display_tasks_order(strat.tasks_order.get(i));
+		display_tasks_order(strat.tasks_order[i]);
 
 	manage_robot_op();
 }

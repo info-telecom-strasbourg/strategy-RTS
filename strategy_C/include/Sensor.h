@@ -35,6 +35,7 @@ public:
 	 * @return if the obstacle is located by the sensor
 	 */
     virtual bool capture(Pos pos);
+
 };
 
 #endif

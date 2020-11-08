@@ -3,6 +3,14 @@
 
 #include "RTSRob.h"
 
+extern Pos POS_NULL;
+extern Pos POS_LIGHTHOUSE;
+extern Pos POS_LIGHTHOUSE_OP;
+extern Pos POS_WEATHERCOCK;
+extern Pos POS_WINDSOCK_1;
+extern Pos POS_WINDSOCK_2;
+extern Pos POS_MOORING_AREA;
+
 /**
  * This class allow our robot to avoid the opponent
  * You can make a class that inherits this class to keep this behaviour
@@ -27,10 +35,8 @@ public:
 	 * @param robot: the robot that will avoid the opponent
 	 */
     ManageOpponent(RTSRob robot)
-    {
-        this->robot = robot;
-        this->objective_position = null;
-    }
+    : robot(robot)
+    {}
 
     /**
 	 * Identify the opponents position with the mobile lidar
@@ -38,26 +44,25 @@ public:
 	 */
 	void find_the_opponent()
 	{
-		this->opponent_positions = new std::vector<Pos>();
 		std::vector<Pos> obstacles;
-		std::vector<Pos> mob_lid_detectable = new std::vector<Pos>();
-		for(int i = 0; i < rob_opponents.size(); i++)
-			mob_lid_detectable.add(rob_opponents.get(i).position);
+		std::vector<Pos> mob_lid_detectable;
+		for(unsigned int i = 0; i < rob_opponents.size(); i++)
+			mob_lid_detectable.push_back(rob_opponents[i].position);
 
-		mob_lid_detectable.add(POS_LIGHTHOUSE);
-		mob_lid_detectable.add(POS_LIGHTHOUSE_OP);
-		mob_lid_detectable.add(POS_WEATHERCOCK);
+		mob_lid_detectable.push_back(POS_LIGHTHOUSE);
+		mob_lid_detectable.push_back(POS_LIGHTHOUSE_OP);
+		mob_lid_detectable.push_back(POS_WEATHERCOCK);
 
-		obstacles = this->robot.sensors.get(MOBILE_LIDAR).detection(mob_lid_detectable);
+		obstacles = this->robot.sensors[MOBILE_LIDAR].detection(mob_lid_detectable);
 
 		if (obstacles.size() == 0)
 			return;
 
-		for (int i = 0; i < obstacles.size(); i++)
-			if (!obstacles.get(i).is_around(POS_LIGHTHOUSE, 5) &&
-			!obstacles.get(i).is_around(POS_LIGHTHOUSE_OP, 5) &&
-			!obstacles.get(i).is_around(POS_WEATHERCOCK, 5))
-				this->opponent_positions.add(obstacles.get(i));
+		for (unsigned int i = 0; i < obstacles.size(); i++)
+			if (!obstacles[i].is_around(POS_LIGHTHOUSE, 5) &&
+			!obstacles[i].is_around(POS_LIGHTHOUSE_OP, 5) &&
+			!obstacles[i].is_around(POS_WEATHERCOCK, 5))
+				this->opponent_positions.push_back(obstacles[i]);
 	}
 
     /**
@@ -66,22 +71,24 @@ public:
 	 */
 	void find_path(float secu_dist)
 	{
-        this->path = new std::vector<Pos>();
+        this->path.clear();
 
-		Pos intersection = access(this->robot.position, objective_position, secu_dist);
-		if(intersection != null)
+		Pos intersection;
+    intersection = access(this->robot.position, objective_position, secu_dist);
+		if(intersection != POS_NULL)
 		{
-			Pos checkpoint = this->find_step(intersection, secu_dist);
-			if(checkpoint != null)
+			Pos checkpoint;
+      checkpoint = this->find_step(intersection, secu_dist);
+			if(checkpoint != POS_NULL)
 			{
-				this->path.add(checkpoint);
-				this->path.add(objective_position);
+				this->path.push_back(checkpoint);
+				this->path.push_back(objective_position);
 			}
 			else
 				this->robot.speed_regime = STOP;
 		}
 		else
-			this->path.add(objective_position);
+			this->path.push_back(objective_position);
 	}
 
 	/**
@@ -101,12 +108,12 @@ public:
 
 		for (float i = 0; i < nb_seg; i++)
 		{
-			Pos new_pos = new Pos(point_1.x + i*delta_x/nb_seg, point_1.y + i*delta_y/nb_seg);
-			for (int j = 0; j < this->opponent_positions.size(); j++)
-				if (is_on_security_area(new_pos, this->opponent_positions.get(j), secu_dist))
+			Pos new_pos(point_1.x + i*delta_x/nb_seg, point_1.y + i*delta_y/nb_seg);
+			for (unsigned int j = 0; j < this->opponent_positions.size(); j++)
+				if (is_on_security_area(new_pos, this->opponent_positions[j], secu_dist))
 					return new_pos;
 		}
-		return null;
+		return POS_NULL;
 	}
 
     /**
@@ -116,14 +123,14 @@ public:
 	 * @param: secu_dist: security distance
 	 * @return if the opponent is on the security area
 	 */
-	boolean is_on_security_area(Pos current_pos, Pos opponent_pos, float secu_dist)
+	bool is_on_security_area(Pos current_pos, Pos opponent_pos, float secu_dist)
 	{
 		if(current_pos.dist(opponent_pos) < 150)
 			return true;
 		if(current_pos.dist(opponent_pos) > secu_dist)
 			return false;
 
-		return (current_pos.angle(opponent_pos) < PI) ? true : false;
+		return (current_pos.angle(opponent_pos) < M_PI) ? true : false;
 	}
 
 	/**
@@ -134,32 +141,33 @@ public:
 	 */
 	Pos find_step(Pos intersection, float secu_dist)
 	{
-		float angle_step = PI/12;
+		float angle_step = M_PI/12;
 		float angle_dep = this->robot.position.angle(this->robot.next_destination);
 		if(angle_step != 0)
-			for(float i = angle_dep; i < angle_dep + PI/2; i += angle_step)
+			for(float i = angle_dep; i < angle_dep + M_PI/2; i += angle_step)
 			{
 				float angle_to_check = mod2Pi(i);
 
-				Pos checkpoint = find_checkpoint(angle_to_check, secu_dist);
-				if(checkpoint != null)
+				Pos checkpoint;
+        checkpoint = find_checkpoint(angle_to_check, secu_dist);
+				if(checkpoint != POS_NULL)
 					return checkpoint;
 
 				checkpoint = find_checkpoint(mod2Pi(2*angle_dep - angle_to_check), secu_dist);
-				if(checkpoint != null)
+				if(checkpoint != POS_NULL)
 					return checkpoint;
 
-				angle_to_check = mod2Pi(i + PI);
+				angle_to_check = mod2Pi(i + M_PI);
 
 				checkpoint = find_checkpoint(angle_to_check, secu_dist);
-				if(checkpoint != null)
+				if(checkpoint != POS_NULL)
 					return checkpoint;
 
 				checkpoint = find_checkpoint(mod2Pi(2*angle_dep - angle_to_check), secu_dist);
-				if(checkpoint != null)
+				if(checkpoint != POS_NULL)
 					return checkpoint;
 			}
-		return null;
+		return POS_NULL;
 	}
 
 	/**
@@ -171,18 +179,18 @@ public:
 	Pos find_checkpoint(float angle, float secu_dist)
 	{
 		float step = 10;
-		Pos checkpoint = new Pos(this->robot.position);
+		Pos checkpoint(this->robot.position);
 
 		while (checkpoint.on_arena(100))
 		{
 			checkpoint.x += step*cos(angle);
 			checkpoint.y += step*sin(angle);
 
-			if(access(this->robot.position, checkpoint, secu_dist) == null
-				&& access(checkpoint, objective_position, secu_dist) == null)
+			if(access(this->robot.position, checkpoint, secu_dist) == POS_NULL
+				&& access(checkpoint, objective_position, secu_dist) == POS_NULL)
 					return checkpoint;
 		}
-		return null;
+		return POS_NULL;
 	}
 
 	/**
@@ -191,10 +199,10 @@ public:
 	 */
 	void check_path(float secu_dist)
 	{
-		if (!this->objective_position.is_around(this->path.get(path.size() - 1), 5)
-			|| access(this->robot.position, this->path.get(0), secu_dist) != null)
+		if (!this->objective_position.is_around(this->path[path.size() - 1], 5)
+			|| access(this->robot.position, this->path[0], secu_dist) != POS_NULL)
 			{
-				this->path = new std::vector();
+				this->path.clear();
 				find_path(secu_dist);
 			}
 	}
@@ -205,15 +213,15 @@ public:
 	 * else we find a new path
 	 * @param objectiv_pos: the destination you want to reach
 	 */
-    void path(Pos objectiv_pos)
+    void best_path(Pos objectiv_pos)
 	{
     	this->objective_position = objectiv_pos;
-		if (this->path.isEmpty())
+		if (this->path.empty())
 			find_path(300);
 		else
 			check_path(200);
 	}
-}
+};
 
 
 #endif

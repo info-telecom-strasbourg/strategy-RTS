@@ -133,6 +133,10 @@ public:
 	{
 		return new Pos((this->x + pos.x)/2, (this->y + pos.y)/2);
 	}
+
+	bool operator!=(const Pos& pos) {return !((this->x == pos.x) && (this->y == pos.y));}
+
+	bool operator==(const Pos& pos) {return ((this->x == pos.x) && (this->y == pos.y));}
 };
 
 #endif

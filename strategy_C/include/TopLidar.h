@@ -8,11 +8,16 @@
  */
 class TopLidar : public Sensor
 {
+public:
     /**
 	 * Constructor of TopLidar
 	 */
     TopLidar()
     : Sensor()
+    {}
+
+    TopLidar(Sensor sensor)
+    : Sensor(sensor)
     {}
 
     /**

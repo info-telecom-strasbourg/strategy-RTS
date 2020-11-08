@@ -8,6 +8,7 @@
  */
 class MobileLidar : public Sensor
 {
+public:
     /**
 	 * Constructor of MobileLidar
 	 */

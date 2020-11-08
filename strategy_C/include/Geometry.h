@@ -2,6 +2,7 @@
 #define GEOMETRY_H
 
 #include <math.h>
+#include <Arduino.h>
 #include "Pos.h"
 
 //Macro for simulation
@@ -50,6 +51,9 @@ Pos POS_MOORING_AREA;
 int BOTTOM_LIDAR = 0;
 int TOP_LIDAR = 1;
 int MOBILE_LIDAR = 2;
+
+//Macro for null types
+const Pos POS_NULL(-1,-1);
 
 
 enum Dir {left , right };

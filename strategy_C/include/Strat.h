@@ -2,6 +2,7 @@
 #define STRAT_H
 
 #include "ManageOpponent.h"
+#include "Task.h"
 
 /**
  * This class is our strategy
@@ -23,10 +24,10 @@ public:
     int score;
 
 	/* The list of tasks to do classified in the order of completion*/
-    std::vector<Integer> tasks_order = new std::vector<Integer>();
+    std::vector<int> tasks_order;
 
 	/* The list of tasks that must be done */
-    std::vector<Task> tab_tasks = new std::vector<Task>();
+    std::vector<Task> tab_tasks;
 
 	/* The task Weathercock has been inserted in tasks_order */
 	bool weathercock_insterted;
@@ -37,14 +38,8 @@ public:
 	 * @param robot: the robot that must fllow the strategy
 	 */
     Strat(RTSRob robot)
-    {
-        super(robot);
-        this->id_current_task = -1;
-        this->time = millis();
-		this->time_start_task = millis();
-        this->score = 7;
-		this->weathercock_insterted = false;
-    }
+    : ManageOpponent(robot), id_current_task(-1), time(millis()), time_start_task(millis()), score(7), weathercock_insterted(false)
+    {}
 
     /**
 	 * Apply the strategy
@@ -52,32 +47,32 @@ public:
 	 */
 	void apply()
 	{
-		this->robot.speed_regime = ((BottomLidar)this->robot.sensors.get(BOTTOM_LIDAR)).manage_speed();
+		this->robot.speed_regime = ((BottomLidar)this->robot.sensors[BOTTOM_LIDAR]).manage_speed();
 		find_the_opponent(); //identify the opponent
 		this->id_current_task = find_best_task(); //choose the task we have to do now
 
 		if(manage_last_tasks())
-				this->id_current_task = this->tasks_order.get(0);
+				this->id_current_task = this->tasks_order[0];
 
-		if(this->robot.position.is_around(this->tab_tasks.get(this->id_current_task).position, 5)
-		   || this->tab_tasks.get(this->id_current_task).done == IN_PROGRESS)
+		if(this->robot.position.is_around(this->tab_tasks[this->id_current_task].position, 5)
+		   || this->tab_tasks[this->id_current_task].done == IN_PROGRESS)
 		{
-			this->tab_tasks.get(this->id_current_task).do_task();
+			this->tab_tasks[this->id_current_task].do_task();
 
-			if (!this->path.isEmpty())
-				this->path = new std::vector();
+      if (!this->path.empty())
+				this->path.clear();
 
 		}
 		else
 		{
-			path(this->robot.next_destination);
+			best_path(this->robot.next_destination);
 
-			if (!this->path.isEmpty() && this->robot.position.is_around(this->path.get(0), 5))
-				this->path.remove(0);
+			if (!this->path.empty() && this->robot.position.is_around(this->path[0], 5))
+				this->path.erase(this->path.begin());
 
-			if (!this->path.isEmpty())
+			if (!this->path.empty())
 			{
-				this->robot.next_destination = this->path.get(0);
+				this->robot.next_destination = this->path[0];
 
 				this->robot.getCorners();
 
@@ -96,13 +91,17 @@ public:
 	 */
 	void select_mooring_area()
 	{
-		Pos[] points_for_closer = new Pos [] {new Pos(POS_MOORING_AREA.x, 200), new Pos(POS_MOORING_AREA.x, 650)};
+    Pos pos_x(POS_MOORING_AREA.x, 200);
+    Pos pos_y(POS_MOORING_AREA.x, 650);
+		std::vector<Pos> points_for_closer;
+    points_for_closer.push_back(pos_x);
+    points_for_closer.push_back(pos_y);
 		int index_closer = this->robot.position.closer(points_for_closer);
-		tab_tasks.get(TASK_MOORING_AREA).position = points_for_closer[index_closer];
+		tab_tasks[TASK_MOORING_AREA].position = points_for_closer[index_closer];
 
-		if(access(this->robot.position, tab_tasks.get(TASK_MOORING_AREA).position, 280) != null
-		&& access(this->robot.position, points_for_closer[(index_closer+1)%2], 280) == null)
-			tab_tasks.get(TASK_MOORING_AREA).position = points_for_closer[(index_closer+1)%2];
+		if(access(this->robot.position, tab_tasks[TASK_MOORING_AREA].position, 280) != POS_NULL
+		&& access(this->robot.position, points_for_closer[(index_closer+1)%2], 280) == POS_NULL)
+			tab_tasks[TASK_MOORING_AREA].position = points_for_closer[(index_closer+1)%2];
 	}
 
     /**
@@ -126,29 +125,29 @@ public:
 
 		if (!this->weathercock_insterted && time_left < 75000)
 		{
-			this->tasks_order.add(TASK_WEATHERCOCK);
+			this->tasks_order.push_back(TASK_WEATHERCOCK);
 			this->weathercock_insterted = true;
 		}
 
-		if((!this->tasks_order.isEmpty()))
+		if((!this->tasks_order.empty()))
 		{
-			if (((this->tab_tasks.get(this->tasks_order.get(0)).done == NOT_DONE && (millis() - this->time_start_task) > 10000)
-			|| (this->tab_tasks.get(this->tasks_order.get(0)).done == IN_PROGRESS) && (millis() - this->time_start_task) > this->tab_tasks.get(this->tasks_order.get(0)).max_time))
+			if (((this->tab_tasks[this->tasks_order[0]].done == NOT_DONE && (millis() - this->time_start_task) > 10000)
+			|| (this->tab_tasks[this->tasks_order[0]].done == IN_PROGRESS) && (millis() - this->time_start_task) > this->tab_tasks[this->tasks_order[0]].max_time))
 			{
-				this->tab_tasks.get(this->tasks_order.get(0)).done = NOT_DONE;
+				this->tab_tasks[this->tasks_order[0]].done = NOT_DONE;
 				changeTaskOrder(0, this->tasks_order.size() - 1);
-				for (int i = 0; i < this->tasks_order.size(); i++)
-					if(access(this->robot.position, this->tab_tasks.get(this->tasks_order.get(i)).position, 280) == null)
+				for (unsigned int i = 0; i < this->tasks_order.size(); i++)
+					if(access(this->robot.position, this->tab_tasks[this->tasks_order[i]].position, 280) == POS_NULL)
 					{
 						changeTaskOrder(i, 0);
 						break;
 					}
 			}
 
-			if (this->tab_tasks.get(this->tasks_order.get(0)).done == NOT_DONE)
-				this->robot.next_destination = this->tab_tasks.get(this->tasks_order.get(0)).position;
+			if (this->tab_tasks[this->tasks_order[0]].done == NOT_DONE)
+				this->robot.next_destination = this->tab_tasks[this->tasks_order[0]].position;
 
-			return this->tasks_order.get(0);
+			return this->tasks_order[0];
 		}
 		else
 			return NO_TASK;
@@ -161,19 +160,19 @@ public:
 	bool manage_last_tasks()
 	{
 		long time_left = 100000 - millis() - time;
-		if ((this->robot.flag_deployed) && (time_left < 500 || this->tasks_order.isEmpty()))
+		if ((this->robot.flag_deployed) && (time_left < 500 || this->tasks_order.empty()))
 		{
-			tab_tasks.get(GAME_OVER).position = this->robot.position;
+			tab_tasks[GAME_OVER].position = this->robot.position;
 			this->emptyTaskOrder();
 			this->addTaskOrder(GAME_OVER);
 			return true;
 		}
-		if ((final_move_with_color(time_left) || final_move_without_color(time_left) || (this->tasks_order.isEmpty())) && this->tab_tasks.get(TASK_MOORING_AREA).done != DONE)
+		if ((final_move_with_color(time_left) || final_move_without_color(time_left) || (this->tasks_order.empty())) && this->tab_tasks[TASK_MOORING_AREA].done != DONE)
 		{
 			this->emptyTaskOrder();
-			Pos pos_mooring_1 = new Pos(POS_MOORING_AREA.x, 200);
-			Pos pos_mooring_2 = new Pos(POS_MOORING_AREA.x, 650);
-			if(access(this->robot.position, this->tab_tasks.get(TASK_MOORING_AREA).position, 280) != null
+			Pos pos_mooring_1(POS_MOORING_AREA.x, 200);
+			Pos pos_mooring_2(POS_MOORING_AREA.x, 650);
+			if(access(this->robot.position, this->tab_tasks[TASK_MOORING_AREA].position, 280) != POS_NULL
 			&& (time_left - 10000 < this->robot.position.dist(pos_mooring_1)/SLOW || time_left - 10000 < this->robot.position.dist(pos_mooring_2)/SLOW))
 				select_mooring_area();
 
@@ -190,7 +189,7 @@ public:
 	 */
 	bool final_move_with_color(long time_left)
 	{
-		return (tab_tasks.get(TASK_WEATHERCOCK).done == DONE && is_final_move(tab_tasks.get(TASK_MOORING_AREA).position, time_left));
+		return (tab_tasks[TASK_WEATHERCOCK].done == DONE && is_final_move(tab_tasks[TASK_MOORING_AREA].position, time_left));
 	}
 
 	/**
@@ -200,9 +199,11 @@ public:
 	 */
 	bool final_move_without_color(long time_left)
 	{
-		return ((is_final_move(new Pos(POS_MOORING_AREA.x, 200), time_left)
-			|| is_final_move(new Pos(POS_MOORING_AREA.x, 650), time_left))
-			&& tab_tasks.get(TASK_MOORING_AREA).done != DONE);
+    Pos pos200(POS_MOORING_AREA.x, 200);
+    Pos pos650(POS_MOORING_AREA.x, 650);
+		return ((is_final_move(pos200, time_left)
+			|| is_final_move(pos650, time_left))
+			&& tab_tasks[TASK_MOORING_AREA].done != DONE);
 	}
 
 	/**
@@ -230,25 +231,25 @@ public:
 		|| index_start < 0 || index_end < 0)
 			return;
 
-		std::vector <Integer> tasks_order_temp = new std::vector();
+		std::vector <int> tasks_order_temp;
 
 		if (index_start > index_end)
 		{
 			for(int i = 0; i < index_end; i++)
-				tasks_order_temp.add(this->tasks_order.get(i));
-			tasks_order_temp.add(this->tasks_order.get(index_start));
+				tasks_order_temp.push_back(this->tasks_order[i]);
+			tasks_order_temp.push_back(this->tasks_order[index_start]);
 			for(int i = index_end; i < this->tasks_order.size(); i++)
 				if(i != index_start)
-					tasks_order_temp.add(this->tasks_order.get(i));
+					tasks_order_temp.push_back(this->tasks_order[i]);
 		}
 		else
 		{
 			for(int i = 0; i <= index_end; i++)
 				if(i != index_start)
-					tasks_order_temp.add(this->tasks_order.get(i));
-			tasks_order_temp.add(this->tasks_order.get(index_start));
-			for(int i = index_end + 1; i < this->tasks_order.size(); i++)
-				tasks_order_temp.add(this->tasks_order.get(i));
+					tasks_order_temp.push_back(this->tasks_order[i]);
+			tasks_order_temp.push_back(this->tasks_order[index_start]);
+			for(unsigned int i = index_end + 1; i < this->tasks_order.size(); i++)
+				tasks_order_temp.push_back(this->tasks_order[i]);
 		}
 
 		this->tasks_order = tasks_order_temp;
@@ -261,7 +262,7 @@ public:
 	void emptyTaskOrder()
 	{
 		this->time_start_task = millis();
-		this->tasks_order = new std::vector();
+		this->tasks_order.clear();
 	}
 
 	/**
@@ -272,18 +273,18 @@ public:
 	void addTaskOrder(int id)
 	{
 		this->time_start_task = millis();
-		this->tasks_order.add(id);
+		this->tasks_order.push_back(id);
 	}
 
 	/**
-	 * Remove the int an index to the std::vector tasks_order and reinitialize
+	 * erase the int an index to the std::vector tasks_order and reinitialize
 	 * time_start_task
-	 * @param index: the position of the id you want to remove
+	 * @param index: the position of the id you want to erase
 	 */
-	void removeTaskOrder(int index)
+	void eraseTaskOrder(int index)
 	{
 		this->time_start_task = millis();
-		this->tasks_order.remove(index);
+		this->tasks_order.erase(this->tasks_order.begin() + index);
 	}
 };
 

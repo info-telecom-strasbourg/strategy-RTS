@@ -55,13 +55,15 @@ public:
 		if(!raise_windsock())
 			return;
 
-		if(((TopLidar)robot_RTS.sensors[TOP_LIDAR]).is_detected(this->id))
+
+    TopLidar lidar(robot_RTS.sensors[TOP_LIDAR]);
+		if(lidar.is_detected(this->id))
 		{
 			this->over();
 			strat.removeTaskOrder(0);
 			strat.score += this->points;
-			if ((this->id == TASK_WINDSOCK_1 && strat.tab_tasks.get(TASK_WINDSOCK_2).done == DONE)
-			|| (this->id == TASK_WINDSOCK_2 && strat.tab_tasks.get(TASK_WINDSOCK_1).done == DONE))
+			if ((this->id == TASK_WINDSOCK_1 && strat.tab_tasks[TASK_WINDSOCK_2].done == DONE)
+			|| (this->id == TASK_WINDSOCK_2 && strat.tab_tasks[TASK_WINDSOCK_1].done == DONE))
 				strat.score += this->points;
 		}
 		else
@@ -70,7 +72,7 @@ public:
 			this->interrupted();
 		}
 	}
-}
+};
 
 
 #endif
