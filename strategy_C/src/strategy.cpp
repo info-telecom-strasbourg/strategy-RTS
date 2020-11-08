@@ -1,16 +1,22 @@
-//#include <Arduino.h>
-//#include "board.h"
-//#include "turn_and_go.h"
-//#include "lidar.h"
-//#include "odometry.h"
 #include <math.h>
-#include <vector>
-#include "../include/BottomLidar.h"
-#include "../include/TopLidar.h"
-#include "../include/MobileLidar.h"
-#include "../include/Weathercock.h"
-#include "../include/RTSRob.h"
-#include "../include/Strat.h"
+#include <Vector.h>
+#include "BottomLidar.h"
+#include "Calibration.h"
+#include "Cups.h"
+#include "GameOver.h"
+#include "Lighthouse.h"
+#include "ManageOpponent.h"
+#include "MobileLidar.h"
+#include "MooringArea.h"
+#include "Pos.h"
+#include "Robot.h"
+#include "Sensor.h"
+#include "Strat.h"
+#include "Task.h"
+#include "TopLidar.h"
+#include "Weathercock.h"
+#include "WeathercockColour.h"
+#include "Windsock.h"
 
 extern Pos POS_LIGHTHOUSE;
 extern Pos POS_LIGHTHOUSE_OP;
@@ -28,14 +34,13 @@ extern Pos POS_MOORING_AREA;
 
 //Global variables
 
-std::vector<Sensor> sensors_null;
-Pos pos_null(0,0);
-RTSRob robot_RTS(&pos_null, 0, sensors_null);
-OpponentRob rob_op(&pos_null, 0);
-OpponentRob rob_op_2(&pos_null, 0);
+Vector<Sensor> sensors_null;
+RTSRob robot_RTS(&POS_NULL, 0, sensors_null);
+OpponentRob rob_op(&POS_NULL, 0);
+OpponentRob rob_op_2(&POS_NULL, 0);
 WeathercockColour weathercock;
-std::vector<OpponentRob> rob_opponents;
-std::vector<Pos> dectable_lidar_mobile;
+Vector<OpponentRob> rob_opponents;
+Vector<Pos> dectable_lidar_mobile;
 Strat strat(robot_RTS);
 
 
@@ -43,15 +48,15 @@ Strat strat(robot_RTS);
 
 /**
  * Initialise sensors
- * @return an std::vector of sensors
+ * @return an Vector of sensors
  */
-std::vector<Sensor> init_sensors()
+Vector<Sensor> init_sensors()
 {
     BottomLidar bottomLidar;
     TopLidar topLidar;
     MobileLidar mobileLidar;
 
-    std::vector<Sensor> sensors;
+    Vector<Sensor> sensors;
     sensors.push_back(bottomLidar);
     sensors.push_back(topLidar);
     sensors.push_back(mobileLidar);
@@ -99,11 +104,11 @@ void init_tasks()
 	strat.tasks_order.add(TASK_WINDSOCK_1);
 	strat.tasks_order.add(TASK_WINDSOCK_2);
 
-    std::vector<Pos> checkpoint_windsock;
+    Vector<Pos> checkpoint_windsock;
     checkpoint_windsock.add(new Pos(-1,945));
-    std::vector<Pos> checkpoint_lighthouse;
+    Vector<Pos> checkpoint_lighthouse;
     checkpoint_lighthouse.add(new Pos(-1,50));
-    std::vector<Pos> checkpoint_weathercock;
+    Vector<Pos> checkpoint_weathercock;
     checkpoint_weathercock.add(new Pos(ARENA_HEIGHT/2, -1));
 
     Weathercock task_weathercock = new Weathercock(TASK_WEATHERCOCK, 10, POS_WEATHERCOCK, 25000, checkpoint_weathercock);
@@ -145,16 +150,6 @@ void display_infos()
 	// textAlign(LEFT);
 	// text((millis() - strat.time)/1000, 1, 21);
 	// text(strat.score, 1450, 21);
-}
-
-/**
- * Manage the robot displayment
- */
-void display_robot()
-{
-	robot_RTS.getCorners();
-	robot_RTS.borderColision();
-	robot_RTS.draw_robot();
 }
 
 void display_tasks_order(int id)

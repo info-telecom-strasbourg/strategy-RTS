@@ -1,7 +1,7 @@
 #ifndef SENSOR_H
 #define SENSOR_H
 
-#include <vector>
+#include <Vector.h>
 #include "Pos.h"
 
 /**
@@ -21,7 +21,7 @@ public:
 	 * @param detectables: an array of obstacles the sensor is sure to detect
 	 * @return an array of obstacles detected by the sensor
 	 */
-    virtual std::vector<Pos> detection(std::vector<Pos> detectables);
+    virtual Vector<Pos> detection(Vector<Pos> detectables);
 
     /**
 	 * Draw the sensors

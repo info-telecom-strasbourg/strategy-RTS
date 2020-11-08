@@ -25,7 +25,7 @@ public:
 	long max_time;
 
 	/* An ArrayList of checkpoints we need to reach to acomplish the task */
-    std::vector<Pos> checkpoints;
+    Vector<Pos> checkpoints;
 
 	/**
 	 * Constructor of Task
@@ -50,30 +50,17 @@ public:
 	/**
 	 * Indicate that the task is in progress
 	 */
-	void in_progress()
-	{
-		if(this->done == NOT_DONE)
-			strat->time_start_task = millis();
-
-		this->done = IN_PROGRESS;
-	}
+	void in_progress();
 
 	/**
 	 * Indicate that the task is interrupted
 	 */
-	void interrupted()
-	{
-		strat.changeTaskOrder(0, strat.tasks_order.size() - 1);
-		strat.tab_tasks.get(TASK_CALIBRATION).in_progress();
-		strat.addTaskOrder(TASK_CALIBRATION);
-		strat.changeTaskOrder(strat.tasks_order.size() - 1, 0);
-		this->done = NOT_DONE;
-	}
+	void interrupted();
 
 	/**
 	 * An abstract method that will simulate the completion of the task
 	 */
-    virtual void do_task();
+  virtual void do_task();
 };
 
 #endif

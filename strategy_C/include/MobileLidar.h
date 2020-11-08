@@ -21,7 +21,7 @@ public:
 	 * @param detectables: an array of obstacles the sensor detect
 	 * @return an array of obstacles detected by the sensor
 	 */
-    std::vector<Pos> detection(std::vector<Pos> detectables) override
+    Vector<Pos> detection(Vector<Pos> detectables) override
     {
 		return detectables;
     }

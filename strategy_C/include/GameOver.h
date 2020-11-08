@@ -16,19 +16,14 @@ class GameOver : public Task
 	 * @param max_time: the estimated necessary time to accomplish the task
 	 */
     GameOver(int id, int points, Pos position, long max_time)
-    {
-        Task(id, points, position, max_time);
-    }
+    : Task(id, points, position, max_time)
+    {}
 
     /**
 	 * Simulate what to do at the end of the timer
 	 */
-    void do_task() override
-    {
-        this.in_progress();
-        robot_RTS.speed_regime = STOP;
-    }
-}
+    void do_task() override;
+};
 
 
 #endif

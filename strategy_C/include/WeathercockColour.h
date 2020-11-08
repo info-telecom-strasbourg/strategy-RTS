@@ -1,7 +1,7 @@
 #ifndef WEATHERCOCKCOLOUR_H
 #define WEATHERCOCKCOLOUR_H
 
-#include "Geometry.h"
+#include "Pos.h"
 
 /**
  * Simulate the behavior of the weathercock
@@ -26,11 +26,7 @@ public:
 	 * Choose randomly a color for the weathercock
 	 * The color is selected 25 seconds after the beginnig of the game
 	 */
-	void decide_zone()
-	{
-		if((millis() - begin) > 25000 && color_w == NO_COLOR)
-			this->color_w = int(random(50))%2 + 1;
-	}
+	void decide_zone();
 };
 
 #endif

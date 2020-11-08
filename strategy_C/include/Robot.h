@@ -3,7 +3,7 @@
 
 #include "Pos.h"
 #include "Sensor.h"
-#include "BottomLidar.h"
+
 
 /**
  * This class represent a basic robot
@@ -28,7 +28,7 @@ public:
     /* The robot speed regime */
     int speed_regime;
 
-	std::vector<Sensor> sensors;
+	Vector<Sensor> sensors;
 
 
     /**
@@ -55,7 +55,7 @@ public:
 	 * @param angle: the initial position of the robot
 	 * @param sensors_list: the list of sensors of the robot
 	 */
-	Robot(Pos pos, float angle, std::vector<Sensor> sensors_list)
+	Robot(Pos pos, float angle, Vector<Sensor> sensors_list)
 	: position(pos),	angle(angle), speed_regime(STOP), sensors(sensors_list)
   {
 		for (int i = 0; i < 4; ++i)
@@ -73,190 +73,77 @@ public:
 	* turn and go, and can go back if forward is false
 	* @param forward: indicate if we go forward or back
 	*/
-	void goTo(bool forward)
-	{
-		float turn = (forward) ? 0 : M_PI;
-
-		if (this->position.is_around(this->next_destination, 5))
-			return;
-
-		if (forward)
-		{
-			float dist = this->position.dist(this->next_destination);
-			float theta = this->position.angle(this->next_destination);
-
-			if (mod2Pi(theta + turn - this->angle) > rot_step && !this->position.is_around(this->next_destination, 5))
-			{
-				goToAngle(theta + turn);
-				return;
-			}
-		}
-
-		if(this->speed_regime != STOP)
-    {
-			if(this->sensors.size() != 0)
-      {
-				BottomLidar lidar(this->sensors[BOTTOM_LIDAR]);
-        this->speed_regime = lidar.manage_speed();
-      }
-			else
-				this->speed_regime = FAST;
-    }
-
-		this->position.x += this->speed_regime * cos(this->angle + turn);
-		this->position.y += this->speed_regime * sin(this->angle + turn);
-	}
+	void goTo(bool forward);
 
     /**
 	 * Rotate the robot
 	 * @param theta: the angle final the robot has to reach
 	 */
-	void goToAngle(float theta)
-	{
-		theta = mod2Pi(theta);
-		float delta_angle = theta - this->angle;
-
-		if (abs(delta_angle) < rot_step)
-			this->angle = theta;
-		else
-			if ((delta_angle > 0 && delta_angle < M_PI) || (delta_angle < 0 && delta_angle < - M_PI))
-				this->angle = mod2Pi(this->angle + rot_step);
-			else
-				this->angle = mod2Pi(this->angle - rot_step);
- 	}
+	void goToAngle(float theta);
 
      /**
 	 * If the front of the robot is too close from the border, it indicates that
      * the robot has to move back
 	 * @return if the robot has to move back
 	 */
-    bool haveToBack()
-	{
-		this->getCorners();
-
-		if(!this->corners[0].on_arena(10) || !this->corners[3].on_arena(10))
-			return true;
-
-		return false;
-	}
+    bool haveToBack();
 
     /**
 	 * Calcul the positions of the corners
 	 */
-	void getCorners()
-	{
-		for (int i = 0; i < 4; ++i)
-		{
-			this->corners[i].x = this->position.x + HALF_DIAG * cos(this->angle + M_PI/4 + i*M_PI/2);
-			this->corners[i].y = this->position.y + HALF_DIAG * sin(this->angle + M_PI/4 + i*M_PI/2);
-		}
-	}
-
+	void getCorners();
 
     /**
 	 * Calcul the positions of the corners
 	 */
-    void borderColision()
-	{
-		if ((corners[1].x < 0) && corners[2].x < 0)
-		{
-			this->angle = 0;
-			this->position.x = ROBOT_HEIGHT/2; // la longeur étant la distance de l'avant à l'arrière du robot
-			getCorners();
-		}
-		else if ((corners[1].x > ARENA_HEIGHT - 1) && (corners[2].x > ARENA_HEIGHT - 1))
-		{
-			this->angle = M_PI;
-			this->position.x = ARENA_HEIGHT - 1 - ROBOT_HEIGHT/2;
-			getCorners();
-		}
-		if ((corners[1].y < 0) && (corners[2].y < 0))
-		{
-			this->angle = M_PI/2;
-			this->position.y = ROBOT_HEIGHT/2;
-			getCorners();
-		}
-		else if ((corners[1].y > ARENA_WIDTH - 1) && (corners[2].y > ARENA_WIDTH - 1))
-		{
-			this->angle = 3 * M_PI/2;
-			this->position.y = ARENA_WIDTH - 1 - ROBOT_HEIGHT/2;
-			getCorners();
-		}
+    void borderColision();
+};
 
-		if ((corners[0].x < 0) && corners[3].x < 0)
-		{
-			this->angle = M_PI;
-			this->position.x = ROBOT_HEIGHT/2; // la longeur étant la distance de l'avant à l'arrière du robot
-			getCorners();
-		}
-		else if ((corners[0].x > ARENA_HEIGHT - 1) && (corners[3].x > ARENA_HEIGHT - 1))
-		{
-			this->angle = 0;
-			this->position.x = ARENA_HEIGHT - 1 - ROBOT_HEIGHT/2;
-			getCorners();
-		}
-		if ((corners[0].y < 0) && (corners[3].y < 0))
-		{
-			this->angle = 3 * M_PI/2;
-			this->position.y = ROBOT_HEIGHT/2;
-			getCorners();
-		}
-		else if ((corners[0].y > ARENA_WIDTH - 1) && (corners[3].y > ARENA_WIDTH - 1))
-		{
-			this->angle = M_PI/2;
-			this->position.y = ARENA_WIDTH - 1 - ROBOT_HEIGHT/2;
-			getCorners();
-		}
+/**
+ * This class simulate the opponent behaviour
+ */
+class OpponentRob : public Robot
+{
+public:
+    /* The list of positions to go */
+    Vector<Pos> list_moves;
 
-		for(int i = 0; i < 4; i++)
-		{
-			float delt_ang;
-			if (corners[i].x < 0)
-			{
-				delt_ang = acos(this->position.x/sqrt(pow(this->position.y - corners[i].y,2) + pow(this->position.x - corners[i].x,2))) - atan(abs((this->position.y - corners[i].y)/(this->position.x - corners[i].x)));
-				if (corners[i].y < this->position.y)
-					this->angle += delt_ang;
-				else if(corners[i].y > this->position.y)
-					this->angle -= delt_ang;
-				else
-					this->position.x -= corners[i].x;
-				getCorners();
-			}
-			else if (corners[i].x > ARENA_HEIGHT - 1)
-			{
-				delt_ang = acos((ARENA_HEIGHT - 1 - this->position.x)/sqrt(pow(this->position.y - corners[i].y,2) + pow(this->position.x - corners[i].x,2))) - atan(abs((this->position.y - corners[i].y)/(this->position.x - corners[i].x)));
-				if (corners[i].y < this->position.y)
-					this->angle -= delt_ang;
-				else if(corners[i].y > this->position.y)
-					this->angle += delt_ang;
-				else
-					this->position.x -= corners[i].x - ARENA_HEIGHT + 1;
-				getCorners();
-			}
-			if (corners[i].y < 0)
-			{
-				delt_ang = acos(this->position.y/sqrt(pow(this->position.y - corners[i].y,2) + pow(this->position.x - corners[i].x,2))) - atan(abs((this->position.x - corners[i].x)/(this->position.y - corners[i].y)));
-				if (corners[i].x < this->position.x)
-					this->angle -= delt_ang;
-				else if(corners[i].x > this->position.x)
-					this->angle += delt_ang;
-				else
-					this->position.y -= corners[i].y;
-				getCorners();
-			}
-			else if (corners[i].y > ARENA_WIDTH - 1)
-			{
-				delt_ang = acos((ARENA_WIDTH - 1 - this->position.y)/sqrt(pow(this->position.y - corners[i].y,2) + pow(this->position.x - corners[i].x,2))) - atan(abs((this->position.x - corners[i].x)/(this->position.y - corners[i].y)));
-				if (corners[i].x < this->position.x)
-					this->angle += delt_ang;
-				else if(corners[i].x > this->position.x)
-					this->angle -= delt_ang;
-				else
-					this->position.y -= corners[i].y - ARENA_WIDTH + 1;
-				getCorners();
-			}
-		}
-	}
+    /**
+	 * Constructor of the OpponentRob (random version)
+	 * @param init_pos: initial position of the opponent
+     * @param angle: angle of the opponent
+	 */
+    OpponentRob(Pos* init_pos, float angle)
+    : Robot(*init_pos, angle)
+    {
+      this->speed_regime = FAST;
+    }
+};
+
+/**
+ * This class represent our robot
+ */
+class RTSRob : public Robot
+{
+public:
+    /* The weathercock's color detected by our robot */
+    int detected_color;
+
+    /* A boolean that indicate if the flag is deployed*/
+    bool flag_deployed;
+
+    /**
+	 * Constructor of our robot
+	 * @param pos: the initial position of the robot
+	 * @param angle: the initial position of the robot
+     * @param sensors: the list of sensors of our robot
+	 */
+    RTSRob(Pos* init_position, float angle, Vector<Sensor> sensors)
+    : Robot(*init_position, angle, sensors)
+    {
+        this->detected_color = NO_COLOR;
+        this->flag_deployed = false;
+    }
 };
 
 #endif
