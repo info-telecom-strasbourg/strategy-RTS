@@ -1,6 +1,14 @@
 #include "Strat.h"
 #include "BottomLidar.h"
 
+extern const int BOTTOM_LIDAR;
+extern const int IN_PROGRESS;
+extern const int TASK_MOORING_AREA;
+extern const int NO_TASK;
+extern const int GAME_OVER;
+extern Pos POS_MOORING_AREA;
+extern Pos POS_NULL;
+
 void Strat::apply()
 {
   this->robot.speed_regime = ((BottomLidar)this->robot.sensors[BOTTOM_LIDAR]).manage_speed();

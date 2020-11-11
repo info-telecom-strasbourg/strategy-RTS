@@ -3,6 +3,7 @@
 
 #include "Task.h"
 
+extern const int DONE;
 
 /**
  * This class represent the task calibration. It allows

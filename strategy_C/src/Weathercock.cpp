@@ -8,22 +8,23 @@
 extern Strat strat;
 extern RTSRob robot_RTS;
 extern WeathercockColour weathercock;
+extern const int TASK_MOORING_AREA;
+extern const int TOP_LIDAR;
+extern const int NO_COLOR;
+extern const int WHITE;
+extern const int BLACK;
 
 
 
 void Weathercock::detect_weathercock_col()
 {
-  switch (robot_RTS.detected_color = weathercock.color_w)
-  {
-    case BLACK:
+  robot_RTS.detected_color = weathercock.color_w;
+  if (robot_RTS.detected_color == BLACK)
       strat.tab_tasks[TASK_MOORING_AREA].position.y = 200;
-      break;
-    case WHITE:
+  else if (robot_RTS.detected_color == WHITE)
       strat.tab_tasks[TASK_MOORING_AREA].position.y = 650;
-      break;
-    default:
+  else
       printf("No color found\n");
-  }
 }
 
 void Weathercock::do_task()

@@ -1,5 +1,11 @@
 #include "ManageOpponent.h"
 
+extern Pos POS_LIGHTHOUSE;
+extern Pos POS_LIGHTHOUSE_OP;
+extern Pos POS_WEATHERCOCK;
+extern const int MOBILE_LIDAR;
+extern Pos POS_NULL;
+
 void ManageOpponent::find_the_opponent()
 {
   Vector<Pos> obstacles;

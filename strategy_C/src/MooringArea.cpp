@@ -2,6 +2,12 @@
 #include "Strat.h"
 #include "Robot.h"
 
+extern const int GAME_OVER;
+extern const int DONE;
+extern const int TASK_WEATHERCOCK;
+extern const int IN_PROGRESS;
+extern Pos POS_MOORING_AREA;
+
 extern RTSRob robot_RTS;
 extern Strat strat;
 

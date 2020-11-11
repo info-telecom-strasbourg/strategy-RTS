@@ -2,6 +2,8 @@
 #include "Strat.h"
 
 extern Strat strat;
+extern const int IN_PROGRESS;
+extern const int TASK_CALIBRATION;
 
 void Task::in_progress()
 {

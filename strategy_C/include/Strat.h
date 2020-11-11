@@ -4,6 +4,10 @@
 #include "ManageOpponent.h"
 #include "Task.h"
 
+extern const int TASK_WEATHERCOCK;
+extern const int SLOW;
+extern const int TASK_MOORING_AREA;
+
 /**
  * This class is our strategy
  */

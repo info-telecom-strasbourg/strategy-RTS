@@ -3,6 +3,9 @@
 
 #include "Pos.h"
 
+extern const int NOT_DONE;
+extern const int DONE;
+
 /**
  * A task (weathercock, windsocks, mooring area and lighthouse)
  */

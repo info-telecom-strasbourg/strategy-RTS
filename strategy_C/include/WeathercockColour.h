@@ -3,6 +3,8 @@
 
 #include "Pos.h"
 
+extern const int NO_COLOR;
+
 /**
  * Simulate the behavior of the weathercock
  */

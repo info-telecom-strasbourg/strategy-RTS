@@ -8,6 +8,7 @@
  */
 class GameOver : public Task
 {
+public:
     /**
 	 * The class' constructor
 	 * @param id: the identifier of the task

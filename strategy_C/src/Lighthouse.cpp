@@ -5,6 +5,7 @@
 
 extern RTSRob robot_RTS;
 extern Strat strat;
+extern const int TOP_LIDAR;
 
 void Lighthouse::deploy_actuator_lighthouse()
 {

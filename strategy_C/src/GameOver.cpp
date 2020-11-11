@@ -2,6 +2,7 @@
 #include "Robot.h"
 
 extern RTSRob robot_RTS;
+extern const int STOP;
 
 void GameOver::do_task()
 {

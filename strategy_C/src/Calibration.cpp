@@ -4,6 +4,7 @@
 
 extern RTSRob robot_RTS;
 extern Strat strat;
+extern const int TASK_CALIBRATION;
 
 void Calibration::do_task()
 {

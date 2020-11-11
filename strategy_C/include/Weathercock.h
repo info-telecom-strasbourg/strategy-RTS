@@ -4,14 +4,6 @@
 
 #include "Task.h"
 
-
-
-
-
-
-
-
-
 /**
  * This class represent the task weathercock
  */

@@ -4,6 +4,10 @@
 #include "Pos.h"
 #include "Sensor.h"
 
+extern const int STOP;
+extern const int FAST;
+extern const int NO_COLOR;
+
 
 /**
  * This class represent a basic robot

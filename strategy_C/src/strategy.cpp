@@ -18,19 +18,46 @@
 #include "WeathercockColour.h"
 #include "Windsock.h"
 
-extern Pos POS_LIGHTHOUSE;
-extern Pos POS_LIGHTHOUSE_OP;
-extern Pos POS_WEATHERCOCK;
-extern Pos POS_WINDSOCK_1;
-extern Pos POS_WINDSOCK_2;
-extern Pos POS_MOORING_AREA;
+//Macro for tasks
+const int TASK_WEATHERCOCK = 0;
+const int TASK_WINDSOCK_1 = 1;
+const int TASK_WINDSOCK_2 = 2;
+const int TASK_LIGHTHOUSE = 3;
+const int TASK_MOORING_AREA = 4;
+const int TASK_CALIBRATION = 5;
+const int GAME_OVER = 6;
+const int NO_TASK = 7;
 
-/**
-* Launcher of the simulation
-*/
+//Macro for speed regimes
+const int STOP = 0;
+const int SLOW = 3;
+const int FAST = 10;
 
+//Macro for colors (weathercock)
+const int NO_COLOR = 0;
+const int BLACK = 1;
+const int WHITE = 2;
 
+//Macro for done
+const int NOT_DONE = 0;
+const int IN_PROGRESS = 1;
+const int DONE = 2;
 
+//Macro for tasks positions
+Pos POS_LIGHTHOUSE;
+Pos POS_LIGHTHOUSE_OP;
+Pos POS_WEATHERCOCK;
+Pos POS_WINDSOCK_1;
+Pos POS_WINDSOCK_2;
+Pos POS_MOORING_AREA;
+
+//Macro for tasks positions
+int BOTTOM_LIDAR = 0;
+int TOP_LIDAR = 1;
+int MOBILE_LIDAR = 2;
+
+//Macro for null types
+Pos POS_NULL(-1,-1);
 
 //Global variables
 
@@ -100,44 +127,34 @@ void init_robots()
  */
 void init_tasks()
 {
-  strat.tasks_order.add(TASK_LIGHTHOUSE);
-	strat.tasks_order.add(TASK_WINDSOCK_1);
-	strat.tasks_order.add(TASK_WINDSOCK_2);
+  strat.tasks_order.push_back(TASK_LIGHTHOUSE);
+	strat.tasks_order.push_back(TASK_WINDSOCK_1);
+	strat.tasks_order.push_back(TASK_WINDSOCK_2);
 
     Vector<Pos> checkpoint_windsock;
-    checkpoint_windsock.add(new Pos(-1,945));
+    checkpoint_windsock.push_back(Pos(-1,945));
     Vector<Pos> checkpoint_lighthouse;
-    checkpoint_lighthouse.add(new Pos(-1,50));
+    checkpoint_lighthouse.push_back(Pos(-1,50));
     Vector<Pos> checkpoint_weathercock;
-    checkpoint_weathercock.add(new Pos(ARENA_HEIGHT/2, -1));
+    checkpoint_weathercock.push_back(Pos(ARENA_HEIGHT/2, -1));
 
-    Weathercock task_weathercock = new Weathercock(TASK_WEATHERCOCK, 10, POS_WEATHERCOCK, 25000, checkpoint_weathercock);
-	Windsock task_windsock_1 = new Windsock(TASK_WINDSOCK_1, 5, POS_WINDSOCK_1, 20000, checkpoint_windsock);
-	Windsock task_windsock_2 = new Windsock(TASK_WINDSOCK_2, 5, POS_WINDSOCK_2, 20000, checkpoint_windsock);
-	Lighthouse task_lighthouse = new Lighthouse(TASK_LIGHTHOUSE, 13, POS_LIGHTHOUSE, 10000, checkpoint_lighthouse);
-	MooringArea task_mooring_area = new MooringArea(TASK_MOORING_AREA, 10, POS_MOORING_AREA, 100000);
+    Weathercock task_weathercock(TASK_WEATHERCOCK, 10, POS_WEATHERCOCK, 25000, checkpoint_weathercock);
+	Windsock task_windsock_1(TASK_WINDSOCK_1, 5, POS_WINDSOCK_1, 20000, checkpoint_windsock);
+	Windsock task_windsock_2(TASK_WINDSOCK_2, 5, POS_WINDSOCK_2, 20000, checkpoint_windsock);
+	Lighthouse task_lighthouse(TASK_LIGHTHOUSE, 13, POS_LIGHTHOUSE, 10000, checkpoint_lighthouse);
+	MooringArea task_mooring_area(TASK_MOORING_AREA, 10, POS_MOORING_AREA, 100000);
 
-	Calibration task_calibration = new Calibration(TASK_CALIBRATION, 0, new Pos(-50, -50), 15000);
-	GameOver game_over = new GameOver(GAME_OVER, 0, new Pos(-50, -50), 1000000);
+  Pos pos_50(-50, -50);
+	Calibration task_calibration(TASK_CALIBRATION, 0, pos_50, 15000);
+	GameOver game_over(GAME_OVER, 0, pos_50, 1000000);
 
-    strat.tab_tasks.add(task_weathercock);
-    strat.tab_tasks.add(task_windsock_1);
-    strat.tab_tasks.add(task_windsock_2);
-    strat.tab_tasks.add(task_lighthouse);
-    strat.tab_tasks.add(task_mooring_area);
-    strat.tab_tasks.add(task_calibration);
-    strat.tab_tasks.add(game_over);
-}
-
-
-
-/**
- * Display the task when our robot know their position
- */
-void display_tasks()
-{
-	for(int i = 0; i < strat.tab_tasks.size(); i++)
-		strat.tab_tasks[i].display(true);
+    strat.tab_tasks.push_back(task_weathercock);
+    strat.tab_tasks.push_back(task_windsock_1);
+    strat.tab_tasks.push_back(task_windsock_2);
+    strat.tab_tasks.push_back(task_lighthouse);
+    strat.tab_tasks.push_back(task_mooring_area);
+    strat.tab_tasks.push_back(task_calibration);
+    strat.tab_tasks.push_back(game_over);
 }
 
 /**
@@ -154,6 +171,7 @@ void display_infos()
 
 void display_tasks_order(int id)
 {
+  /**
 	switch (id)
 	{
 		case TASK_WEATHERCOCK:
@@ -178,9 +196,10 @@ void display_tasks_order(int id)
 			println("GAME_OVER");
 			break;
 	}
+  **/
 }
 
-Lidar lidar;
+Sensor lidar;
 
 void setup() {
     // Setup serial link
@@ -190,30 +209,23 @@ void setup() {
 
 
     dectable_lidar_mobile.push_back(POS_LIGHTHOUSE);
-    dectable_lidar_mobile.add(POS_LIGHTHOUSE_OP);
-    dectable_lidar_mobile.add(POS_WEATHERCOCK);
-    dectable_lidar_mobile.add(rob_op.position);
-    dectable_lidar_mobile.add(rob_op_2.position);
-
-    weathercock = new WeathercockColour();
-
-    strat = new Strat(robot_RTS);
+    dectable_lidar_mobile.push_back(POS_LIGHTHOUSE_OP);
+    dectable_lidar_mobile.push_back(POS_WEATHERCOCK);
+    dectable_lidar_mobile.push_back(rob_op.position);
+    dectable_lidar_mobile.push_back(rob_op_2.position);
 
     init_tasks();
-
-	smooth();
 
 }
 
 void loop() {
-	distance_read = lidar.readDistance();
+	//distance_read = lidar.readDistance();
 
 	strat.apply();
 
 	display_infos();
 
-	for (int i = 0; i < strat.tasks_order.size(); i++)
+	for (unsigned int i = 0; i < strat.tasks_order.size(); i++)
 		display_tasks_order(strat.tasks_order[i]);
 
-	manage_robot_op();
 }

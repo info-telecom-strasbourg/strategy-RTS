@@ -1,6 +1,8 @@
 #include "Robot.h"
 #include "BottomLidar.h"
 
+extern const int BOTTOM_LIDAR;
+
 void Robot::goTo(bool forward)
 {
   float turn = (forward) ? 0 : M_PI;
