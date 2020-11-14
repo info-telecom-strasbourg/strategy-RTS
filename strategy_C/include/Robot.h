@@ -3,11 +3,7 @@
 
 #include "Pos.h"
 #include "Sensor.h"
-
-extern const int STOP;
-extern const int FAST;
-extern const int NO_COLOR;
-
+#include "Macro.h"
 
 /**
  * This class represent a basic robot
@@ -40,18 +36,7 @@ public:
 	 * @param pos: the initial position of the robot
 	 * @param angle: the initial position of the robot
 	 */
-	Robot(Pos pos_ini, float angle)
-	: position(pos_ini),	angle(angle), speed_regime(STOP)
-  {
-		for (int i = 0; i < 4; ++i)
-		{
-			float angle_corner = this->angle + M_PI/4 + i*M_PI/2;
-			this->corners[i] = Pos(
-									  pos_ini.x + HALF_DIAG * cos(angle_corner),
-									  pos_ini.y + HALF_DIAG * sin(angle_corner)
-									 );
-		}
-	}
+	Robot(Pos pos_ini, float angle);
 
 	/**
 	 * Constructor of Robot (with sensors, probably the our robot)
@@ -59,18 +44,7 @@ public:
 	 * @param angle: the initial position of the robot
 	 * @param sensors_list: the list of sensors of the robot
 	 */
-	Robot(Pos pos, float angle, Vector<Sensor> sensors_list)
-	: position(pos),	angle(angle), speed_regime(STOP), sensors(sensors_list)
-  {
-		for (int i = 0; i < 4; ++i)
-		{
-			float angle_corner = this->angle + M_PI/4 + i*M_PI/2;
-			this->corners[i] = Pos(
-									  pos.x + HALF_DIAG * cos(angle_corner),
-									  pos.y + HALF_DIAG * sin(angle_corner)
-									 );
-		}
-	}
+	Robot(Pos pos, float angle, Vector<Sensor> sensors_list);
 
     /**
 	* Move the robot to the attribute "next_destination" using the method

@@ -2,12 +2,10 @@
 #include "Robot.h"
 #include "Strat.h"
 #include "TopLidar.h"
+#include "Macro.h"
 
 extern RTSRob robot_RTS;
 extern Strat strat;
-extern const int TASK_WINDSOCK_1;
-extern const int TASK_WINDSOCK_2;
-extern int TOP_LIDAR;
 
 bool Windsock::raise_windsock()
 {

@@ -1,6 +1,11 @@
 #include "WeathercockColour.h"
+#include "Macro.h"
 
-extern const int NO_COLOR;
+WeathercockColour::WeathercockColour()
+: color_w(NO_COLOR)
+{
+  begin = millis();
+}
 
 void WeathercockColour::decide_zone()
 {

@@ -1,15 +1,8 @@
 #ifndef BOTTOMLIDAR_H
 #define BOTTOMLIDAR_H
 
-//class RTSRob;
-
-#include "Robot.h"
 #include <Vector.h>
 #include "Sensor.h"
-#include "Strat.h"
-
-extern RTSRob robot_RTS;
-extern Vector<OpponentRob> rob_opponents;
 
 /**
  * This class simulate the behaviour of the bottom lidars

@@ -1,7 +1,32 @@
 #include "Robot.h"
 #include "BottomLidar.h"
+#include "Macro.h"
 
-extern const int BOTTOM_LIDAR;
+Robot::Robot(Pos pos_ini, float angle)
+: position(pos_ini),	angle(angle), speed_regime(STOP)
+{
+  for (int i = 0; i < 4; ++i)
+  {
+    float angle_corner = this->angle + M_PI/4 + i*M_PI/2;
+    this->corners[i] = Pos(
+                  pos_ini.x + HALF_DIAG * cos(angle_corner),
+                  pos_ini.y + HALF_DIAG * sin(angle_corner)
+                 );
+  }
+}
+
+Robot::Robot(Pos pos, float angle, Vector<Sensor> sensors_list)
+: position(pos),	angle(angle), speed_regime(STOP), sensors(sensors_list)
+{
+  for (int i = 0; i < 4; ++i)
+  {
+    float angle_corner = this->angle + M_PI/4 + i*M_PI/2;
+    this->corners[i] = Pos(
+                  pos.x + HALF_DIAG * cos(angle_corner),
+                  pos.y + HALF_DIAG * sin(angle_corner)
+                 );
+  }
+}
 
 void Robot::goTo(bool forward)
 {

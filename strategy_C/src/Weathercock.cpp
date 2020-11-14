@@ -4,15 +4,12 @@
 #include "Robot.h"
 #include "WeathercockColour.h"
 #include "TopLidar.h"
+#include "Macro.h"
 
 extern Strat strat;
 extern RTSRob robot_RTS;
 extern WeathercockColour weathercock;
-extern const int TASK_MOORING_AREA;
-extern const int TOP_LIDAR;
-extern const int NO_COLOR;
-extern const int WHITE;
-extern const int BLACK;
+
 
 
 

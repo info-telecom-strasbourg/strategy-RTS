@@ -1,11 +1,7 @@
 #include "Strat.h"
 #include "BottomLidar.h"
+#include "Macro.h"
 
-extern const int BOTTOM_LIDAR;
-extern const int IN_PROGRESS;
-extern const int TASK_MOORING_AREA;
-extern const int NO_TASK;
-extern const int GAME_OVER;
 extern Pos POS_MOORING_AREA;
 extern Pos POS_NULL;
 
@@ -134,6 +130,9 @@ bool Strat::manage_last_tasks()
   return false;
 }
 
+bool Strat::final_move_with_color(long time_left){return (tab_tasks[TASK_WEATHERCOCK].done == DONE && is_final_move(tab_tasks[TASK_MOORING_AREA].position, time_left));}
+
+
 bool Strat::final_move_without_color(long time_left)
 {
   Pos pos200(POS_MOORING_AREA.x, 200);
@@ -142,6 +141,9 @@ bool Strat::final_move_without_color(long time_left)
     || is_final_move(pos650, time_left))
     && tab_tasks[TASK_MOORING_AREA].done != DONE);
 }
+
+bool Strat::is_final_move (Pos pos, long time_left){return time_left < (10000 + pos.dist(robot.position)/SLOW);}
+
 
 void Strat::changeTaskOrder(int index_start, int index_end)
 {

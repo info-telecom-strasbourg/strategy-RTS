@@ -2,9 +2,7 @@
 #define TASK_H
 
 #include "Pos.h"
-
-extern const int NOT_DONE;
-extern const int DONE;
+#include "Macro.h"
 
 /**
  * A task (weathercock, windsocks, mooring area and lighthouse)

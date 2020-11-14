@@ -17,31 +17,8 @@
 #include "Weathercock.h"
 #include "WeathercockColour.h"
 #include "Windsock.h"
-
-//Macro for tasks
-const int TASK_WEATHERCOCK = 0;
-const int TASK_WINDSOCK_1 = 1;
-const int TASK_WINDSOCK_2 = 2;
-const int TASK_LIGHTHOUSE = 3;
-const int TASK_MOORING_AREA = 4;
-const int TASK_CALIBRATION = 5;
-const int GAME_OVER = 6;
-const int NO_TASK = 7;
-
-//Macro for speed regimes
-const int STOP = 0;
-const int SLOW = 3;
-const int FAST = 10;
-
-//Macro for colors (weathercock)
-const int NO_COLOR = 0;
-const int BLACK = 1;
-const int WHITE = 2;
-
-//Macro for done
-const int NOT_DONE = 0;
-const int IN_PROGRESS = 1;
-const int DONE = 2;
+#include "Dir.h"
+#include "Macro.h"
 
 //Macro for tasks positions
 Pos POS_LIGHTHOUSE;
@@ -50,11 +27,6 @@ Pos POS_WEATHERCOCK;
 Pos POS_WINDSOCK_1;
 Pos POS_WINDSOCK_2;
 Pos POS_MOORING_AREA;
-
-//Macro for tasks positions
-int BOTTOM_LIDAR = 0;
-int TOP_LIDAR = 1;
-int MOBILE_LIDAR = 2;
 
 //Macro for null types
 Pos POS_NULL(-1,-1);
@@ -70,6 +42,7 @@ Vector<OpponentRob> rob_opponents;
 Vector<Pos> dectable_lidar_mobile;
 Strat strat(robot_RTS);
 
+Dir dir = right;
 
 
 

@@ -1,10 +1,16 @@
 #include "Calibration.h"
 #include "Robot.h"
 #include "Strat.h"
+#include "Macro.h"
 
 extern RTSRob robot_RTS;
 extern Strat strat;
-extern const int TASK_CALIBRATION;
+
+Calibration::Calibration(int id, int points, Pos position, long max_time)
+: Task(id, points, position, max_time), x_calibration(false), y_calibrated(false)
+{
+  this->done = DONE;
+}
 
 void Calibration::do_task()
 {

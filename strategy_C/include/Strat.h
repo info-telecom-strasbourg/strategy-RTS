@@ -4,10 +4,6 @@
 #include "ManageOpponent.h"
 #include "Task.h"
 
-extern const int TASK_WEATHERCOCK;
-extern const int SLOW;
-extern const int TASK_MOORING_AREA;
-
 /**
  * This class is our strategy
  */
@@ -74,7 +70,7 @@ public:
 	 * @param: time_left: the time before the end of the game
 	 * @return if we have to move to the mooring area
 	 */
-	bool final_move_with_color(long time_left){return (tab_tasks[TASK_WEATHERCOCK].done == DONE && is_final_move(tab_tasks[TASK_MOORING_AREA].position, time_left));}
+	bool final_move_with_color(long time_left);
 
 	/**
 	 * Calculate if we have to move to the closest mooring area without the color of the weathercock
@@ -89,7 +85,7 @@ public:
 	 * @param: time_left: the time before the end of the game
 	 * @return if we have the time to move to "pos" before the end of the game
 	 */
-	bool is_final_move (Pos pos, long time_left){return time_left < (10000 + pos.dist(robot.position)/SLOW);}
+	bool is_final_move (Pos pos, long time_left);
 
 
 	/**

@@ -3,8 +3,6 @@
 
 #include "Pos.h"
 
-extern const int NO_COLOR;
-
 /**
  * Simulate the behavior of the weathercock
  */
@@ -18,11 +16,7 @@ public:
 	/**
 	 * Constructor of Weathercock
 	 */
-	WeathercockColour()
-  : color_w(NO_COLOR)
-	{
-		begin = millis();
-	}
+	WeathercockColour();
 
 	/**
 	 * Choose randomly a color for the weathercock

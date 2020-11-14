@@ -1,4 +1,9 @@
 #include "BottomLidar.h"
+#include "Robot.h"
+#include "Macro.h"
+
+extern RTSRob robot_RTS;
+extern Vector<OpponentRob> rob_opponents;
 
 Vector<Pos> BottomLidar::detection(Vector<Pos> detectables)
 {

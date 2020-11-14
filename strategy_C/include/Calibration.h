@@ -3,8 +3,6 @@
 
 #include "Task.h"
 
-extern const int DONE;
-
 /**
  * This class represent the task calibration. It allows
  * the robot to reinitialize its position
@@ -28,11 +26,7 @@ public:
      * @param position: task position
      * @param max_time: the max time this task should last
 	 */
-    Calibration(int id, int points, Pos position, long max_time)
-    : Task(id, points, position, max_time), x_calibration(false), y_calibrated(false)
-    {
-      this->done = DONE;
-    }
+    Calibration(int id, int points, Pos position, long max_time);
 
     /**
 	 * Calibrate the robot when we have lost our position

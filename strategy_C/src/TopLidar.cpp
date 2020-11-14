@@ -1,5 +1,6 @@
 #include "TopLidar.h"
 #include "Robot.h"
+#include "Macro.h"
 
 extern RTSRob robot_RTS;
 
