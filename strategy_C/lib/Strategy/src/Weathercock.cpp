@@ -1,3 +1,4 @@
+#include <Arduino.h>
 #include <stdio.h>
 #include "Weathercock.h"
 #include "Strat.h"

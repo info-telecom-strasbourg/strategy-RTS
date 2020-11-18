@@ -1,3 +1,4 @@
+#include <Arduino.h>
 #include "Windsock.h"
 #include "Robot.h"
 #include "Strat.h"

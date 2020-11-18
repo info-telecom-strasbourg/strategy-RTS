@@ -1,3 +1,4 @@
+#include <Arduino.h>
 #include "MooringArea.h"
 #include "Strat.h"
 #include "Robot.h"

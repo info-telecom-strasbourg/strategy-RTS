@@ -1,3 +1,4 @@
+#include <Arduino.h>
 #include <math.h>
 #include <Vector.h>
 #include "BottomLidar.h"

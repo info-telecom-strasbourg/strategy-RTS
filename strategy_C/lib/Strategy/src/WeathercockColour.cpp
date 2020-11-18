@@ -1,3 +1,4 @@
+#include <Arduino.h>
 #include "WeathercockColour.h"
 #include "Macro.h"
 

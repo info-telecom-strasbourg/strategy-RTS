@@ -37,9 +37,7 @@ public:
 	 * The constructor of the class
 	 * @param robot: the robot that must fllow the strategy
 	 */
-  Strat(RTSRob robot)
-  : ManageOpponent(robot), id_current_task(-1), time(millis()), time_start_task(millis()), score(7), weathercock_insterted(false)
-  {}
+  Strat(RTSRob robot);
 
     /**
 	 * Apply the strategy
@@ -100,33 +98,21 @@ public:
 	 * Empty the Vector tasks_order and reinitialize
 	 * time_start_task
 	 */
-	void emptyTaskOrder()
-  {
-		this->time_start_task = millis();
-		this->tasks_order.clear();
-	}
+	void emptyTaskOrder();
 
 	/**
 	 * Add id to the Vector tasks_order and reinitialize
 	 * time_start_task
 	 * @param id: the id of the task
 	 */
-	void addTaskOrder(int id)
-	{
-		this->time_start_task = millis();
-		this->tasks_order.push_back(id);
-	}
+	void addTaskOrder(int id);
 
 	/**
 	 * remove the int an index to the Vector tasks_order and reinitialize
 	 * time_start_task
 	 * @param index: the position of the id you want to remove
 	 */
-	void removeTaskOrder(int index)
-	{
-		this->time_start_task = millis();
-		this->tasks_order.remove(index);
-	}
+	void removeTaskOrder(int index);
 };
 
 

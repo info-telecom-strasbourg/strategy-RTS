@@ -3,8 +3,6 @@
 
 #include <math.h>
 #include <Vector.h>
-#include <Arduino.h>
-#include "Dir.h"
 
 /**
  * Using radians, find the angle in [0, 2 M_PI]

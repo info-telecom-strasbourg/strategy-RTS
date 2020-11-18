@@ -1,9 +1,14 @@
+#include <Arduino.h>
 #include "Strat.h"
 #include "BottomLidar.h"
 #include "Macro.h"
 
 extern Pos POS_MOORING_AREA;
 extern Pos POS_NULL;
+
+Strat::Strat(RTSRob robot)
+: ManageOpponent(robot), id_current_task(-1), time(millis()), time_start_task(millis()), score(7), weathercock_insterted(false)
+{}
 
 void Strat::apply()
 {
@@ -174,4 +179,22 @@ void Strat::changeTaskOrder(int index_start, int index_end)
   }
 
   this->tasks_order = tasks_order_temp;
+}
+
+void Strat::emptyTaskOrder()
+{
+  this->time_start_task = millis();
+  this->tasks_order.clear();
+}
+
+void Strat::addTaskOrder(int id)
+{
+  this->time_start_task = millis();
+  this->tasks_order.push_back(id);
+}
+
+void Strat::removeTaskOrder(int index)
+{
+  this->time_start_task = millis();
+  this->tasks_order.remove(index);
 }

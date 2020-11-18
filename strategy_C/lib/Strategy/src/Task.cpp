@@ -1,3 +1,4 @@
+#include <Arduino.h>
 #include "Task.h"
 #include "Strat.h"
 #include "Macro.h"

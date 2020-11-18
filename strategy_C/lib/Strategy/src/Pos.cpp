@@ -1,5 +1,6 @@
 #include "Pos.h"
 #include "Macro.h"
+#include "Dir.h"
 
 extern Dir dir;
 
