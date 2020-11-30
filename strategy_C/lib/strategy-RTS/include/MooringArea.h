@@ -16,14 +16,12 @@ public:
 	 * @param position: the location of this task
 	 * @param max_time: the estimated necessary time to accomplish the task
 	 */
-    MooringArea(int id, int points, Pos position, long max_time)
-    : Task(id, points, position, max_time)
-    {}
+  MooringArea(int id, int points, Pos position, long max_time);
 
     /**
 	 * Simulate the task linked to the mooring area
 	 */
-	void do_task();
+	void do_task(int millis);
 };
 
 #endif

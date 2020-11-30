@@ -21,26 +21,22 @@ public:
 	 * @param max_time: the estimated necessary time to accomplish the task
 	 * @param light_house_checkpoints: the checkpoints we need to reach to accomplish the task
 	 */
-    Lighthouse(int id, int points, Pos position, long max_time, Vector<Pos> lighthouse_checkpoints)
-    : Task(id, points, position, max_time), lighthouse_wait(-1)
-    {
-        this->checkpoints = lighthouse_checkpoints;
-    }
+    Lighthouse(int id, int points, Pos position, long max_time, Vector<Pos> lighthouse_checkpoints);
 
     /**
 	 * Deploy the actuator to push the lighthouse button (simulation only)
 	 */
-	void deploy_actuator_lighthouse();
+	void deploy_actuator_lighthouse(int millis);
 
 	/**
 	 * Turn the robot to the right direction and push the button
 	 */
-	void push_button();
+	void push_button(int millis);
 
 	/**
 	 * Simulate the execution of the lighthouse task
 	 */
-	void do_task();
+	void do_task(int millis);
 };
 
 #endif

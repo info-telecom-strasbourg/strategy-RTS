@@ -31,7 +31,7 @@ public:
     /**
 	 * Calibrate the robot when we have lost our position
 	 */
-    void do_task();
+    void do_task(int millis);
 
     /**
 	 * Calibrate the robot following the y axis
@@ -41,7 +41,7 @@ public:
     /**
 	 * Calibrate the robot following the x axis
 	 */
-    void x_do_calibration(float calib_x, float calib_secu_y);
+    void x_do_calibration(float calib_x, float calib_secu_y, int millis);
 };
 
 #endif

@@ -12,7 +12,7 @@ Calibration::Calibration(int id, int points, Pos position, long max_time)
   this->done = DONE;
 }
 
-void Calibration::do_task()
+void Calibration::do_task(int millis)
 {
     float calib_x = (robot_RTS.position.x < ARENA_HEIGHT/2) ? 0 : ARENA_HEIGHT;
     float calib_y = (robot_RTS.position.y < ARENA_WIDTH/2) ? 0 : ARENA_WIDTH;
@@ -21,7 +21,7 @@ void Calibration::do_task()
     if(!y_calibrated)
         y_do_calibration(calib_y, calib_secu_y);
     else
-        x_do_calibration(calib_x, calib_secu_y);
+        x_do_calibration(calib_x, calib_secu_y, millis);
 }
 
 void Calibration::y_do_calibration(float calib_y, float calib_secu_y)
@@ -40,7 +40,7 @@ void Calibration::y_do_calibration(float calib_y, float calib_secu_y)
     robot_RTS.goTo(true);
 }
 
-void Calibration::x_do_calibration(float calib_x, float calib_secu_y)
+void Calibration::x_do_calibration(float calib_x, float calib_secu_y, int millis)
 {
     if(!this->x_calibration)
     {
@@ -62,7 +62,7 @@ void Calibration::x_do_calibration(float calib_x, float calib_secu_y)
         if(!robot_RTS.corners[0].on_arena(1) && !robot_RTS.corners[3].on_arena(1))
         {
             strat.tab_tasks[TASK_CALIBRATION].over();
-            strat.removeTaskOrder(0);
+            strat.removeTaskOrder(0, millis);
             y_calibrated = false;
             x_calibration = false;
             strat.tab_tasks[TASK_CALIBRATION].position = Pos(-50, -50);

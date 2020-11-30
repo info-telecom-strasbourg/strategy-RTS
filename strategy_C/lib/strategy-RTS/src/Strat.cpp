@@ -1,4 +1,3 @@
-#include <Arduino.h>
 #include "Strat.h"
 #include "BottomLidar.h"
 #include "Macro.h"
@@ -6,23 +5,23 @@
 extern Pos POS_MOORING_AREA;
 extern Pos POS_NULL;
 
-Strat::Strat(RTSRob robot)
-: ManageOpponent(robot), id_current_task(-1), time(millis()), time_start_task(millis()), score(7), weathercock_insterted(false)
+Strat::Strat(RTSRob robot, int millis)
+: ManageOpponent(robot), id_current_task(-1), time(millis), time_start_task(millis), score(7), weathercock_insterted(false)
 {}
 
-void Strat::apply()
+void Strat::apply(int millis)
 {
   this->robot.speed_regime = ((BottomLidar)this->robot.sensors[BOTTOM_LIDAR]).manage_speed();
   find_the_opponent(); //identify the opponent
-  this->id_current_task = find_best_task(); //choose the task we have to do now
+  this->id_current_task = find_best_task(millis); //choose the task we have to do now
 
-  if(manage_last_tasks())
+  if(manage_last_tasks(millis))
       this->id_current_task = this->tasks_order[0];
 
   if(this->robot.position.is_around(this->tab_tasks[this->id_current_task].position, 5)
      || this->tab_tasks[this->id_current_task].done == IN_PROGRESS)
   {
-    this->tab_tasks[this->id_current_task].do_task();
+    this->tab_tasks[this->id_current_task].do_task(millis);
 
     if (!this->path.empty())
       this->path.clear();
@@ -65,12 +64,12 @@ void Strat::select_mooring_area()
     tab_tasks[TASK_MOORING_AREA].position = points_for_closer[(index_closer+1)%2];
 }
 
-int Strat::find_best_task()
+int Strat::find_best_task(int millis)
 {
   if (this->id_current_task == TASK_MOORING_AREA && this->robot.detected_color == NO_COLOR)
     select_mooring_area();
 
-  long time_left = 100000 - millis() - time;
+  long time_left = 100000 - millis - time;
 
   if (time_left < 4500 && !this->robot.flag_deployed)
   {
@@ -88,15 +87,15 @@ int Strat::find_best_task()
 
   if((!this->tasks_order.empty()))
   {
-    if (((this->tab_tasks[this->tasks_order[0]].done == NOT_DONE && (millis() - this->time_start_task) > 10000)
-    || (this->tab_tasks[this->tasks_order[0]].done == IN_PROGRESS) && (millis() - this->time_start_task) > this->tab_tasks[this->tasks_order[0]].max_time))
+    if (((this->tab_tasks[this->tasks_order[0]].done == NOT_DONE && (millis - this->time_start_task) > 10000)
+    || (this->tab_tasks[this->tasks_order[0]].done == IN_PROGRESS) && (millis - this->time_start_task) > this->tab_tasks[this->tasks_order[0]].max_time))
     {
       this->tab_tasks[this->tasks_order[0]].done = NOT_DONE;
-      changeTaskOrder(0, this->tasks_order.size() - 1);
+      changeTaskOrder(0, this->tasks_order.size() - 1, millis);
       for (unsigned int i = 0; i < this->tasks_order.size(); i++)
         if(access(this->robot.position, this->tab_tasks[this->tasks_order[i]].position, 280) == POS_NULL)
         {
-          changeTaskOrder(i, 0);
+          changeTaskOrder(i, 0, millis);
           break;
         }
     }
@@ -110,26 +109,26 @@ int Strat::find_best_task()
     return NO_TASK;
 }
 
-bool Strat::manage_last_tasks()
+bool Strat::manage_last_tasks(int millis)
 {
-  long time_left = 100000 - millis() - time;
+  long time_left = 100000 - millis - time;
   if ((this->robot.flag_deployed) && (time_left < 500 || this->tasks_order.empty()))
   {
     tab_tasks[GAME_OVER].position = this->robot.position;
-    this->emptyTaskOrder();
-    this->addTaskOrder(GAME_OVER);
+    this->emptyTaskOrder(millis);
+    this->addTaskOrder(GAME_OVER, millis);
     return true;
   }
   if ((final_move_with_color(time_left) || final_move_without_color(time_left) || (this->tasks_order.empty())) && this->tab_tasks[TASK_MOORING_AREA].done != DONE)
   {
-    this->emptyTaskOrder();
+    this->emptyTaskOrder(millis);
     Pos pos_mooring_1(POS_MOORING_AREA.x, 200);
     Pos pos_mooring_2(POS_MOORING_AREA.x, 650);
     if(access(this->robot.position, this->tab_tasks[TASK_MOORING_AREA].position, 280) != POS_NULL
     && (time_left - 10000 < this->robot.position.dist(pos_mooring_1)/SLOW || time_left - 10000 < this->robot.position.dist(pos_mooring_2)/SLOW))
       select_mooring_area();
 
-    this->addTaskOrder(TASK_MOORING_AREA);
+    this->addTaskOrder(TASK_MOORING_AREA, millis);
     return true;
   }
   return false;
@@ -150,9 +149,9 @@ bool Strat::final_move_without_color(long time_left)
 bool Strat::is_final_move (Pos pos, long time_left){return time_left < (10000 + pos.dist(robot.position)/SLOW);}
 
 
-void Strat::changeTaskOrder(int index_start, int index_end)
+void Strat::changeTaskOrder(int index_start, int index_end, int millis)
 {
-  this->time_start_task = millis();
+  this->time_start_task = millis;
   if (index_start == index_end || index_start >= this->tasks_order.size() || index_end >= this->tasks_order.size()
   || index_start < 0 || index_end < 0)
     return;
@@ -181,20 +180,20 @@ void Strat::changeTaskOrder(int index_start, int index_end)
   this->tasks_order = tasks_order_temp;
 }
 
-void Strat::emptyTaskOrder()
+void Strat::emptyTaskOrder(int millis)
 {
-  this->time_start_task = millis();
+  this->time_start_task = millis;
   this->tasks_order.clear();
 }
 
-void Strat::addTaskOrder(int id)
+void Strat::addTaskOrder(int id, int millis)
 {
-  this->time_start_task = millis();
+  this->time_start_task = millis;
   this->tasks_order.push_back(id);
 }
 
-void Strat::removeTaskOrder(int index)
+void Strat::removeTaskOrder(int index, int millis)
 {
-  this->time_start_task = millis();
+  this->time_start_task = millis;
   this->tasks_order.remove(index);
 }

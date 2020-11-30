@@ -35,7 +35,7 @@ public:
 	/**
 	 * Simulate the execution of the weathercock
 	 */
-    void do_task();
+    void do_task(int millis);
 };
 
 #endif

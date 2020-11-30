@@ -1,4 +1,3 @@
-#include <Arduino.h>
 #include "Windsock.h"
 #include "Robot.h"
 #include "Strat.h"
@@ -8,17 +7,23 @@
 extern RTSRob robot_RTS;
 extern Strat strat;
 
-bool Windsock::raise_windsock()
+Windsock::Windsock(int id, int points, Pos position, long max_time, Vector<Pos> windsock_checkpoints)
+: Task(id, points, position, max_time), windsock_wait(-1)
 {
-    if(windsock_wait == -1)
-        windsock_wait = millis();
-
-    return (millis() - windsock_wait > 4000);
+  this->checkpoints = windsock_checkpoints;
 }
 
-void Windsock::do_task()
+bool Windsock::raise_windsock(int millis)
 {
-  this->in_progress();
+    if(windsock_wait == -1)
+        windsock_wait = millis;
+
+    return (millis - windsock_wait > 4000);
+}
+
+void Windsock::do_task(int millis)
+{
+  this->in_progress(millis);
 
   this->checkpoints[0].x = robot_RTS.position.x;
   robot_RTS.next_destination = this->checkpoints[0];
@@ -30,7 +35,7 @@ void Windsock::do_task()
     return;
   }
 
-  if(!raise_windsock())
+  if(!raise_windsock(millis))
     return;
 
 
@@ -38,7 +43,7 @@ void Windsock::do_task()
   if(lidar.is_detected(this->id))
   {
     this->over();
-    strat.removeTaskOrder(0);
+    strat.removeTaskOrder(0, millis);
     strat.score += this->points;
     if ((this->id == TASK_WINDSOCK_1 && strat.tab_tasks[TASK_WINDSOCK_2].done == DONE)
     || (this->id == TASK_WINDSOCK_2 && strat.tab_tasks[TASK_WINDSOCK_1].done == DONE))
@@ -47,6 +52,6 @@ void Windsock::do_task()
   else
   {
     this->windsock_wait = -1;
-    this->interrupted();
+    this->interrupted(millis);
   }
 }

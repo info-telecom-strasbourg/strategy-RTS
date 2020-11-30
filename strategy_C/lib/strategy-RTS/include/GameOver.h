@@ -23,7 +23,7 @@ public:
     /**
 	 * Simulate what to do at the end of the timer
 	 */
-    void do_task() override;
+    void do_task(int millis) override;
 };
 
 

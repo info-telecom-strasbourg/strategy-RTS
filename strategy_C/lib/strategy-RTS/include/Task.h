@@ -34,34 +34,27 @@ public:
 	 * @param position: the position of the task
 	 * @param max_time: the maximum time this task should last
 	 */
-	Task(int id, int points, Pos position, long max_time)
-	{
-		this->id = id;
-		this->points = points;
-		this->position = position;
-		this->done = NOT_DONE;
-		this->max_time = max_time;
-	}
+	Task(int id, int points, Pos position, long max_time);
 
 	/**
 	 * Indicate that the task in done
 	 */
-	void over() {this->done = DONE;}
+	void over();
 
 	/**
 	 * Indicate that the task is in progress
 	 */
-	void in_progress();
+	void in_progress(int millis);
 
 	/**
 	 * Indicate that the task is interrupted
 	 */
-	void interrupted();
+	void interrupted(int millis);
 
 	/**
 	 * An abstract method that will simulate the completion of the task
 	 */
-  virtual void do_task();
+  virtual void do_task(int millis);
 };
 
 #endif

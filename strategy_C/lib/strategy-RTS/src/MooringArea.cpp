@@ -1,4 +1,3 @@
-#include <Arduino.h>
 #include "MooringArea.h"
 #include "Strat.h"
 #include "Robot.h"
@@ -8,15 +7,19 @@ extern Pos POS_MOORING_AREA;
 extern RTSRob robot_RTS;
 extern Strat strat;
 
-void MooringArea::do_task()
+MooringArea::MooringArea(int id, int points, Pos position, long max_time)
+: Task(id, points, position, max_time)
+{}
+
+void MooringArea::do_task(int millis)
 {
-  if (millis() - strat.time > 99500)
+  if (millis - strat.time > 99500)
   {
     this->over();
     strat.tab_tasks[GAME_OVER].position = robot_RTS.position;
-    strat.tab_tasks[GAME_OVER].in_progress();
-    strat.emptyTaskOrder();
-    strat.addTaskOrder(GAME_OVER);
+    strat.tab_tasks[GAME_OVER].in_progress(millis);
+    strat.emptyTaskOrder(millis);
+    strat.addTaskOrder(GAME_OVER, millis);
   }
 
   if(this->done == DONE)
@@ -36,5 +39,5 @@ void MooringArea::do_task()
       return;
     }
   }
-  this->in_progress();
+  this->in_progress(millis);
 }

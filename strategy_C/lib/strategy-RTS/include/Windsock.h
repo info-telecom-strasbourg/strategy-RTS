@@ -10,24 +10,20 @@ class Windsock : public Task
 {
 public:
 	/* The beginning of the task */
-    long windsock_wait;
+  long windsock_wait;
 
-    Windsock(int id, int points, Pos position, long max_time, Vector<Pos> windsock_checkpoints)
-    : Task(id, points, position, max_time), windsock_wait(-1)
-    {
-      this->checkpoints = windsock_checkpoints;
-    }
+  Windsock(int id, int points, Pos position, long max_time, Vector<Pos> windsock_checkpoints);
 
 	/**
 	 * A function that windsock to be raised
 	 * @return a boolean that indicate if the windsock is raised
 	 */
-  bool raise_windsock();
+  bool raise_windsock(int millis);
 
 	/**
 	 * Simulate the execution of the windsock task
 	 */
-	void do_task();
+	void do_task(int millis);
 };
 
 

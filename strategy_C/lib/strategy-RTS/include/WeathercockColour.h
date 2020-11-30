@@ -16,13 +16,13 @@ public:
 	/**
 	 * Constructor of Weathercock
 	 */
-	WeathercockColour();
+	WeathercockColour(int millis);
 
 	/**
 	 * Choose randomly a color for the weathercock
 	 * The color is selected 25 seconds after the beginnig of the game
 	 */
-	void decide_zone();
+	void decide_zone(int millis);
 };
 
 #endif

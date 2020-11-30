@@ -1,4 +1,3 @@
-#include <Arduino.h>
 #include <stdio.h>
 #include "Weathercock.h"
 #include "Strat.h"
@@ -25,9 +24,9 @@ void Weathercock::detect_weathercock_col()
       printf("No color found\n");
 }
 
-void Weathercock::do_task()
+void Weathercock::do_task(int millis)
 {
-  this->in_progress();
+  this->in_progress(millis);
   this->checkpoints[0].y = robot_RTS.position.y;
   robot_RTS.next_destination = this->checkpoints[0];
 
@@ -42,18 +41,18 @@ void Weathercock::do_task()
     if(mod2Pi(3*M_PI/2 - robot_RTS.angle) < rot_step)
     {
       if(this->weathercock_wait == -1)
-        this->weathercock_wait = millis();
+        this->weathercock_wait = millis;
 
-      if((millis() - this->weathercock_wait) > 2000)
+      if((millis - this->weathercock_wait) > 2000)
       {
         if(((TopLidar)robot_RTS.sensors[TOP_LIDAR]).is_detected(this->id))
         {
           this->detect_weathercock_col();
           this->over();
-          strat.removeTaskOrder(0);
+          strat.removeTaskOrder(0, millis);
         }
         else
-          this->interrupted();
+          this->interrupted(millis);
       }
     }
     else

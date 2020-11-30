@@ -37,13 +37,13 @@ public:
 	 * The constructor of the class
 	 * @param robot: the robot that must fllow the strategy
 	 */
-  Strat(RTSRob robot);
+  Strat(RTSRob robot, int millis);
 
     /**
 	 * Apply the strategy
 	 * @param: opponent: the opponent's robot (for simulation)
 	 */
-	void apply();
+	void apply(int millis);
 
     /**
 	 * Select the closer mooring area (use if we do not know the weathercock color)
@@ -55,13 +55,13 @@ public:
 	 * Find the task to do
 	 * @return the index of the task in tab_tasks
 	 */
-	int find_best_task();
+	int find_best_task(int millis);
 
 	/**
 	 * This function check if the last task must be done
 	 * @return a bool that indicate if the final task must be done
 	 */
-	bool manage_last_tasks();
+	bool manage_last_tasks(int millis);
 
     /**
 	 * Calculate if we have to move to the mooring area with the color of the weathercock
@@ -92,27 +92,27 @@ public:
 	 * @param index_start: index of the task to move
 	 * @param index_end: index where the task has to be moved
 	 */
-  void changeTaskOrder(int index_start, int index_end);
+  void changeTaskOrder(int index_start, int index_end, int millis);
 
 	/**
 	 * Empty the Vector tasks_order and reinitialize
 	 * time_start_task
 	 */
-	void emptyTaskOrder();
+	void emptyTaskOrder(int millis);
 
 	/**
 	 * Add id to the Vector tasks_order and reinitialize
 	 * time_start_task
 	 * @param id: the id of the task
 	 */
-	void addTaskOrder(int id);
+	void addTaskOrder(int id, int millis);
 
 	/**
 	 * remove the int an index to the Vector tasks_order and reinitialize
 	 * time_start_task
 	 * @param index: the position of the id you want to remove
 	 */
-	void removeTaskOrder(int index);
+	void removeTaskOrder(int index, int millis);
 };
 
 
