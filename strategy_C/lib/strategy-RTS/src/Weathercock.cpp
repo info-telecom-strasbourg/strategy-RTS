@@ -1,4 +1,4 @@
-#include <stdio.h>
+//#include <stdio.h>
 #include "Weathercock.h"
 #include "Strat.h"
 #include "Robot.h"
@@ -21,7 +21,8 @@ void Weathercock::detect_weathercock_col()
   else if (robot_RTS.detected_color == WHITE)
       strat.tab_tasks[TASK_MOORING_AREA].position.y = 650;
   else
-      printf("No color found\n");
+  	;
+      //printf("No color found\n");
 }
 
 void Weathercock::do_task(int millis)

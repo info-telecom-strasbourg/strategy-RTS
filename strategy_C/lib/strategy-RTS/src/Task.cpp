@@ -1,6 +1,5 @@
 #include "Task.h"
 #include "Strat.h"
-#include "Macro.h"
 
 extern Strat strat;
 

@@ -37,6 +37,11 @@ public:
 	Task(int id, int points, Pos position, long max_time);
 
 	/**
+	 * Destructor of Task
+	 */
+	~Task() {};
+
+	/**
 	 * Indicate that the task in done
 	 */
 	void over();
@@ -54,7 +59,7 @@ public:
 	/**
 	 * An abstract method that will simulate the completion of the task
 	 */
-  virtual void do_task(int millis);
+  	virtual void do_task(int millis) {;}
 };
 
 #endif

@@ -38,10 +38,10 @@ Vector<Sensor> sensors_null;
 RTSRob robot_RTS(&POS_NULL, 0, sensors_null);
 OpponentRob rob_op(&POS_NULL, 0);
 OpponentRob rob_op_2(&POS_NULL, 0);
-WeathercockColour weathercock;
+WeathercockColour weathercock(millis());
 Vector<OpponentRob> rob_opponents;
 Vector<Pos> dectable_lidar_mobile;
-Strat strat(robot_RTS);
+Strat strat(robot_RTS, millis());
 
 Dir dir = right;
 
@@ -195,7 +195,7 @@ void setup() {
 void loop() {
 	//distance_read = lidar.readDistance();
 
-	strat.apply();
+	strat.apply(millis());
 
 	display_infos();
 
