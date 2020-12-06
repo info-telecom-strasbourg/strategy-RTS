@@ -37,7 +37,7 @@ public:
 	 * The constructor of the class
 	 * @param robot: the robot that must fllow the strategy
 	 */
-  Strat(RTSRob robot, int millis);
+	Strat(RTSRob robot, int millis);
 
     /**
 	 * Apply the strategy

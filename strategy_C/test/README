@@ -9,3 +9,23 @@ in the development cycle.
 
 More information about PlatformIO Unit Testing:
 - https://docs.platformio.org/page/plus/unit-testing.html
+
+Avancés dans les tests :
+
+- [ ] BottomLidar
+- [ ] Calibration
+- [ ] Cups
+- [ ] GameOver
+- [x] Init
+- [ ] Lighthouse
+- [ ] MobileLidar
+- [ ] MooringArea
+- [ ] OpponentRob
+- [x] Pos
+- [ ] Robot
+- [ ] Strat
+- [ ] Task
+- [ ] TopLidar
+- [ ] Weathercock
+- [ ] WeathercockColour
+- [ ] Windsock

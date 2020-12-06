@@ -29,6 +29,12 @@ public:
     Vector<Pos> checkpoints;
 
 	/**
+	 * Default constructor of Task
+	 */
+	Task()
+	{}
+
+	/**
 	 * Constructor of Task
 	 * @param points: the number of points that this task brings
 	 * @param position: the position of the task

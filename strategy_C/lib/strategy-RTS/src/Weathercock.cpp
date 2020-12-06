@@ -8,15 +8,18 @@
 
 extern Strat strat;
 extern RTSRob robot_RTS;
-extern WeathercockColour weathercock;
+extern WeathercockColour weathercockColour;
 
-
-
+Weathercock::Weathercock(int id, int points, Pos position, long max_time, Vector<Pos> weathercock_checkpoints)
+: Task(id, points, position, max_time), weathercock_wait(-1)
+{
+  this->checkpoints = weathercock_checkpoints;
+}
 
 void Weathercock::detect_weathercock_col()
 {
-  robot_RTS.detected_color = weathercock.color_w;
-  if (robot_RTS.detected_color == BLACK)
+  robot_RTS.detected_color = weathercockColour.color_w;
+  if ((robot_RTS.detected_color == BLACK))
       strat.tab_tasks[TASK_MOORING_AREA].position.y = 200;
   else if (robot_RTS.detected_color == WHITE)
       strat.tab_tasks[TASK_MOORING_AREA].position.y = 650;

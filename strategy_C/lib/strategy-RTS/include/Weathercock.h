@@ -21,11 +21,7 @@ public:
 	 * @param max_time: the estimated necessary time to accomplish the task
 	 * @param weathercock_checkpoints: the checkpoints we need to reach to accomplish the task
 	 */
-    Weathercock(int id, int points, Pos position, long max_time, Vector<Pos> weathercock_checkpoints)
-    : Task(id, points, position, max_time), weathercock_wait(-1)
-    {
-      this->checkpoints = weathercock_checkpoints;
-    }
+    Weathercock(int id, int points, Pos position, long max_time, Vector<Pos> weathercock_checkpoints);
 
     /**
 	 * Detect the weathercock color and update POS_MOORING_AREA
