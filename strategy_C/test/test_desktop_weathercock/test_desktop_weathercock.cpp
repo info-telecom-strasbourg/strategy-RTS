@@ -42,7 +42,7 @@ void test_class_Weathercock(void)
 void test_function_detect_weathercock_col(void)
 {
 	init_tasks();
-	//strat.apply(0);
+	// strat.apply(0);
 	int id = TASK_WEATHERCOCK;
 	int points = 5; //?
 	Pos position = POS_WEATHERCOCK;
@@ -51,11 +51,11 @@ void test_function_detect_weathercock_col(void)
 	Weathercock weathercock(id, points, position, max_time, weathercock_checkpoints);
 	weathercockColour.decide_zone(50000);
 	weathercockColour.color_w = BLACK;
-	//strat.tab_tasks[TASK_MOORING_AREA].position.y = 200; //probleme avec ca
-	//weathercock.detect_weathercock_col(); // probleme avec TASK_MOORING_AREA
-	//TEST_ASSERT_EQUAL(weathercockColour.color_w, BLACK);
+	strat.tab_tasks[TASK_MOORING_AREA].position.y = 200; //probleme avec ca
+	weathercock.detect_weathercock_col(); // probleme avec TASK_MOORING_AREA
+	TEST_ASSERT_EQUAL(weathercockColour.color_w, BLACK);
 
-	//TEST_ASSERT_EQUAL(strat.tab_tasks[TASK_MOORING_AREA].position.y, 200);
+	TEST_ASSERT_EQUAL(strat.tab_tasks[TASK_MOORING_AREA].position.y, 200);
 }
 
 int main(int argc, char* argv[])
