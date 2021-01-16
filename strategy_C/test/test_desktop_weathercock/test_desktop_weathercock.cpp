@@ -60,8 +60,8 @@ void test_function_detect_weathercock_col(void)
 
 int main(int argc, char* argv[])
 {
-  UNITY_BEGIN();
-  RUN_TEST(test_class_Weathercock);
-  RUN_TEST(test_function_detect_weathercock_col);
-  UNITY_END();
+	UNITY_BEGIN();
+	RUN_TEST(test_class_Weathercock);
+	RUN_TEST(test_function_detect_weathercock_col);
+	UNITY_END();
 }

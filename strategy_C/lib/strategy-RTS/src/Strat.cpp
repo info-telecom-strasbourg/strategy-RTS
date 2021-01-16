@@ -18,18 +18,18 @@ Strat::Strat(RTSRob robot, int millis)
 void Strat::apply(int millis)
 {
 	this->robot.speed_regime = ((BottomLidar)this->robot.sensors[BOTTOM_LIDAR]).manage_speed();
-	find_the_opponent(); //identify the opponent
+	// find_the_opponent(); //identify the opponent
 	this->id_current_task = find_best_task(millis); //choose the task we have to do now
 
-	if(manage_last_tasks(millis))
-		this->id_current_task = this->tasks_order[0];
+	// if(manage_last_tasks(millis))
+	// 	this->id_current_task = this->tasks_order[0];
 
 	if(this->robot.position.is_around(this->tab_tasks[this->id_current_task].position, 5)
 	|| this->tab_tasks[this->id_current_task].done == IN_PROGRESS)
 	{
-		this->tab_tasks[this->id_current_task].do_task(millis);
-		if (!this->path.empty())
-			this->path.clear();
+		// this->tab_tasks[this->id_current_task].do_task(millis);
+		// if (!this->path.empty())
+		// 	this->path.clear();
 	}
 	else
 	{

@@ -35,7 +35,7 @@ void test_class_Strat(void)
 
 void test_function_apply(void)
 {
-	//strat.apply(0);
+	strat.apply(0);
 	// blabla
 }
 
