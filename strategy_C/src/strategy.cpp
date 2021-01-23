@@ -36,7 +36,7 @@ Pos POS_NULL(-1,-1);
 //Global variables
 
 Vector<Sensor> sensors_null;
-RTSRob robot_RTS(&POS_NULL, 0, sensors_null);
+RTSRob robot_RTS(&POS_NULL, 0);
 OpponentRob rob_op(&POS_NULL, 0);
 OpponentRob rob_op_2(&POS_NULL, 0);
 WeathercockColour weathercockColour(millis());

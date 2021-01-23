@@ -18,7 +18,7 @@ Pos POS_MOORING_AREA(100, -50);
 Pos POS_WEATHERCOCK(450, 125);
 Pos POS_NULL(-1,-1);
 Dir dir = left;
-RTSRob robot_RTS(&POS_NULL, 0, sensors_null);
+RTSRob robot_RTS(&POS_NULL, 0);
 Vector<OpponentRob> rob_opponents;
 Strat strat(robot_RTS, 0);
 
@@ -26,8 +26,9 @@ WeathercockColour weathercockColour(0);
 
 void test_function_init_sensor(void)
 {
-	Vector<Sensor> vector = init_sensors();
-	TEST_ASSERT_EQUAL(vector.size(),3);
+	Sensor sensors[3];
+	init_sensors(sensors);
+	//TEST_ASSERT_EQUAL(vector.size(),3); //revoir ca parcequ'avant c'était un vecteur
 }
 
 void test_function_init_robots(void)

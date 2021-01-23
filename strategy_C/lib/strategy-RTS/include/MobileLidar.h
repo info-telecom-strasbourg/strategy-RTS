@@ -21,9 +21,9 @@ public:
 	 * @param detectables: an array of obstacles the sensor detect
 	 * @return an array of obstacles detected by the sensor
 	 */
-    Vector<Pos> detection(Vector<Pos> detectables) override
+     void detection(Vector<Pos> & obstacles, Vector<Pos> & detectables) override
     {
-		return detectables;
+		obstacles.fill(detectables);
     }
 
     /**

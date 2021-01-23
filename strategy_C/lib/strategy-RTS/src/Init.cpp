@@ -23,19 +23,16 @@ extern Dir dir;
 extern Strat strat;
 extern RTSRob robot_RTS;
 
-Vector<Sensor> init_sensors()
+void init_sensors(Sensor sensors[3])
 {
-	Sensor storage_pos[3];
     BottomLidar bottomLidar;
     TopLidar topLidar;
     MobileLidar mobileLidar;
 
-    Vector<Sensor> sensors(storage_pos);
-    sensors.push_back(bottomLidar);
-    sensors.push_back(topLidar);
-    sensors.push_back(mobileLidar);
+	sensors[BOTTOM_LIDAR] = bottomLidar;
+    sensors[TOP_LIDAR] = topLidar;
+    sensors[MOBILE_LIDAR] = mobileLidar;
 
-    return sensors;
 }
 
 void init_robots()
@@ -44,7 +41,7 @@ void init_robots()
 	{
 		robot_RTS.position = Pos(100, 410);
 		robot_RTS.angle = 0;
-		robot_RTS.sensors = init_sensors();
+		init_sensors(robot_RTS.sensors);
 		POS_WINDSOCK_1 = Pos(100,800);
 		POS_WINDSOCK_2 = Pos(300,800);
 		POS_LIGHTHOUSE = Pos(250,125);
@@ -56,7 +53,7 @@ void init_robots()
 	{
 		robot_RTS.position = Pos(1400, 410);
 		robot_RTS.angle = M_PI;
-		robot_RTS.sensors = init_sensors();
+		init_sensors(robot_RTS.sensors);
 		POS_WINDSOCK_1 = Pos(1400,800);
 		POS_WINDSOCK_2 = Pos(1200,800);
 		POS_LIGHTHOUSE = Pos(1250, 125);

@@ -28,7 +28,7 @@ public:
 	 * @param detectables: an array of obstacles containing only the opponent position
 	 * @return an array of obstacles detected by the sensor
 	 */
-    Vector<Pos> detection(Vector<Pos> detectables);
+    void detection(Vector<Pos> & obstacles, Vector<Pos> & detectables) override;
 
     /**
 	 * Detect if the "pos" is detected by the fixed lidars

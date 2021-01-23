@@ -18,7 +18,7 @@ Pos POS_MOORING_AREA(100, -50);
 Pos POS_WEATHERCOCK(450, 125);
 Pos POS_NULL(-1,-1);
 Dir dir = left;
-RTSRob robot_RTS(&POS_NULL, 0, sensors_null);
+RTSRob robot_RTS(&POS_NULL, 0);
 Vector<OpponentRob> rob_opponents;
 Strat strat(robot_RTS, 0);
 

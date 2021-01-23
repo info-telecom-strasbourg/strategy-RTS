@@ -28,8 +28,13 @@ public:
     /* The robot speed regime */
     int speed_regime;
 
-	Vector<Sensor> sensors;
+	Sensor sensors[3];
 
+    /**
+     * Default constructor of Robot
+     */
+    Robot()
+    {}
 
     /**
 	 * Constructor of Robot (without sensors, probably the opponent)
@@ -44,7 +49,7 @@ public:
 	 * @param angle: the initial position of the robot
 	 * @param sensors_list: the list of sensors of the robot
 	 */
-	Robot(Pos pos, float angle, Vector<Sensor> sensors_list);
+	Robot(Pos pos, float angle, Sensor sensors[3]);
 
     /**
 	* Move the robot to the attribute "next_destination" using the method
@@ -87,6 +92,13 @@ public:
     Vector<Pos> list_moves;
 
     /**
+     * Default constructor of OppoonentRob
+     */
+    OpponentRob()
+    : Robot()
+    {}
+
+    /**
 	 * Constructor of the OpponentRob (random version)
 	 * @param init_pos: initial position of the opponent
      * @param angle: angle of the opponent
@@ -116,8 +128,8 @@ public:
 	 * @param angle: the initial position of the robot
      * @param sensors: the list of sensors of our robot
 	 */
-    RTSRob(Pos* init_position, float angle, Vector<Sensor> sensors)
-    : Robot(*init_position, angle, sensors)
+    RTSRob(Pos* init_position, float angle)
+    : Robot(*init_position, angle)
     {
         this->detected_color = NO_COLOR;
         this->flag_deployed = false;

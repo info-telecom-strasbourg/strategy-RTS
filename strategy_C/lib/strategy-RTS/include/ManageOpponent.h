@@ -30,7 +30,12 @@ public:
 	 */
     ManageOpponent(RTSRob robot)
     : robot(robot)
-    {}
+    {
+        Pos opp_pos[2];
+        Pos path_arr[1024];
+        opponent_positions = opp_pos;
+        path = path_arr;
+    }
 
     /**
 	 * Identify the opponents position with the mobile lidar

@@ -8,6 +8,7 @@ extern Pos POS_NULL;
 
 void ManageOpponent::find_the_opponent()
 {
+	// clear this->opponent_positions ici ?
 	Pos tab_lid_detectable[5];
 	Vector<Pos> mob_lid_detectable(tab_lid_detectable);
 	for(unsigned int i = 0; i < rob_opponents.size(); i++)
@@ -19,16 +20,16 @@ void ManageOpponent::find_the_opponent()
 
 	Pos tab_obstacles[1024];
 	Vector<Pos> obstacles(tab_obstacles);
-	obstacles = this->robot.sensors[MOBILE_LIDAR].detection(mob_lid_detectable);
-	//
-	// if (obstacles.size() == 0)
-	// 	return;
-	//
-	// for (unsigned int i = 0; i < obstacles.size(); i++)
-	// 	if (!obstacles[i].is_around(POS_LIGHTHOUSE, 5) &&
-	// 	!obstacles[i].is_around(POS_LIGHTHOUSE_OP, 5) &&
-	// 	!obstacles[i].is_around(POS_WEATHERCOCK, 5))
-	// 		this->opponent_positions.push_back(obstacles[i]);
+	this->robot.sensors[MOBILE_LIDAR].detection(obstacles, mob_lid_detectable);
+
+	if (obstacles.size() == 0)
+		return;
+
+	for (unsigned int i = 0; i < obstacles.size(); i++)
+		if (!obstacles[i].is_around(POS_LIGHTHOUSE, 5) &&
+		!obstacles[i].is_around(POS_LIGHTHOUSE_OP, 5) &&
+		!obstacles[i].is_around(POS_WEATHERCOCK, 5))
+			this->opponent_positions.push_back(obstacles[i]);
 }
 
 void ManageOpponent::find_path(float secu_dist)
@@ -57,10 +58,12 @@ Pos ManageOpponent::access (Pos point_1, Pos point_2, float secu_dist)
 	float nb_seg = 100;
 	float delta_x = point_2.x - point_1.x;
 	float delta_y = point_2.y - point_1.y;
+	Pos new_pos;
 
 	for (float i = 0; i < nb_seg; i++)
 	{
-		Pos new_pos(point_1.x + i*delta_x/nb_seg, point_1.y + i*delta_y/nb_seg);
+		new_pos.x = point_1.x + i*delta_x/nb_seg;
+		new_pos.y = point_1.y + i*delta_y/nb_seg;
 		for (unsigned int j = 0; j < this->opponent_positions.size(); j++)
 			if (is_on_security_area(new_pos, this->opponent_positions[j], secu_dist))
 				return new_pos;
@@ -75,6 +78,7 @@ bool ManageOpponent::is_on_security_area(Pos current_pos, Pos opponent_pos, floa
 	if(current_pos.dist(opponent_pos) > secu_dist)
 		return false;
 
+	// ce return est chelou, genre retourne vrai ou faux en fonction de si y est sup ou inf à l'autre y
 	return (current_pos.angle(opponent_pos) < M_PI) ? true : false;
 }
 
@@ -82,6 +86,7 @@ Pos ManageOpponent::find_step(Pos intersection, float secu_dist)
 {
 	float angle_step = M_PI/12;
 	float angle_dep = this->robot.position.angle(this->robot.next_destination);
+	//wtf cette condition, elle est tout le temps vraie
 	if(angle_step != 0)
 		for(float i = angle_dep; i < angle_dep + M_PI/2; i += angle_step)
 		{

@@ -3,7 +3,7 @@
 #include "Macro.h"
 
 Robot::Robot(Pos pos_ini, float angle)
-: position(pos_ini),	angle(angle), speed_regime(STOP)
+: position(pos_ini), angle(angle), speed_regime(STOP)
 {
   for (int i = 0; i < 4; ++i)
   {
@@ -15,8 +15,8 @@ Robot::Robot(Pos pos_ini, float angle)
   }
 }
 
-Robot::Robot(Pos pos, float angle, Vector<Sensor> sensors_list)
-: position(pos),	angle(angle), speed_regime(STOP), sensors(sensors_list)
+Robot::Robot(Pos pos, float angle, Sensor sensors[3])
+: position(pos),	angle(angle), speed_regime(STOP)
 {
   for (int i = 0; i < 4; ++i)
   {
@@ -25,6 +25,10 @@ Robot::Robot(Pos pos, float angle, Vector<Sensor> sensors_list)
                   pos.x + HALF_DIAG * cos(angle_corner),
                   pos.y + HALF_DIAG * sin(angle_corner)
                  );
+  }
+  for (int i = 0; i < 3; i++)
+  {
+      this->sensors[i] = sensors[i];
   }
 }
 
@@ -49,13 +53,13 @@ void Robot::goTo(bool forward)
 
   if(this->speed_regime != STOP)
   {
-    if(this->sensors.size() != 0)
-    {
+    // if(this->sensors.size() != 0)
+    // {
       BottomLidar lidar(this->sensors[BOTTOM_LIDAR]);
       this->speed_regime = lidar.manage_speed();
-    }
-    else
-      this->speed_regime = FAST;
+    // }
+    // else
+    //   this->speed_regime = FAST;
   }
 
   this->position.x += this->speed_regime * cos(this->angle + turn);

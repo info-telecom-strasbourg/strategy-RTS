@@ -21,7 +21,7 @@ public:
 	 * @param detectables: an array of obstacles the sensor is sure to detect
 	 * @return an array of obstacles detected by the sensor
 	 */
-    virtual Vector<Pos> detection(Vector<Pos> detectables){return detectables;} //si on met rien, problème de vtable
+    virtual void detection(Vector<Pos> & obstacles, Vector<Pos> & detectables){obstacles.fill(detectables);} //si on met rien, problème de vtable
 
     /**
 	 * Indicate if the obstacle located at the position "pos" is detected by
